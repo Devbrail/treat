@@ -1,8 +1,14 @@
+import 'dart:async';
+
+import 'package:country_pickers/country.dart';
+import 'package:country_pickers/country_pickers.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:treat/api/api.dart';
 import 'package:treat/models/models.dart';
+import 'package:treat/models/response/intial_token_response.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/shared.dart';
 
@@ -10,76 +16,249 @@ class AuthController extends GetxController {
   final ApiRepository apiRepository;
   AuthController({required this.apiRepository});
 
-  final GlobalKey<FormState> registerFormKey = GlobalKey<FormState>();
-  final registerEmailController = TextEditingController();
-  final registerPasswordController = TextEditingController();
-  final registerConfirmPasswordController = TextEditingController();
-  bool registerTermsChecked = false;
+  final SharedPreferences sharedPreferences = Get.find<SharedPreferences>();
+  late String? intialToken =
+      sharedPreferences.getString(StorageConstants.intialToken);
 
-  final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
-  final loginEmailController = TextEditingController();
-  final loginPasswordController = TextEditingController();
+  final GlobalKey<FormState> registerFormKey = GlobalKey<FormState>();
+
+  Future<void> fetchingIntialToken() async {
+    printInfo(info: 'Intial token $intialToken');
+
+    if (intialToken == null || intialToken!.isEmpty) {
+      final IntialTokenResponse? result = await apiRepository.initialtoken();
+      intialToken = result!.respData!.initialToken;
+      sharedPreferences.setString(StorageConstants.intialToken, intialToken!);
+    }
+  }
+
+//   AUTH SCREEN
+  var phoneController = TextEditingController();
+  Country selectedCountry = CountryPickerUtils.getCountryByPhoneCode('91');
+
+  sentOtpMobile(BuildContext context) async {
+    AppFocus.unfocus(context);
+
+    String phone = phoneController.text;
+
+    if (!phone.isNumericOnly || phone.length < 8) {
+      CommonWidget.toast('Please enter a valid number.');
+      return;
+    }
+    printInfo(info: 'senting otp');
+
+    final Either? result = await apiRepository.sendOtpPhone(
+        data: {'initialToken': intialToken, 'phoneNumber': phone});
+
+    result?.fold((l) => CommonWidget.toast(l), (r) {
+      printInfo(info: 'success');
+      if (r['success'])
+        Get.toNamed(Routes.AUTH + Routes.PhoneOTP, arguments: this);
+      else
+        CommonWidget.toast('Error senting otp');
+    });
+  }
+
+// EMAIL SIGNUP SCREEN CONTROLLS
+
+  double buttonProgressPercenage = 0;
+  var firstNameController = TextEditingController();
+  var lastNameController = TextEditingController();
+  var emailController = TextEditingController();
+  String errorMessage = '';
+
+  void listeningTextChange() {
+    buttonProgressPercenage = 0;
+    if (firstNameController.text.isNotEmpty) buttonProgressPercenage += .33;
+    if (lastNameController.text.isNotEmpty) buttonProgressPercenage += .33;
+    if (emailController.text.isNotEmpty && emailController.text.isEmail)
+      buttonProgressPercenage += .33;
+
+    update([1]);
+  }
+
+  void validateEMail() {
+    if (!emailController.text.isEmail) {
+      errorMessage = '* please enter valid email';
+      update([0]);
+    } else {
+      errorMessage = '';
+      update([0]);
+    }
+  }
+
+  sentOtpEmail(BuildContext context) async {
+    AppFocus.unfocus(context);
+
+    printInfo(info: 'senting otp to email');
+
+    final Either? result = await apiRepository.sendOtpEmail(data: {
+      'initialToken': intialToken,
+      'emailId': emailController.text,
+      'firstName': firstNameController.text.trim(),
+      'lastName': lastNameController.text.trim(),
+    });
+
+    result?.fold((l) => CommonWidget.toast(l), (r) {
+      printInfo(info: 'success');
+      Get.toNamed(Routes.AUTH + Routes.EmailOTP, arguments: this);
+    });
+  }
+
+// ===========================================================================
+
+//======   OTP VERIFY PAGE   ======================
+
+  resendOtp(BuildContext context) async {}
+  verifyOtp(BuildContext context, String otp) async {
+    AppFocus.unfocus(context);
+
+    if (!otp.isNumericOnly || otp.length != 4) {
+      CommonWidget.toast('Please enter a valid otp');
+      return;
+    }
+
+    printInfo(info: 'senting otp to email  $intialToken');
+    final Either<String, Map>? result = await apiRepository
+        .verifyOTP(data: {'initialToken': intialToken, 'otpValue': otp});
+
+    result?.fold((l) => CommonWidget.toast(l), (r) {
+      printInfo(info: 'success');
+      if (r['success']) {
+        CommonWidget.toast('OTP verifed succesfully');
+        printInfo(info: intialToken!);
+
+        loginResponse = LoginResponse.fromJson(r as Map<String, dynamic>);
+        sharedPreferences.setString(
+            StorageConstants.token, loginResponse!.respData!.accessToken!);
+        if (loginResponse!.respData!.missingInfo == 'MOBILE') {
+          Get.toNamed(Routes.AUTH + Routes.ProfileCompletion, arguments: this);
+        } else if (loginResponse!.respData!.missingInfo == 'EMAIL')
+          Get.toNamed(Routes.AUTH + Routes.EmailSignup, arguments: this);
+        else
+          Get.toNamed(Routes.AUTH + Routes.AuthLoading);
+      } else
+        CommonWidget.toast('Invalid OTP');
+    });
+  }
+
+// ===========================================================================
+
+//======   Profile Completion PAGE   ======================
+  var mobileNumberController = TextEditingController();
+  late LoginResponse? loginResponse = null;
+  void completeProfile(BuildContext context, {required String type}) async {
+    AppFocus.unfocus(context);
+    String phone = mobileNumberController.text;
+
+    var data = {};
+
+    if (type == 'email') {
+      String firstName = firstNameController.text;
+      String lastName = lastNameController.text;
+      String email = emailController.text;
+      data['missing'] = 'EMAIL';
+      data['emailId'] = email;
+      data['firstName'] = firstName;
+      data['lastName'] = lastName;
+    } else {
+      if (!phone.isNumericOnly || phone.length < 8) {
+        CommonWidget.toast('Please enter a valid otp');
+        return;
+      }
+      data['missing'] = 'MOBILE';
+
+      data['phoneNumber'] = phone;
+    }
+
+    printInfo(info: 'senting otp to email');
+    printInfo(info: data.toString());
+    final Either<String, Map>? result =
+        await apiRepository.completeProfile(data: data);
+
+    result?.fold((l) => CommonWidget.toast(l), (r) {
+      printInfo(info: 'success');
+      if (r['success']) {
+        Get.toNamed(Routes.AUTH + Routes.AuthLoading);
+      } else
+        CommonWidget.toast(r['message'] ?? 'Failed');
+    });
+  }
+
+// ===========================================================================
+
+  selectCountry(Country country) {
+    selectedCountry = country;
+    update();
+  }
 
   @override
   void onInit() {
     super.onInit();
   }
 
+  refreshController() {
+    fetchingIntialToken();
+    phoneController = TextEditingController();
+
+    firstNameController = TextEditingController();
+    lastNameController = TextEditingController();
+    emailController = TextEditingController();
+    mobileNumberController = TextEditingController();
+  }
+
   @override
   void onReady() {
     super.onReady();
+    phoneController = TextEditingController();
+
+    firstNameController = TextEditingController();
+    lastNameController = TextEditingController();
+    emailController = TextEditingController();
+    mobileNumberController = TextEditingController();
   }
 
   void register(BuildContext context) async {
     AppFocus.unfocus(context);
     if (registerFormKey.currentState!.validate()) {
-      if (!registerTermsChecked) {
-        CommonWidget.toast('Please check the terms first.');
-        return;
-      }
+      CommonWidget.toast('Please check the terms first.');
 
-      final res = await apiRepository.register(
-        RegisterRequest(
-          email: registerEmailController.text,
-          password: registerPasswordController.text,
-        ),
-      );
+      // final res = await apiRepository.register(
+      //   RegisterRequest(
+      //     email: registerEmailController.text,
+      //     password: registerPasswordController.text,
+      //   ),
+      // );
 
-      final prefs = Get.find<SharedPreferences>();
-      if (res!.token.isNotEmpty) {
-        prefs.setString(StorageConstants.token, res.token);
-        print('Go to Home screen>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-      }
+      // final prefs =sharedPreferences;
+      // if (res!.token.isNotEmpty) {
+      //   prefs.setString(StorageConstants.token, res.token);
+      //   print('Go to Home screen>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+      // }
     }
   }
 
-  void login(BuildContext context) async {
-    AppFocus.unfocus(context);
-    if (loginFormKey.currentState!.validate()) {
-      final res = await apiRepository.login(
-        LoginRequest(
-          email: loginEmailController.text,
-          password: loginPasswordController.text,
-        ),
-      );
-
-      final prefs = Get.find<SharedPreferences>();
-      if (res!.token.isNotEmpty) {
-        prefs.setString(StorageConstants.token, res.token);
-        Get.toNamed(Routes.HOME);
-      }
-    }
+  String getFormatedPhoneNumber() {
+    String phone = selectedCountry.phoneCode + phoneController.text;
+    String formattedPhoneNumber = "(+" +
+        phone.substring(0, 2) +
+        ") " +
+        phone.substring(2, 6) +
+        "-" +
+        phone.substring(6, phone.length);
+    return formattedPhoneNumber;
   }
 
   @override
   void onClose() {
     super.onClose();
 
-    registerEmailController.dispose();
-    registerPasswordController.dispose();
-    registerConfirmPasswordController.dispose();
+    phoneController.dispose();
 
-    loginEmailController.dispose();
-    loginPasswordController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    emailController.dispose();
+
+    mobileNumberController.dispose();
   }
 }

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:treat/api/api.dart';
 import 'package:treat/models/response/users_response.dart';
 import 'package:treat/modules/home/home.dart';
+import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/shared.dart';
 
 class HomeController extends GetxController {
@@ -47,8 +48,7 @@ class HomeController extends GetxController {
     var prefs = Get.find<SharedPreferences>();
     prefs.clear();
 
-    // Get.back();
-    NavigatorHelper.popLastScreens(popCount: 2);
+    Get.toNamed(Routes.AUTH);
   }
 
   void _saveUserInfo(UsersResponse users) {

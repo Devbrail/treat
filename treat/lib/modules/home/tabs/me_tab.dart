@@ -17,9 +17,7 @@ class MeTab extends GetView<HomeController> {
               GradientBackground(
                 needWave: false,
               ),
-              Obx(
-                () => _buildUserInfo(),
-              ),
+              _buildUserInfo()
             ],
           ),
         ),
@@ -49,7 +47,7 @@ class MeTab extends GetView<HomeController> {
           height: 10,
         ),
         Text(
-          '${controller.user.value!.email}',
+          'ctrsuhail@suhail',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -63,21 +61,7 @@ class MeTab extends GetView<HomeController> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             SizedBox(width: 10.0),
-            Expanded(
-              child: BorderButton(
-                text: '100 follower',
-                backgroundColor: Colors.white,
-                onPressed: () {},
-              ),
-            ),
             SizedBox(width: 10.0),
-            Expanded(
-              child: BorderButton(
-                text: '100 following',
-                backgroundColor: Colors.white,
-                onPressed: () {},
-              ),
-            ),
             SizedBox(width: 10.0),
           ],
         ),
@@ -96,8 +80,7 @@ class MeTab extends GetView<HomeController> {
             width: 110,
             child: CachedNetworkImage(
               fit: BoxFit.fill,
-              imageUrl: controller.user.value!.avatar ??
-                  'https://reqres.in/img/faces/1-image.jpg',
+              imageUrl: 'https://reqres.in/img/faces/1-image.jpg',
               placeholder: (context, url) => Image(
                 image: AssetImage('assets/images/icon_success.png'),
               ),
@@ -112,7 +95,7 @@ class MeTab extends GetView<HomeController> {
               color: hexToColor('#9A434343'),
             ),
             child: Text(
-              controller.user.value!.firstName ?? '',
+              'Suhail T S',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14,
@@ -145,9 +128,7 @@ class MeTab extends GetView<HomeController> {
               IconTitleItem(
                 title: 'Cards',
                 icon: 'assets/svgs/icon_discover.svg',
-                onTap: () {
-                  Get.toNamed(Routes.HOME + Routes.CARDS);
-                },
+                onTap: () => Get.offAndToNamed(Routes.HOME + Routes.CARDS),
               ),
               IconTitleItem(
                 title: 'Resource',

@@ -1,26 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:treat/modules/splash/widgets/loading_page.dart';
 import 'package:treat/shared/shared.dart';
+import 'package:treat/shared/widgets/text_widget.dart';
 
 class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Container(
-      color: Colors.white,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.hourglass_bottom,
-            color: ColorConstants.darkGray,
-            size: 30.0,
-          ),
-          Text(
-            'loading...',
-            style: TextStyle(fontSize: 30.0),
-          ),
-        ],
-      ),
+    return LoadingPage(
+      title: '',
     );
   }
 }

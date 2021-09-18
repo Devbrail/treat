@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:treat/shared/shared.dart';
@@ -14,6 +15,7 @@ void main() async {
   await DenpendencyInjection.init();
 
   runApp(App());
+
   configLoading();
 }
 
@@ -39,6 +41,10 @@ class App extends StatelessWidget {
 }
 
 void configLoading() {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    systemNavigationBarColor: ColorConstants.black, // navigation bar color
+    statusBarColor: ColorConstants.lightViolet, // status bar color
+  ));
   EasyLoading.instance
     ..indicatorType = EasyLoadingIndicatorType.threeBounce
     ..loadingStyle = EasyLoadingStyle.custom
@@ -46,8 +52,8 @@ void configLoading() {
     ..radius = 10.0
     // ..progressColor = Colors.yellow
     ..backgroundColor = ColorConstants.lightGray
-    ..indicatorColor = hexToColor('#64DEE0')
-    ..textColor = hexToColor('#64DEE0')
+    ..indicatorColor = ColorConstants.violet
+    ..textColor = ColorConstants.violet
     // ..maskColor = Colors.red
     ..userInteractions = false
     ..dismissOnTap = false
