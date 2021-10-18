@@ -5,7 +5,6 @@ import 'package:treat/library/liquid_progress_indicator-0.4.0/lib/src/liquid_lin
 import 'package:treat/modules/auth/auth.dart';
 import 'package:treat/shared/constants/common.dart';
 import 'package:treat/shared/shared.dart';
-import 'package:treat/shared/widgets/action_button.dart';
 import 'package:treat/shared/widgets/auth_input_field.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
 
@@ -15,7 +14,10 @@ class EmailSignup extends StatefulWidget {
 }
 
 class _EmailSignupState extends State<EmailSignup> {
-  final AuthController controller = Get.arguments;
+  final AuthController controller =
+      Get.put(AuthController(apiRepository: Get.find()));
+
+  final String prevPage = Get.arguments[1];
   @override
   void initState() {
     super.initState();
@@ -25,7 +27,6 @@ class _EmailSignupState extends State<EmailSignup> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -54,10 +55,10 @@ class _EmailSignupState extends State<EmailSignup> {
                       ),
                       NormalText(
                         text: controller.loginResponse == null
-                            ? 'Email Signup Up'
+                            ? 'Email Sign Up'
                             : 'Complete Profile',
                         fontSize: 24,
-                        textColor: Color(0xFF4B4B4B),
+                        textColor: ColorConstants.textBlack,
                       ),
                       CommonWidget.rowHeight(height: 64),
                       AuthTextField(
@@ -70,9 +71,8 @@ class _EmailSignupState extends State<EmailSignup> {
                       AuthTextField(
                           hint: 'Last Name',
                           controller: controller.lastNameController,
-                          onChange: (String text) {
-                            controller.listeningTextChange();
-                          }),
+                          onChange: (String text) =>
+                              controller.listeningTextChange()),
                       CommonWidget.rowHeight(),
                       AuthTextField(
                           hint: 'Email',
@@ -99,7 +99,8 @@ class _EmailSignupState extends State<EmailSignup> {
                       InkWell(
                         onTap: () {
                           controller.validateEMail();
-                          if (controller.loginResponse == null) {
+                          prevPage.printInfo();
+                          if (prevPage == CommonConstants.fromEmail) {
                             if (controller.buttonProgressPercenage > .9)
                               controller.sentOtpEmail(context);
                           } else
@@ -113,16 +114,17 @@ class _EmailSignupState extends State<EmailSignup> {
                               id: 1,
                               builder: (auth) {
                                 return LiquidLinearProgressIndicator(
-                                  value: auth
-                                      .buttonProgressPercenage, // Defaults to 0.5.
-                                  valueColor: AlwaysStoppedAnimation(Color(
-                                      0xFF363636)), // Defaults to the current Theme's accentColor.
-                                  backgroundColor: Color(
-                                      0xFFAFAFAF), // Defaults to the current Theme's backgroundColor.
+                                  value: auth.buttonProgressPercenage,
+                                  // Defaults to 0.5.
+                                  valueColor:
+                                      AlwaysStoppedAnimation(Color(0xFF363636)),
+                                  // Defaults to the current Theme's accentColor.
+                                  backgroundColor: ColorConstants.textColorGrey,
+                                  // Defaults to the current Theme's backgroundColor.
                                   borderRadius: 8,
 
-                                  direction: Axis
-                                      .horizontal, // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.horizontal.
+                                  direction: Axis.horizontal,
+                                  // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.horizontal.
                                   center: Container(
                                     height: CommonConstants.buttonHeight,
                                     alignment: Alignment.center,
@@ -195,7 +197,7 @@ class _AnimatedLiquidLinearProgressIndicatorState
       padding: EdgeInsets.symmetric(horizontal: 24.0),
       child: LiquidLinearProgressIndicator(
         value: _animationController!.value,
-        backgroundColor: const Color(0xFFAFAFAF),
+        backgroundColor: ColorConstants.textColorGrey,
         valueColor: AlwaysStoppedAnimation(const Color(0xFF363636)),
         borderRadius: 12.0,
         center: Container(

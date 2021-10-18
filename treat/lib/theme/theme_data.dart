@@ -176,7 +176,7 @@ class ThemeConfig {
 
   static ThemeData get lightTheme => createTheme(
         brightness: Brightness.light,
-        background: ColorConstants.lightScaffoldBackgroundColor,
+        background: ColorConstants.white,
         cardBackground: ColorConstants.secondaryAppColor,
         primaryText: Colors.black,
         secondaryText: Colors.white,
@@ -190,7 +190,7 @@ class ThemeConfig {
 
   static ThemeData get darkTheme => createTheme(
         brightness: Brightness.dark,
-        background: ColorConstants.darkScaffoldBackgroundColor,
+        background: ColorConstants.white,
         cardBackground: ColorConstants.secondaryDarkAppColor,
         primaryText: Colors.white,
         secondaryText: Colors.black,

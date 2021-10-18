@@ -76,6 +76,7 @@ class _TimerWidgetState extends State<TimerWidget> {
               else if (_start != 0) {
                 CommonWidget.toast('Please wait for few seconds');
               } else {
+                authController.resendOtp(context);
                 startTimer();
                 ++attempts;
               }

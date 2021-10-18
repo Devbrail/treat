@@ -12,15 +12,20 @@ class ColorConstants {
 
   static const Color yellow = const Color(0xFFF4C500);
   static const Color lightYellow = const Color(0xFFFFED6C);
+  static const Color ratingBarYellow = const Color(0xFFFFC107);
   static const Color violet = const Color(0xFFC36BFF);
   static const Color lightViolet = const Color(0xFFD89FFF);
   static const Color black = const Color(0xFF585858);
+  static const Color ratingBlack = const Color(0xFF3B3B3B);
   static const Color green = const Color(0xFFADEFFF);
-  static const Color whiteGrey = const Color(0xFFF4F4F4);
+  static const Color whiteGrey = const Color(0xFFEAEAEA);
   static const Color textFieldBackround = const Color(0xFFbdc6cf);
   static const Color pinInputBackround = const Color(0xFFEAEAEA);
+  static const Color chipBackround = const Color(0xFFF2F2F2);
+  static const Color textBlack = const Color(0xFF4B4B4B);
 
   static const Color textColorBlack = const Color(0xFF707070);
+  static const Color textColorGrey = const Color(0xFFAFAFAF);
   static const Color skipButtonBoxColor = const Color(0xFFF5E8FF);
 }
 

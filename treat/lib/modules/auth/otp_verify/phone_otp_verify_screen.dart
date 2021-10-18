@@ -32,7 +32,7 @@ class PhoneOtpScreen extends StatelessWidget {
                         Text(
                           'Enter verification code sent to',
                           style: TextStyle(
-                              color: Color(0xFF4B4B4B),
+                              color: ColorConstants.textBlack,
                               fontFamily: 'Rubik',
                               fontSize: 24),
                         ),
@@ -44,7 +44,7 @@ class PhoneOtpScreen extends StatelessWidget {
                         Text(
                           controller.getFormatedPhoneNumber(),
                           style: TextStyle(
-                              color: Color(0xFF4B4B4B),
+                              color: ColorConstants.textBlack,
                               fontFamily: 'Rubik',
                               fontWeight: FontWeight.bold,
                               fontSize: 24),

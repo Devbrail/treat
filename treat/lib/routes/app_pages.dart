@@ -8,6 +8,8 @@ import 'package:treat/modules/auth/profile_completion/profile_completion_page.da
 import 'package:treat/modules/home/home.dart';
 import 'package:treat/modules/me/cards/cards_screen.dart';
 import 'package:treat/modules/modules.dart';
+import 'package:treat/modules/store_detail/everyday_store_detail.dart';
+import 'package:treat/modules/store_detail/menu.dart';
 import 'package:treat/modules/terms_and_condition/terms_and_condotion.dart';
 
 part 'app_routes.dart';
@@ -41,5 +43,17 @@ class AppPages {
         children: [
           GetPage(name: Routes.CARDS, page: () => CardsScreen()),
         ]),
+    GetPage(
+        name: Routes.RetailMenu,
+        page: () => RetailMenu(),
+        binding: MenuBinding(),
+        children: [
+          GetPage(name: Routes.MenuDetail, page: () => MenuDetail()),
+        ]),
+    GetPage(
+      name: Routes.EVERYDAY,
+      page: () => EveryDayStoreDetail(),
+      binding: MenuBinding(),
+    )
   ];
 }

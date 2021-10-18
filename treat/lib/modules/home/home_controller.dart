@@ -36,19 +36,19 @@ class HomeController extends GetxController {
   }
 
   Future<void> loadUsers() async {
-    var _users = await apiRepository.getUsers();
-    if (_users!.data!.length > 0) {
-      users.value = _users;
-      users.refresh();
-      _saveUserInfo(_users);
-    }
+    // var _users = await apiRepository.getUsers();
+    // if (_users!.data!.length > 0) {
+    //   users.value = _users;
+    //   users.refresh();
+    //   _saveUserInfo(_users);
+    // }
   }
 
   void signout() {
     var prefs = Get.find<SharedPreferences>();
     prefs.clear();
 
-    Get.toNamed(Routes.AUTH);
+    Get.offAllNamed(Routes.SPLASH);
   }
 
   void _saveUserInfo(UsersResponse users) {

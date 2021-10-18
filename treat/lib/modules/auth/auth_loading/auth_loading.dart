@@ -14,7 +14,7 @@ class _AuthLoadingState extends State<AuthLoading> {
   @override
   void initState() {
     Future.delayed(Duration(seconds: 3))
-        .then((value) => Get.offAndToNamed(Routes.HOME));
+        .then((value) => Get.offAllNamed(Routes.HOME));
 
     super.initState();
   }

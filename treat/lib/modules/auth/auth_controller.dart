@@ -14,9 +14,11 @@ import 'package:treat/shared/shared.dart';
 
 class AuthController extends GetxController {
   final ApiRepository apiRepository;
+
   AuthController({required this.apiRepository});
 
   final SharedPreferences sharedPreferences = Get.find<SharedPreferences>();
+
   late String? intialToken =
       sharedPreferences.getString(StorageConstants.intialToken);
 
@@ -29,7 +31,15 @@ class AuthController extends GetxController {
       final IntialTokenResponse? result = await apiRepository.initialtoken();
       intialToken = result!.respData!.initialToken;
       sharedPreferences.setString(StorageConstants.intialToken, intialToken!);
+      // await fetchAuthToken();
     }
+  }
+
+  Future<void> fetchAuthToken() async {
+    final LoginResponse? result = await apiRepository.authToken(intialToken!);
+
+    loginResponse = result;
+    saveTokens(result!);
   }
 
 //   AUTH SCREEN
@@ -109,7 +119,12 @@ class AuthController extends GetxController {
 
 //======   OTP VERIFY PAGE   ======================
 
-  resendOtp(BuildContext context) async {}
+  resendOtp(BuildContext context) async {
+    apiRepository.resendOtp(data: {
+      'initialToken': intialToken,
+    });
+  }
+
   verifyOtp(BuildContext context, String otp) async {
     AppFocus.unfocus(context);
 
@@ -129,12 +144,12 @@ class AuthController extends GetxController {
         printInfo(info: intialToken!);
 
         loginResponse = LoginResponse.fromJson(r as Map<String, dynamic>);
-        sharedPreferences.setString(
-            StorageConstants.token, loginResponse!.respData!.accessToken!);
+        saveTokens(loginResponse!);
         if (loginResponse!.respData!.missingInfo == 'MOBILE') {
           Get.toNamed(Routes.AUTH + Routes.ProfileCompletion, arguments: this);
         } else if (loginResponse!.respData!.missingInfo == 'EMAIL')
-          Get.toNamed(Routes.AUTH + Routes.EmailSignup, arguments: this);
+          Get.toNamed(Routes.AUTH + Routes.EmailSignup,
+              arguments: [this, CommonConstants.fromOtp]);
         else
           Get.toNamed(Routes.AUTH + Routes.AuthLoading);
       } else
@@ -142,11 +157,18 @@ class AuthController extends GetxController {
     });
   }
 
+  void saveTokens(LoginResponse loginResponse) {
+    sharedPreferences.setString(
+        StorageConstants.token, loginResponse.respData!.accessToken!);
+  }
+
 // ===========================================================================
 
 //======   Profile Completion PAGE   ======================
   var mobileNumberController = TextEditingController();
-  late LoginResponse? loginResponse = null;
+
+  var loginResponse;
+
   void completeProfile(BuildContext context, {required String type}) async {
     AppFocus.unfocus(context);
     String phone = mobileNumberController.text;
@@ -179,7 +201,7 @@ class AuthController extends GetxController {
     result?.fold((l) => CommonWidget.toast(l), (r) {
       printInfo(info: 'success');
       if (r['success']) {
-        Get.toNamed(Routes.AUTH + Routes.AuthLoading);
+        Get.offAndToNamed(Routes.AUTH + Routes.AuthLoading);
       } else
         CommonWidget.toast(r['message'] ?? 'Failed');
     });
@@ -210,12 +232,6 @@ class AuthController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    phoneController = TextEditingController();
-
-    firstNameController = TextEditingController();
-    lastNameController = TextEditingController();
-    emailController = TextEditingController();
-    mobileNumberController = TextEditingController();
   }
 
   void register(BuildContext context) async {
@@ -253,12 +269,12 @@ class AuthController extends GetxController {
   void onClose() {
     super.onClose();
 
-    phoneController.dispose();
-
-    firstNameController.dispose();
-    lastNameController.dispose();
-    emailController.dispose();
-
-    mobileNumberController.dispose();
+    // phoneController.dispose();
+    //
+    // firstNameController.dispose();
+    // lastNameController.dispose();
+    // emailController.dispose();
+    //
+    // mobileNumberController.dispose();
   }
 }

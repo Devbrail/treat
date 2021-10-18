@@ -1,25 +1,52 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:treat/models/response/users_response.dart';
 import 'package:treat/modules/home/home.dart';
+import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/constants/colors.dart';
+import 'package:treat/shared/shared.dart';
 
 class MainTab extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(
-        () => RefreshIndicator(
-          child: _buildGridView(),
-          onRefresh: () => controller.loadUsers(),
-        ),
-      ),
+      body: _buildGridView(),
     );
   }
 
   Widget _buildGridView() {
+    return Center(
+      child: Wrap(
+        children: [
+          CommonWidget.actionbutton(
+            text: 'Retail',
+            buttoncolor: ColorConstants.lightViolet,
+            textColor: ColorConstants.black,
+            onTap: () => Get.toNamed(Routes.RetailMenu,
+                arguments: CommonConstants.retail),
+          ),
+          CommonWidget.actionbutton(
+            text: 'EveryDay',
+            width: 124,
+            buttoncolor: ColorConstants.lightViolet,
+            textColor: ColorConstants.black,
+            onTap: () =>
+                Get.toNamed(Routes.RetailMenu, arguments: CommonConstants.dine),
+          ),
+          CommonWidget.actionbutton(
+            text: 'Retail',
+            width: 124,
+            buttoncolor: ColorConstants.lightViolet,
+            textColor: ColorConstants.black,
+            onTap: () =>
+                Get.toNamed(Routes.EVERYDAY, arguments: CommonConstants.dine),
+          )
+        ],
+      ),
+    );
     return StaggeredGridView.countBuilder(
       crossAxisCount: 4,
       itemCount: data!.length,

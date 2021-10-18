@@ -5,12 +5,14 @@ import 'package:treat/shared/constants/colors.dart';
 class AuthTextField extends StatelessWidget {
   final String hint;
   final textInputType;
+  final int maxLength;
   TextEditingController? controller;
   Function(String text)? onChange;
   AuthTextField({
     Key? key,
     required this.hint,
     this.textInputType = TextInputType.text,
+    this.maxLength = 30,
     this.controller,
     this.onChange,
   }) : super(key: key);
@@ -22,12 +24,14 @@ class AuthTextField extends StatelessWidget {
       child: TextField(
         autofocus: false,
         controller: controller,
-        style: TextStyle(fontSize: 22.0, color: ColorConstants.black),
+        style: TextStyle(fontSize: 18.0, color: ColorConstants.black),
         textAlign: TextAlign.start,
         keyboardType: textInputType,
         onChanged: onChange,
+        maxLength: maxLength,
         decoration: InputDecoration(
           filled: true,
+          counterText: "",
           fillColor: ColorConstants.whiteGrey,
           hintText: hint,
           enabledBorder: OutlineInputBorder(

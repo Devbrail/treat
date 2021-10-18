@@ -1,21 +1,18 @@
 import 'package:country_pickers/country.dart';
-import 'package:country_pickers/country_picker_cupertino.dart';
-import 'package:country_pickers/country_picker_dialog.dart';
-import 'package:country_pickers/country_pickers.dart';
-import 'package:country_pickers/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:treat/modules/auth/auth.dart';
 import 'package:treat/modules/auth/widgets/mobile_entry_widget.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/shared.dart';
-import 'package:get/get.dart';
 import 'package:treat/shared/widgets/action_button.dart';
 
 class AuthScreen extends GetView<AuthController> {
-  // final AuthController controller = Get.arguments;
+  final AuthController controller =
+      Get.put(AuthController(apiRepository: Get.find()));
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +121,10 @@ class AuthScreen extends GetView<AuthController> {
                             onTap: () {
                               controller.loginResponse = null;
                               Get.toNamed(Routes.AUTH + Routes.EmailSignup,
-                                  arguments: controller);
+                                  arguments: [
+                                    controller,
+                                    CommonConstants.fromEmail
+                                  ]);
                             },
                             child: SvgPicture.asset(
                               'assets/svgs/icon_email.svg',

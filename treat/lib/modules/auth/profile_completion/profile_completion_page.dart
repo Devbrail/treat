@@ -2,19 +2,19 @@ import 'package:country_pickers/country.dart';
 import 'package:country_pickers/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:treat/modules/auth/auth_controller.dart';
 import 'package:treat/modules/auth/widgets/mobile_entry_widget.dart';
 import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/utils/common_widget.dart';
 import 'package:treat/shared/utils/size_config.dart';
 import 'package:treat/shared/widgets/action_button.dart';
-import 'package:treat/shared/widgets/auth_input_field.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
+
+import '../auth_controller.dart';
 
 class ProfileCompletion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final AuthController controller = Get.arguments;
+    final AuthController controller = Get.find<AuthController>();
     SizeConfig().init(context);
 
     return SafeArea(

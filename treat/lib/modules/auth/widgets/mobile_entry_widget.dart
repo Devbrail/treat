@@ -1,5 +1,4 @@
 import 'package:country_pickers/country.dart';
-import 'package:country_pickers/country.dart';
 import 'package:country_pickers/country_picker_dialog.dart';
 import 'package:country_pickers/country_picker_dropdown.dart';
 import 'package:country_pickers/utils/utils.dart';
@@ -87,6 +86,7 @@ class MobileEntryWidget extends StatelessWidget {
               onTap: _openCountryPickerDialog,
               title: Center(
                 child: Container(
+                  padding: EdgeInsets.only(bottom: 6),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -122,6 +122,7 @@ class MobileEntryWidget extends StatelessWidget {
           child: AuthTextField(
               hint: '(999) 999-9999',
               textInputType: TextInputType.phone,
+              maxLength: 10,
               controller: controller),
         ),
       ],

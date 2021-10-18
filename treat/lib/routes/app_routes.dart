@@ -13,4 +13,8 @@ abstract class Routes {
   static const REGISTER = '/register';
   static const HOME = '/home';
   static const CARDS = '/cards';
+  static const RetailMenu = '/MenusPage';
+  static const MenuDetail = '/MenuDetail';
+  static const DineINMenu = '/$RetailMenu/Dine';
+  static const EVERYDAY = '/Everyday';
 }

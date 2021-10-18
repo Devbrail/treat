@@ -1,7 +1,7 @@
 class LoginResponse {
   bool? success;
   String? message;
-  dynamic? errorCode;
+  var errorCode;
   RespData? respData;
 
   LoginResponse({this.success, this.message, this.errorCode, this.respData});
