@@ -7,10 +7,12 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:treat/models/response/everyday_store.detail.dart';
 import 'package:treat/models/response/store_details.dart';
+import 'package:treat/modules/store_detail/widgets/loyalty_bar.dart';
 import 'package:treat/routes/routes.dart';
 import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/shared.dart';
 import 'package:treat/shared/utils/common_function.dart';
+import 'package:treat/shared/widgets/banners.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
 
 import 'menu_controller.dart';
@@ -27,7 +29,15 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
   MenuController controller =
       Get.put(MenuController(apiRepository: Get.find()));
   final PageController _pageController = PageController();
-  final String pageType = Get.arguments;
+  final String pageType = Get.arguments[0];
+  final String storeID = Get.arguments[1];
+
+  @override
+  void initState() {
+    Utils.setStatusBarColor(color: ColorConstants.white);
+    super.initState();
+    controller.loadEveryDayStoreDetail(storeID);
+  }
 
   @override
   void dispose() {
@@ -49,14 +59,19 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
               );
             else {
               final EveryDayStore? storeDetails = controller.storeDetails.value;
-              if (storeDetails == null || storeDetails.storeName == null) {
-                return Center(child: Text('Parse Error'));
+              if (storeDetails == null) {
+                return Center(child: Text('Parse Go back and come again'));
               }
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
+              return CustomScrollView(
+                slivers: <Widget>[
+                  SliverAppBar(
+                    pinned: false,
+                    snap: false,
+                    floating: true,
+                    expandedHeight: 74,
+                    automaticallyImplyLeading: false,
+                    backgroundColor: Colors.white,
+                    flexibleSpace: Container(
                       margin:
                           EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       child: Row(
@@ -80,259 +95,243 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
                         ],
                       ),
                     ),
-                    Container(
-                      height: SizeConfig().screenHeight * .3,
-                      child: Stack(
+                  ),
+                  SliverToBoxAdapter(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          PageView(
-                            controller: _pageController,
-                            allowImplicitScrolling: true,
-                            children: [
-                              ...storeDetails.photos
-                                  .map((e) => Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.transparent,
-                                          image: DecorationImage(
-                                            fit: BoxFit.fill,
-                                            image: CachedNetworkImageProvider(
-                                                e.assetId),
-                                          ),
-                                        ),
-                                      ))
-                                  .toList()
-                            ],
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: 24, horizontal: 24),
+                            child: LoyaltyBarWidget(
+                                loyaltyPoint: storeDetails
+                                    .loyaltyInfo.percDiscount
+                                    .toDouble()),
                           ),
                           Container(
-                            height: 350.0,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              gradient: LinearGradient(
-                                begin: FractionalOffset.topCenter,
-                                end: FractionalOffset.bottomCenter,
-                                colors: [
-                                  Colors.grey.withOpacity(0.0),
-                                  Colors.black,
-                                ],
-                                stops: [0.0, 1.0],
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              if (_pageController.page ==
-                                  storeDetails.photos.length - 1)
-                                _pageController.animateToPage(0,
-                                    duration: Duration(milliseconds: 100),
-                                    curve: Curves.easeInOut);
-                              else
-                                _pageController.nextPage(
-                                    duration: Duration(milliseconds: 100),
-                                    curve: Curves.easeInOut);
-                            },
-                            child: Container(
-                              alignment: Alignment.centerRight,
-                              margin: const EdgeInsets.only(right: 16),
-                              child: Image.asset(
-                                'assets/images/right_arrow.png',
-                                height: 46,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.bottomCenter,
-                            margin: const EdgeInsets.only(bottom: 24, left: 16),
-                            child: Row(
+                            height: SizeConfig().screenHeight * .3,
+                            child: Stack(
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
+                                PageView(
+                                  controller: _pageController,
+                                  allowImplicitScrolling: true,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: NormalText(
-                                        text: storeDetails.storeName,
-                                        textColor: ColorConstants.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 25,
-                                      ),
-                                    ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          child: RatingBar.builder(
-                                            itemSize: 24,
-                                            tapOnlyMode: false,
-                                            ignoreGestures: true,
-                                            initialRating: storeDetails.rating,
-                                            minRating: 1,
-                                            direction: Axis.horizontal,
-                                            allowHalfRating: true,
-                                            itemCount: 5,
-                                            itemPadding: EdgeInsets.symmetric(
-                                                horizontal: 4.0),
-                                            unratedColor:
-                                                ColorConstants.ratingBlack,
-                                            itemBuilder: (context, _) => Icon(
-                                              Icons.star,
-                                              size: 24,
-                                              color: ColorConstants
-                                                  .ratingBarYellow,
-                                            ),
-                                            onRatingUpdate: (rating) {
-                                              print(rating);
-                                            },
-                                          ),
-                                        ),
-                                        NormalText(
-                                          text: '(${storeDetails.rating}/5)',
-                                          fontSize: 14,
-                                          textColor: ColorConstants.white,
-                                        ),
-                                      ],
-                                    )
+                                    ...storeDetails.photos
+                                        .map((e) => Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.transparent,
+                                                image: DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image:
+                                                      CachedNetworkImageProvider(
+                                                          e.assetId),
+                                                ),
+                                              ),
+                                            ))
+                                        .toList()
                                   ],
                                 ),
-                                Spacer(),
                                 Container(
-                                  margin: EdgeInsets.only(right: 16),
-                                  padding: EdgeInsets.all(4),
+                                  height: 350.0,
                                   decoration: BoxDecoration(
-                                      color: ColorConstants.white,
-                                      borderRadius: BorderRadius.circular(26)),
-                                  child: Icon(
-                                    Icons.favorite,
-                                    size: 26,
-                                    color: Color(0xFFFF6243),
+                                    color: Colors.white,
+                                    gradient: LinearGradient(
+                                      begin: FractionalOffset.topCenter,
+                                      end: FractionalOffset.bottomCenter,
+                                      colors: [
+                                        Colors.grey.withOpacity(0.0),
+                                        Colors.black,
+                                      ],
+                                      stops: [0.0, 1.0],
+                                    ),
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    if (_pageController.page ==
+                                        storeDetails.photos.length - 1)
+                                      _pageController.animateToPage(0,
+                                          duration: Duration(milliseconds: 100),
+                                          curve: Curves.easeInOut);
+                                    else
+                                      _pageController.nextPage(
+                                          duration: Duration(milliseconds: 100),
+                                          curve: Curves.easeInOut);
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.centerRight,
+                                    margin: const EdgeInsets.only(right: 16),
+                                    child: Image.asset(
+                                      'assets/images/right_arrow.png',
+                                      height: 46,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  alignment: Alignment.bottomCenter,
+                                  margin: const EdgeInsets.only(
+                                      bottom: 24, left: 16),
+                                  child: Row(
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0),
+                                            child: NormalText(
+                                              text: storeDetails.storeName,
+                                              textColor: ColorConstants.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 25,
+                                            ),
+                                          ),
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                child: RatingBar.builder(
+                                                  itemSize: 24,
+                                                  tapOnlyMode: false,
+                                                  ignoreGestures: true,
+                                                  initialRating:
+                                                      storeDetails.rating,
+                                                  minRating: 1,
+                                                  direction: Axis.horizontal,
+                                                  allowHalfRating: true,
+                                                  itemCount: 5,
+                                                  itemPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 4.0),
+                                                  unratedColor: ColorConstants
+                                                      .ratingBlack,
+                                                  itemBuilder: (context, _) =>
+                                                      Icon(
+                                                    Icons.star,
+                                                    size: 24,
+                                                    color: ColorConstants
+                                                        .ratingBarYellow,
+                                                  ),
+                                                  onRatingUpdate: (rating) {
+                                                    print(rating);
+                                                  },
+                                                ),
+                                              ),
+                                              NormalText(
+                                                text:
+                                                    '(${storeDetails.rating}/5)',
+                                                fontSize: 14,
+                                                textColor: ColorConstants.white,
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                      Spacer(),
+                                      Container(
+                                        margin: EdgeInsets.only(right: 16),
+                                        padding: EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                            color: ColorConstants.white,
+                                            borderRadius:
+                                                BorderRadius.circular(26)),
+                                        child: Icon(
+                                          Icons.favorite,
+                                          size: 26,
+                                          color: Color(0xFFFF6243),
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 )
                               ],
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          child: Column(
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                width: Get.width / 1.4,
-                                child: MenuChip(
-                                  text: storeDetails.address1,
-                                  bGColor: ColorConstants.chipBackround,
-                                  textColor: ColorConstants.textBlack,
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 24, top: 4),
-                                decoration: BoxDecoration(
-                                  color: ColorConstants.chipBackround,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      NormalText(
-                                        text: 'Open right now!',
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: Get.width / 1.4,
+                                      child: MenuChip(
+                                        text: storeDetails.address1,
+                                        bGColor: ColorConstants.chipBackround,
                                         textColor: ColorConstants.textBlack,
-                                        fontSize: 13,
                                       ),
-                                      NormalText(
-                                        text: '11AM - 10PM',
-                                        textColor: Color(0xFF00B153),
-                                        fontSize: 13,
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(left: 24, top: 4),
+                                      decoration: BoxDecoration(
+                                        color: ColorConstants.chipBackround,
+                                        borderRadius: BorderRadius.circular(16),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Spacer(),
-                        Container(
-                          margin: const EdgeInsets.only(top: 8),
-                          child: menuButton(
-                            'assets/images/info.png',
-                            'More Info',
-                            onTap: () => Get.toNamed(
-                                Routes.RetailMenu + Routes.MenuDetail,
-                                arguments: StoreDetails.fromJson(
-                                    storeDetails.toJson())),
-                          ),
-                        ),
-                        Spacer(),
-                      ],
-                    ),
-                    buildClipSection(),
-                    buildGrocery(storeDetails
-                        .categoryData.retail.couponMenuGroupings
-                        .where((element) => element.availableInMenu)
-                        .toList()),
-                    buildOfferSectionList(
-                        title: 'My Offers :',
-                        offerList: storeDetails.storeCoupons,
-                        chipsFilter: storeDetails
-                            .categoryData.retail.couponMenuGroupings),
-                    CommonWidget.rowHeight(height: 24),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          for (int i = 0; i < 4; i++)
-                            Container(
-                              height: SizeConfig().screenHeight * .3,
-                              width: SizeConfig().screenWidth * .8,
-                              margin: EdgeInsets.only(
-                                  right: SizeConfig().screenWidth * .1),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.transparent,
-                                      image: DecorationImage(
-                                        fit: BoxFit.fill,
-                                        image: AssetImage(
-                                          'assets/images/banner_top.png',
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            NormalText(
+                                              text: 'Open right now!',
+                                              textColor:
+                                                  ColorConstants.textBlack,
+                                              fontSize: 13,
+                                            ),
+                                            NormalText(
+                                              text: '11AM - 10PM',
+                                              textColor: Color(0xFF00B153),
+                                              fontSize: 13,
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Container(
-                                    height: 350.0,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      gradient: LinearGradient(
-                                        begin: FractionalOffset.topCenter,
-                                        end: FractionalOffset.bottomCenter,
-                                        colors: [
-                                          Colors.grey.withOpacity(0.0),
-                                          Colors.black,
-                                        ],
-                                        stops: [0.0, 1.0],
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            )
+                              Spacer(),
+                              Container(
+                                margin: const EdgeInsets.only(top: 8),
+                                child: menuButton(
+                                  'assets/images/info.png',
+                                  'More Info',
+                                  onTap: () => Get.toNamed(
+                                      Routes.RetailMenu + Routes.MenuDetail,
+                                      arguments: StoreDetails.fromJson(
+                                          storeDetails.toJson())),
+                                ),
+                              ),
+                              Spacer(),
+                            ],
+                          ),
+                          buildClipSection(),
+                          buildGrocery(storeDetails
+                              .categoryData.retail.couponMenuGroupings
+                              .where((element) => element.availableInMenu)
+                              .toList()),
+                          buildOfferSectionList(
+                              title: 'My Offers :',
+                              offerList: storeDetails.storeCoupons,
+                              chipsFilter: storeDetails
+                                  .categoryData.retail.couponMenuGroupings),
+                          CommonWidget.rowHeight(height: 24),
+                          AppBanner(),
+                          CommonWidget.rowHeight(height: 32)
                         ],
                       ),
                     ),
-                    CommonWidget.rowHeight(height: 32)
-                  ],
-                ),
+                  ),
+                ],
               );
             }
           }),
@@ -352,63 +351,76 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
             fontSize: 14,
           ),
           CommonWidget.rowHeight(height: 12),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                ...couponMenuGroupings.map(
-                  (e) => Container(
-                    width: 74,
-                    height: 74,
-                    margin: EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                        color: ColorConstants.chipBackround,
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          // margin: EdgeInsets.only(
-                          //     top: 24, left: 24, right: 24, bottom: 4),
-                          child: Image.network(
-                            e.assetId,
-                            fit: BoxFit.fill,
-                            width: 48,
-                            height: 48,
-                          ),
+          GetBuilder<MenuController>(
+            id: 'offer',
+            builder: (_c) => SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  ...couponMenuGroupings.map(
+                    (e) => InkWell(
+                      onTap: () {
+                        controller.filterList(e.menuGroup, e.couponIds);
+                      },
+                      child: Container(
+                        width: 74,
+                        height: 74,
+                        margin: EdgeInsets.only(right: 8),
+                        decoration: BoxDecoration(
+                            color: e.isSelected
+                                ? Color(0xFF818181)
+                                : ColorConstants.chipBackround,
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              child: Image.network(
+                                e.assetId,
+                                fit: BoxFit.fill,
+                                width: 48,
+                                height: 48,
+                              ),
+                            ),
+                            NormalText(
+                              text: e.menuGroup,
+                              fontSize: 10,
+                              textColor: e.isSelected
+                                  ? ColorConstants.white
+                                  : ColorConstants.textBlack,
+                            )
+                          ],
                         ),
-                        NormalText(
-                          text: e.menuGroup,
-                          fontSize: 10,
-                        )
-                      ],
+                      ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
   Container buildClipSection() {
+    final List<StoreCoupons> clippers = controller.getClipperList;
     return Container(
       margin: EdgeInsets.only(left: 24, top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          NormalText(
-            text: 'Clip Again ',
-            fontSize: 14,
-          ),
+          if (clippers.length > 0)
+            NormalText(
+              text: 'Clip Again ',
+              fontSize: 14,
+            ),
           CommonWidget.rowHeight(height: 12),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                ...[1, 2, 3, 4].map((e) => Container(
+                ...clippers.map((e) => Container(
                       width: 132,
                       height: 138,
                       margin: EdgeInsets.only(right: 8),
@@ -421,8 +433,7 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
                             margin: EdgeInsets.all(24),
                             alignment: Alignment.center,
                             child: CachedNetworkImage(
-                              imageUrl:
-                                  'https://www.milma.com/storage/products/October2020/r8ToSNreD1WnxhACr6Hf.jpg',
+                              imageUrl: e.assetID,
                             ),
                           ),
                           Container(
@@ -434,7 +445,7 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
                                 buildAddButton('add.png'),
                                 Spacer(),
                                 NormalText(
-                                  text: 'Egg Whites (Burnbrae)',
+                                  text: e.couponName,
                                   fontSize: 11,
                                   textColor: ColorConstants.textBlack,
                                 ),
@@ -483,7 +494,6 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
       required final List<CouponMenuGroupings> chipsFilter}) {
     List<CouponMenuGroupings> chips = chipsFilter.reversed.toList();
 
-    printInfo(info: 'refreheddd &&&&&&&&&&&&&&&&&&&&');
     return GetBuilder<MenuController>(
       id: 'offer',
       builder: (_c) => Column(
@@ -694,11 +704,5 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    Utils.setStatusBarColor(color: ColorConstants.white);
-    super.initState();
   }
 }

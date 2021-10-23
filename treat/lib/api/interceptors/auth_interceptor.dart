@@ -7,7 +7,7 @@ import 'package:treat/api/api.dart';
 import 'package:treat/shared/constants/storage.dart';
 
 FutureOr<Request> authInterceptor(Request request) async {
-  'auth intercenptro  ${request.url.path}'.printInfo();
+  'auth interceptor  ${request.url.path}'.printInfo();
   if (ApiConstants.headerLess
       .where((element) => element.contains(request.url.path))
       .isEmpty) {

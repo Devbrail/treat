@@ -1,89 +1,120 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:treat/modules/home/home.dart';
 import 'package:treat/modules/home/tabs/tabs.dart';
+import 'package:treat/shared/constants/common.dart';
 import 'package:treat/shared/shared.dart';
+import 'package:treat/shared/widgets/text_widget.dart';
 
 class HomeScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Obx(() => _buildWidget()),
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () async {
+          if (controller.currentTab.value != MainTabs.home)
+            controller.switchTab(0);
+          return false;
+        },
+        child: Obx(() => _buildWidget()),
+      ),
     );
   }
 
   Widget _buildWidget() {
     return Scaffold(
-      body: Center(
-        child: _buildContent(controller.currentTab.value),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          _buildNavigationBarItem(
-            "Home",
-            MainTabs.home == controller.currentTab.value
-                ? "icon_home_activited.svg"
-                : "icon_home.svg",
-          ),
-          _buildNavigationBarItem(
-            "Discover",
-            MainTabs.discover == controller.currentTab.value
-                ? "icon_discover_activited.svg"
-                : "icon_discover.svg",
-          ),
-          _buildNavigationBarItem(
-            "Resource",
-            "icon_resource.svg",
-          ),
-          _buildNavigationBarItem(
-            "Inbox",
-            MainTabs.inbox == controller.currentTab.value
-                ? "icon_inbox_activited.svg"
-                : "icon_inbox.svg",
-          ),
-          _buildNavigationBarItem(
-            "Me",
-            MainTabs.me == controller.currentTab.value
-                ? "icon_me_activited.svg"
-                : "icon_me.svg",
+      body: Stack(
+        children: [
+          _buildContent(controller.currentTab.value),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  buildBottomBar(
+                    path: 'dinein.png',
+                    text: 'DINING',
+                    index: 0,
+                    isCurrent: controller.currentTabIdx == 0,
+                    onTap: (int a) => controller.switchTab(a),
+                  ),
+                  buildBottomBar(
+                      path: 'retail.png',
+                      text: 'RETAIL',
+                      index: 1,
+                      isCurrent: controller.currentTabIdx == 1,
+                      onTap: (int a) => controller.switchTab(a)),
+                  buildBottomBar(
+                      path: 'everyday.png',
+                      text: 'EVERYDAY',
+                      index: 2,
+                      isCurrent: controller.currentTabIdx == 2,
+                      onTap: (int a) => controller.switchTab(a)),
+                  buildBottomBar(
+                      path: 'fave.png',
+                      text: 'FAVES',
+                      index: 3,
+                      isCurrent: controller.currentTabIdx == 3,
+                      onTap: (int a) => controller.switchTab(a)),
+                ],
+              ),
+            ),
           )
         ],
-        type: BottomNavigationBarType.fixed,
-        unselectedItemColor: ColorConstants.black,
-        currentIndex: controller.getCurrentIndex(controller.currentTab.value),
-        selectedItemColor: ColorConstants.black,
-        selectedLabelStyle: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-        ),
-        onTap: (index) => controller.switchTab(index),
+      ),
+    );
+  }
+
+  Widget buildBottomBar(
+      {required String path,
+      required String text,
+      required int index,
+      bool isCurrent = false,
+      Function(int a)? onTap}) {
+    return InkWell(
+      onTap: () {
+        onTap!(index);
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            '$IMAGE_PATH/$path',
+            width: 40,
+            height: 40,
+            color: !isCurrent ? Color(0xFFA6A6A6) : null,
+          ),
+          CommonWidget.rowHeight(height: 4),
+          NormalText(
+            text: text,
+            textColor: !isCurrent ? Color(0xFFA6A6A6) : ColorConstants.black,
+            fontSize: 10,
+          )
+        ],
       ),
     );
   }
 
   Widget _buildContent(MainTabs tab) {
+    tab.index.toString().printInfo();
     switch (tab) {
       case MainTabs.home:
         return controller.mainTab;
       case MainTabs.discover:
-        return controller.discoverTab;
+        return controller.meTab;
       case MainTabs.resource:
-        return controller.resourceTab;
+        return controller.meTab;
       case MainTabs.inbox:
-        return controller.inboxTab;
+        return controller.meTab;
       case MainTabs.me:
         return controller.meTab;
       default:
         return controller.mainTab;
     }
-  }
-
-  BottomNavigationBarItem _buildNavigationBarItem(String label, String svg) {
-    return BottomNavigationBarItem(
-      icon: SvgPicture.asset('assets/svgs/$svg'),
-      label: label,
-    );
   }
 }

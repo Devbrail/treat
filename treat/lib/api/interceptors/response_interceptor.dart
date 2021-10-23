@@ -10,7 +10,7 @@ import 'package:treat/shared/shared.dart';
 
 FutureOr<dynamic> responseInterceptor(
     Request request, Response response) async {
-  Get.printInfo(info: 'response ${request.url.path}');
+  Get.printInfo(info: 'response ${response.statusCode} ${request.url.path}');
   EasyLoading.dismiss();
 
   if (response.statusCode != 200) {

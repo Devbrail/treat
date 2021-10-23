@@ -155,7 +155,7 @@ class MeTab extends GetView<HomeController> {
                 title: 'sign out',
                 icon: 'assets/svgs/icon_sign_out.svg',
                 onTap: () {
-                  controller.signout();
+                  controller.signOut();
                 },
               ),
             ],

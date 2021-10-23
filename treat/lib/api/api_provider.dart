@@ -40,4 +40,8 @@ class ApiProvider extends BaseProvider {
   Future<Response> getStoreDetails(String path) {
     return get('${ApiConstants.storeBaseUrl}$path');
   }
+
+  Future<Response> loadStores(String path) {
+    return get('${ApiConstants.storeBaseUrl}$path');
+  }
 }

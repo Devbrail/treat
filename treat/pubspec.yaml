@@ -44,6 +44,8 @@ dependencies:
   flutter_rating_bar: ^4.0.0
   flutter_pdf_viewer:
     path: ../treat/library/pdf_lib
+  shimmer: ^2.0.0
+  progress_indicator: ^0.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

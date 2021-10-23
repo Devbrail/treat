@@ -5,6 +5,7 @@ import 'package:get/get_utils/src/extensions/dynamic_extensions.dart';
 import 'package:treat/models/models.dart';
 import 'package:treat/models/response/everyday_store.detail.dart';
 import 'package:treat/models/response/intial_token_response.dart';
+import 'package:treat/models/response/store_dasboard.dart';
 import 'package:treat/models/response/store_details.dart';
 import 'package:treat/models/response/users_response.dart';
 
@@ -27,6 +28,17 @@ class ApiRepository {
         await apiProvider.authToken('${ApiConstants.skiplogin}/$initialToken');
     if (res.statusCode == 200) {
       return LoginResponse.fromJson(res.body);
+    }
+  }
+
+  Future<StoreDashboardResponse?> loadStores(
+      {required String lat,
+      required String lng,
+      required String storeType}) async {
+    final res = await apiProvider
+        .loadStores('${ApiConstants.stores}/$storeType/$lat/$lng');
+    if (res.statusCode == 200) {
+      return StoreDashboardResponse.fromJson(res.body);
     }
   }
 

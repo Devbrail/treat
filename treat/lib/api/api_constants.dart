@@ -34,4 +34,5 @@ class ApiConstants {
 
 //STORE PREFIX
   static const String storedetails = '/storedetails';
+  static const String stores = '/home';
 }

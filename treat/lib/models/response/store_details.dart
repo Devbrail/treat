@@ -296,12 +296,12 @@ class LoyaltyInfo {
     required this.percDiscount,
   });
 
-  late final Null loyaltyType;
+  late final String? loyaltyType;
   late final int visitFreqInDays;
   late final int percDiscount;
 
   LoyaltyInfo.fromJson(Map<String, dynamic> json) {
-    loyaltyType = null;
+    loyaltyType = json['loyaltyType'] ?? '';
     visitFreqInDays = json['visitFreqInDays'];
     percDiscount = json['percDiscount'];
   }
