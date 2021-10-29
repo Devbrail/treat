@@ -13,6 +13,7 @@ import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/shared.dart';
 import 'package:treat/shared/utils/common_function.dart';
 import 'package:treat/shared/widgets/banners.dart';
+import 'package:treat/shared/widgets/favourite.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
 
 import 'menu_controller.dart';
@@ -60,7 +61,8 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
             else {
               final EveryDayStore? storeDetails = controller.storeDetails.value;
               if (storeDetails == null) {
-                return Center(child: Text('Parse Go back and come again'));
+                return Center(
+                    child: Text('Server Error\nGo back and come again'));
               }
               return CustomScrollView(
                 slivers: <Widget>[
@@ -233,18 +235,22 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
                                       ),
                                       Spacer(),
                                       Container(
-                                        margin: EdgeInsets.only(right: 16),
-                                        padding: EdgeInsets.all(4),
-                                        decoration: BoxDecoration(
-                                            color: ColorConstants.white,
-                                            borderRadius:
-                                                BorderRadius.circular(26)),
-                                        child: Icon(
-                                          Icons.favorite,
-                                          size: 26,
-                                          color: Color(0xFFFF6243),
-                                        ),
-                                      )
+                                          padding: EdgeInsets.all(4),
+                                          child: GetBuilder<MenuController>(
+                                            builder: (ctrl) => FavouriteButton(
+                                                isFavourite:
+                                                    storeDetails.isFavourite,
+                                                storeID: storeDetails.storeId,
+                                                size: 30,
+                                                onClick: () {
+                                                  controller
+                                                      .favouriteButtonAction(
+                                                          storeDetails
+                                                              .isFavourite,
+                                                          storeDetails.storeId);
+                                                }),
+                                            id: 'fav',
+                                          ))
                                     ],
                                   ),
                                 )
@@ -302,13 +308,22 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
                               Spacer(),
                               Container(
                                 margin: const EdgeInsets.only(top: 8),
-                                child: menuButton(
-                                  'assets/images/info.png',
-                                  'More Info',
-                                  onTap: () => Get.toNamed(
-                                      Routes.RetailMenu + Routes.MenuDetail,
-                                      arguments: StoreDetails.fromJson(
-                                          storeDetails.toJson())),
+                                child: GetBuilder<MenuController>(
+                                  builder: (ctrl) => menuButton(
+                                      'assets/images/info.png', 'More Info',
+                                      onTap: () {
+                                    try {
+                                      StoreDetails sd = StoreDetails.fromJson(
+                                          ctrl.storeDetails.value.toJson());
+                                      Get.toNamed(
+                                          Routes.RetailMenu + Routes.MenuDetail,
+                                          arguments: sd);
+                                    } catch (e, s) {
+                                      print(e);
+                                      print(s);
+                                    }
+                                  }),
+                                  id: 'fav',
                                 ),
                               ),
                               Spacer(),

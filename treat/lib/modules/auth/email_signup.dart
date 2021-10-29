@@ -18,6 +18,7 @@ class _EmailSignupState extends State<EmailSignup> {
       Get.put(AuthController(apiRepository: Get.find()));
 
   final String prevPage = Get.arguments[1];
+
   @override
   void initState() {
     super.initState();
@@ -128,14 +129,11 @@ class _EmailSignupState extends State<EmailSignup> {
                                   center: Container(
                                     height: CommonConstants.buttonHeight,
                                     alignment: Alignment.center,
-                                    child: Text(
-                                      'Continue',
-                                      style: TextStyle(
-                                          color: ColorConstants.white,
-                                          fontFamily: 'Rubik',
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18),
-                                    ),
+                                    child: NormalText(
+                                        text: 'Continue',
+                                        textColor: ColorConstants.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18),
                                   ),
                                 );
                               }),
@@ -203,14 +201,11 @@ class _AnimatedLiquidLinearProgressIndicatorState
         center: Container(
           height: CommonConstants.buttonHeight,
           alignment: Alignment.center,
-          child: Text(
-            'Continue',
-            style: TextStyle(
-                color: ColorConstants.white,
-                fontFamily: 'Rubik',
-                fontWeight: FontWeight.bold,
-                fontSize: 18),
-          ),
+          child: NormalText(
+              text: 'Continue',
+              textColor: ColorConstants.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18),
         ),
       ),
     );

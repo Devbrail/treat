@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:get/get_utils/src/extensions/dynamic_extensions.dart';
 import 'package:treat/models/models.dart';
 import 'package:treat/models/response/everyday_store.detail.dart';
+import 'package:treat/models/response/favourite_response.dart';
 import 'package:treat/models/response/intial_token_response.dart';
 import 'package:treat/models/response/store_dasboard.dart';
 import 'package:treat/models/response/store_details.dart';
@@ -39,6 +40,17 @@ class ApiRepository {
         .loadStores('${ApiConstants.stores}/$storeType/$lat/$lng');
     if (res.statusCode == 200) {
       return StoreDashboardResponse.fromJson(res.body);
+    }
+  }
+
+  Future<FavouriteResponse?> favoriteStoreDetails({
+    required String lat,
+    required String lng,
+  }) async {
+    final res = await apiProvider
+        .favoriteStoreDetails('${ApiConstants.favoritestoredetails}/$lat/$lng');
+    if (res.statusCode == 200) {
+      return FavouriteResponse.fromJson(res.body['respData']);
     }
   }
 
@@ -79,6 +91,24 @@ class ApiRepository {
     if (res.statusCode == 200) {
       return Right(res.body);
     } else
+      return Left(res.body);
+  }
+
+  Future<Either<String, Map>?> addFavorite({required Map data}) async {
+    final res = await apiProvider.addFavorite(ApiConstants.addFavorite, data);
+    if (res.statusCode == 200) {
+      return Right(res.body);
+    } else
+      return Left(res.body);
+  }
+
+  Future<Either<String, Map>?> removeFavorite(
+      {required Map<String, dynamic> data}) async {
+    final res =
+        await apiProvider.removeFavorite(ApiConstants.removeFavorite, data);
+    if (res.statusCode == 200)
+      return Right(res.body);
+    else
       return Left(res.body);
   }
 

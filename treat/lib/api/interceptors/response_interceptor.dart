@@ -10,8 +10,8 @@ import 'package:treat/shared/shared.dart';
 
 FutureOr<dynamic> responseInterceptor(
     Request request, Response response) async {
-  Get.printInfo(info: 'response ${response.statusCode} ${request.url.path}');
   EasyLoading.dismiss();
+  Get.printInfo(info: 'response ${response.statusCode} ${request.url.path}');
 
   if (response.statusCode != 200) {
     handleErrorStatus(response);
@@ -25,8 +25,10 @@ void handleErrorStatus(Response response) {
   Get.printInfo(info: response.statusCode.toString() + " Status code");
   switch (response.statusCode) {
     case 400:
-      final message = ErrorResponse.fromJson(response.body);
-      CommonWidget.toast(message.error);
+      final message = response.body is String
+          ? response.body
+          : ErrorResponse.fromJson(response.body);
+      CommonWidget.toast(message?.error! ?? message ?? '');
       break;
     case 401:
       // CommonWidget.toast('Authorization Failed');

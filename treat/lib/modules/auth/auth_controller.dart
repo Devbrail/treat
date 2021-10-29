@@ -11,6 +11,7 @@ import 'package:treat/models/models.dart';
 import 'package:treat/models/response/intial_token_response.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/shared.dart';
+import 'package:treat/shared/utils/common_function.dart';
 
 class AuthController extends GetxController {
   final ApiRepository apiRepository;
@@ -38,8 +39,12 @@ class AuthController extends GetxController {
   Future<void> fetchAuthToken() async {
     final LoginResponse? result = await apiRepository.authToken(intialToken!);
 
-    loginResponse = result;
-    saveTokens(result!);
+    if (result != null) {
+      loginResponse = result;
+
+      saveTokens(result);
+      Utils.saveLoginType(StorageConstants.guest);
+    }
   }
 
 //   AUTH SCREEN
@@ -145,6 +150,7 @@ class AuthController extends GetxController {
 
         loginResponse = LoginResponse.fromJson(r as Map<String, dynamic>);
         saveTokens(loginResponse!);
+        Utils.saveLoginType(StorageConstants.user);
         if (loginResponse!.respData!.missingInfo == 'MOBILE') {
           Get.toNamed(Routes.AUTH + Routes.ProfileCompletion, arguments: this);
         } else if (loginResponse!.respData!.missingInfo == 'EMAIL')

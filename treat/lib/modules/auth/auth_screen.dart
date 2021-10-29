@@ -3,12 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:treat/modules/auth/auth.dart';
 import 'package:treat/modules/auth/widgets/mobile_entry_widget.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/shared.dart';
 import 'package:treat/shared/widgets/action_button.dart';
+import 'package:treat/shared/widgets/text_widget.dart';
 
 class AuthScreen extends GetView<AuthController> {
   final AuthController controller =
@@ -37,6 +39,10 @@ class AuthScreen extends GetView<AuthController> {
                         child: CommonWidget.actionbutton(
                             text: 'SKIP',
                             buttoncolor: ColorConstants.skipButtonBoxColor,
+                            onTap: () async {
+                              await controller.fetchAuthToken();
+                              Get.toNamed(Routes.AUTH + Routes.AuthLoading);
+                            },
                             textColor: ColorConstants.textColorBlack),
                       ),
                     ],
@@ -73,12 +79,10 @@ class AuthScreen extends GetView<AuthController> {
                           ),
                           Container(
                             margin: EdgeInsets.symmetric(horizontal: 14),
-                            child: Text(
-                              'OR'.tr,
-                              style: TextStyle(
-                                  color: ColorConstants.black,
-                                  fontSize: 16,
-                                  fontFamily: 'Rubik'),
+                            child: NormalText(
+                              text: 'OR'.tr,
+                              textColor: ColorConstants.black,
+                              fontSize: 16,
                             ),
                           ),
                           Expanded(
@@ -141,22 +145,19 @@ class AuthScreen extends GetView<AuthController> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'by_continuing_you_agree_to_our'.tr,
-                      style: TextStyle(
-                          color: ColorConstants.textColorBlack,
-                          fontFamily: 'Rubik',
-                          fontSize: 14),
+                    NormalText(
+                      text: 'by_continuing_you_agree_to_our'.tr,
+                      textColor: ColorConstants.textColorBlack,
+                      fontSize: 14,
                     ),
                     InkWell(
                       onTap: () =>
                           Get.toNamed(Routes.AUTH + Routes.TermsAndCondition),
                       child: Text(
                         'terms_and_conditions'.tr,
-                        style: TextStyle(
+                        style: GoogleFonts.roboto(
                             color: ColorConstants.textColorBlack,
                             decoration: TextDecoration.underline,
-                            fontFamily: 'Rubik',
                             fontSize: 14),
                       ),
                     ),

@@ -1,13 +1,17 @@
 import 'dart:math';
 
+import 'package:dartz/dartz.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:treat/api/api.dart';
+import 'package:treat/models/response/favourite_response.dart';
 import 'package:treat/models/response/store_dasboard.dart';
 import 'package:treat/models/response/users_response.dart';
 import 'package:treat/modules/home/home.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/shared.dart';
+import 'package:treat/shared/utils/common_function.dart';
 
 class HomeController extends GetxController {
   final ApiRepository apiRepository;
@@ -18,14 +22,17 @@ class HomeController extends GetxController {
   var loading = true.obs;
   var currentTabIdx = 0.obs;
   var users = Rxn<UsersResponse>();
-  var storeDashboard = Rxn<StoreDashboard>();
+  var _storeDashboard = Rxn<StoreDashboard>();
   var user = Rxn<Datum>();
 
+  StoreDashboard get storeDashboard => _storeDashboard.value!;
+
+  set storeDashboard(value) {
+    _storeDashboard.value = value;
+  }
+
   late MainTab mainTab;
-  late DiscoverTab discoverTab;
-  late ResourceTab resourceTab;
-  late InboxTab inboxTab;
-  late MeTab meTab;
+  late FaveTab faveTab;
 
   @override
   void onInit() async {
@@ -34,10 +41,7 @@ class HomeController extends GetxController {
     mainTab = MainTab();
     loadUsers();
     loadStores('dining');
-    discoverTab = DiscoverTab();
-    resourceTab = ResourceTab();
-    inboxTab = InboxTab();
-    meTab = MeTab();
+    faveTab = FaveTab();
   }
 
   Future<void> loadStores(String storeType) async {
@@ -45,7 +49,28 @@ class HomeController extends GetxController {
     apiRepository
         .loadStores(lat: '65', lng: '-141', storeType: storeType)
         .then((value) {
-      storeDashboard.value = value?.respData;
+      'suhail  ${value?.toJson()}'.printInfo();
+      value?.toJson().printInfo();
+
+      if (value != null) {
+        _storeDashboard.value = value.respData;
+        setLoading(false);
+      } else
+        EasyLoading.showError(
+          'Server Unavailable',
+        );
+    });
+  }
+
+  var favouriteStores = Rxn<List<ConsumerFavoriteStores>>();
+
+  Future<void> getFaves() async {
+    setLoading(true);
+    // /favoritestoredetails/{latitude}/{longitude}
+    apiRepository.favoriteStoreDetails(lat: '65', lng: '-141').then((value) {
+      favouriteStores.value = value!.consumerFavoriteStores;
+      setLoading(false);
+    }).catchError((e) {
       setLoading(false);
     });
   }
@@ -59,9 +84,9 @@ class HomeController extends GetxController {
     // }
   }
 
-  void signOut() {
+  void signOut() async {
     var prefs = Get.find<SharedPreferences>();
-    prefs.clear();
+    await prefs.clear();
 
     Get.offAllNamed(Routes.SPLASH);
   }
@@ -89,6 +114,9 @@ class HomeController extends GetxController {
       case 2:
         loadStores('dining');
         break;
+      case 3:
+        if (!Utils.isGuest) getFaves();
+        break;
       default:
         loadStores('dining');
     }
@@ -107,10 +135,9 @@ class HomeController extends GetxController {
         return 1;
       case MainTabs.home:
         return 2;
-      case MainTabs.me:
+      case MainTabs.faveTab:
         return 3;
-      case MainTabs.me:
-        return 4;
+
       default:
         return 0;
     }
@@ -125,9 +152,8 @@ class HomeController extends GetxController {
       case 2:
         return MainTabs.home;
       case 3:
-        return MainTabs.inbox;
-      case 4:
-        return MainTabs.me;
+        return MainTabs.faveTab;
+
       default:
         return MainTabs.home;
     }
@@ -137,9 +163,38 @@ class HomeController extends GetxController {
     loading.value = value;
   }
 
+  updateIsFavourite(int storeID, bool isFavourite) async {
+    if (Utils.isGuest) {
+      CommonWidget.toast(
+          'You are not authorised to do this action!\nPlease login to continue');
+
+      return;
+    }
+    Map<String, dynamic> data = {'storeId': storeID};
+    Either<String, Map<dynamic, dynamic>>? response;
+    if (isFavourite)
+      response = await apiRepository.removeFavorite(data: data);
+    else
+      response = await apiRepository.addFavorite(data: data);
+    response?.fold((l) => CommonWidget.toast('Failed to Update'), (r) {
+      if (r['success']) {
+        _storeDashboard.value!.sections.forEach((element) {
+          element.stores.forEach((store) {
+            if (store.id == storeID) {
+              store.isFavourite = !store.isFavourite;
+            }
+          });
+        });
+      } else
+        CommonWidget.toast('Failed to Update');
+    });
+
+    update(['fav']);
+  }
+
   List<Stores> get sponsoredShops {
     try {
-      return storeDashboard.value!.sections
+      return storeDashboard.sections
           .where((element) => element.title == 'Sponsored Vendor')
           .first
           .stores;
@@ -151,7 +206,7 @@ class HomeController extends GetxController {
 
   List<Stores> get topRatedShops {
     try {
-      return storeDashboard.value!.sections
+      return storeDashboard.sections
           .where((element) => element.title == 'Top Rated')
           .first
           .stores;
@@ -163,7 +218,7 @@ class HomeController extends GetxController {
 
   List<Stores> get newToTreat {
     try {
-      return storeDashboard.value!.sections
+      return storeDashboard.sections
           .where((element) => element.title == 'Top Rated')
           .first
           .stores;
@@ -175,7 +230,7 @@ class HomeController extends GetxController {
 
   List<Stores> get allNearbyShops {
     try {
-      List<Stores> stores = storeDashboard.value!.sections
+      List<Stores> stores = storeDashboard.sections
           .where((element) => element.title == 'Nearby Offers')
           .first
           .stores;
@@ -189,7 +244,7 @@ class HomeController extends GetxController {
 
   List<Stores> get nearbyShops {
     try {
-      List<Stores> stores = storeDashboard.value!.sections
+      List<Stores> stores = storeDashboard.sections
           .where((element) => element.title == 'Nearby Offers')
           .first
           .stores;
@@ -205,7 +260,7 @@ class HomeController extends GetxController {
 
   List<Stores> get balanceNearbyShops {
     try {
-      List<Stores> stores = storeDashboard.value!.sections
+      List<Stores> stores = storeDashboard.sections
           .where((element) => element.title == 'Nearby Offers')
           .first
           .stores;

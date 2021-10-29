@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:treat/shared/constants/colors.dart';
 
 class NormalText extends StatelessWidget {
@@ -8,11 +9,12 @@ class NormalText extends StatelessWidget {
   final String fontFamily;
   final TextAlign textAlign;
   final FontWeight fontWeight;
+
   NormalText({
     required this.text,
     this.textColor = ColorConstants.black,
     this.fontSize = 16,
-    this.fontFamily = 'Rubik',
+    this.fontFamily = 'Roboto',
     this.textAlign = TextAlign.center,
     this.fontWeight = FontWeight.normal,
     Key? key,
@@ -22,11 +24,8 @@ class NormalText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: TextStyle(
-          color: textColor,
-          fontFamily: fontFamily,
-          fontSize: fontSize,
-          fontWeight: fontWeight),
+      style: GoogleFonts.roboto(
+          color: textColor, fontSize: fontSize, fontWeight: fontWeight),
       textAlign: textAlign,
     );
   }

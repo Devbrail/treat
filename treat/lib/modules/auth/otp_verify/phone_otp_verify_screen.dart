@@ -4,6 +4,7 @@ import 'package:treat/modules/auth/auth.dart';
 import 'package:treat/modules/auth/widgets/circular_curve_widget.dart';
 import 'package:treat/modules/auth/widgets/pin_input_fields.dart';
 import 'package:treat/shared/shared.dart';
+import 'package:treat/shared/widgets/text_widget.dart';
 
 class PhoneOtpScreen extends StatelessWidget {
   final AuthController controller = Get.arguments;
@@ -29,26 +30,20 @@ class PhoneOtpScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'Enter verification code sent to',
-                          style: TextStyle(
-                              color: ColorConstants.textBlack,
-                              fontFamily: 'Rubik',
-                              fontSize: 24),
-                        ),
+                        NormalText(
+                            text: 'Enter verification code sent to',
+                            textColor: ColorConstants.textBlack,
+                            fontSize: 24),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          controller.getFormatedPhoneNumber(),
-                          style: TextStyle(
-                              color: ColorConstants.textBlack,
-                              fontFamily: 'Rubik',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24),
-                        ),
+                        NormalText(
+                            text: controller.getFormatedPhoneNumber(),
+                            textColor: ColorConstants.textBlack,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24),
                       ],
                     ),
                     CommonWidget.rowHeight(
@@ -72,14 +67,11 @@ class PhoneOtpScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Center(
-                          child: Text(
-                            'Change Number',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'Rubik',
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18),
-                          ),
+                          child: NormalText(
+                              text: 'Change Number',
+                              textColor: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18),
                         ),
                       ),
                     ),

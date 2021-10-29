@@ -41,7 +41,19 @@ class ApiProvider extends BaseProvider {
     return get('${ApiConstants.storeBaseUrl}$path');
   }
 
+  Future<Response> addFavorite(String path, Map data) {
+    return post('${ApiConstants.baseUrl}$path', data);
+  }
+
+  Future<Response> removeFavorite(String path, Map data) {
+    return post('${ApiConstants.baseUrl}$path', data);
+  }
+
   Future<Response> loadStores(String path) {
     return get('${ApiConstants.storeBaseUrl}$path');
+  }
+
+  Future<Response> favoriteStoreDetails(String path) {
+    return get('${ApiConstants.baseUrl}$path');
   }
 }

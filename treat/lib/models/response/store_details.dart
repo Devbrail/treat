@@ -24,6 +24,7 @@ class StoreDetails {
     required this.loyaltyInfo,
     required this.pingedCoupons,
     required this.storeCoupons,
+    required this.isFavourite,
   });
 
   late final int storeId;
@@ -37,6 +38,7 @@ class StoreDetails {
   late final String contactNo;
   late final String website;
   late final String province;
+  late bool isFavourite;
   late final int storeCategotyId;
   late final String storeCategoryName;
   late final int storeSubCategoryId;
@@ -61,12 +63,13 @@ class StoreDetails {
     postcode = json['postcode'];
     city = json['city'];
     contactNo = json['contactNo'];
-    website = json['website'];
+    website = json['website'] ?? '';
     province = json['province'];
     storeCategotyId = json['storeCategotyId'];
     storeCategoryName = json['storeCategoryName'];
     storeSubCategoryId = json['storeSubCategoryId'];
     storeSubCategoryName = json['storeSubCategoryName'];
+    isFavourite = json['isFavourite'] ?? false;
     if (json['storeSpecialities'] != null)
       storeSpecialities =
           List.castFrom<dynamic, String>(json['storeSpecialities']);

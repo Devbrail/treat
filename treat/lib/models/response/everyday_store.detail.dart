@@ -43,6 +43,7 @@ class EveryDayStore {
   late final int storeSubCategoryId;
   late final String storeSubCategoryName;
   late final Location location;
+  late bool isFavourite;
   late final CategoryData categoryData;
   late final List<Photos> photos;
   late final List<WorkingHours> workingHours;
@@ -67,6 +68,7 @@ class EveryDayStore {
         List.castFrom<dynamic, dynamic>(json['storeSpecialities']);
     storeCategotyId = json['storeCategotyId'];
     storeCategoryName = json['storeCategoryName'];
+    isFavourite = json['isFavourite'];
     storeSubCategoryId = json['storeSubCategoryId'];
     storeSubCategoryName = json['storeSubCategoryName'];
     location = Location.fromJson(json['location']);
@@ -109,6 +111,7 @@ class EveryDayStore {
     _data['amneties'] = amneties.map((e) => e.toJson()).toList();
     _data['loyaltyInfo'] = loyaltyInfo.toJson();
     _data['pingedCoupons'] = pingedCoupons;
+    _data['isFavourite'] = isFavourite;
     _data['storeCoupons'] = storeCoupons.map((e) => e.toJson()).toList();
     return _data;
   }
@@ -168,12 +171,12 @@ class Dining {
     this.menuAssetId,
   });
 
-  late final Null restaurantService;
-  late final Null menuAssetId;
+  late final dynamic restaurantService;
+  late final dynamic menuAssetId;
 
   Dining.fromJson(Map<String, dynamic> json) {
-    restaurantService = null;
-    menuAssetId = null;
+    restaurantService = json['restaurantService'];
+    menuAssetId = json['restaurantService'];
   }
 
   Map<String, dynamic> toJson() {
@@ -341,7 +344,7 @@ class LoyaltyInfo {
     required this.percDiscount,
   });
 
-  late final Null loyaltyType;
+  late final dynamic loyaltyType;
   late final int visitFreqInDays;
   late final int percDiscount;
 

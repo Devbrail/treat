@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:treat/api/api.dart';
 import 'package:treat/models/response/everyday_store.detail.dart';
 import 'package:treat/models/response/store_details.dart';
+import 'package:treat/modules/home/home.dart';
+import 'package:treat/shared/shared.dart';
 
 class MenuController extends GetxController {
   final ApiRepository apiRepository;
@@ -65,6 +67,28 @@ class MenuController extends GetxController {
       e.printInfo();
     }
     return clipCoupons;
+  }
+
+  void favouriteButtonAction(bool isFavourite, int storeID) async {
+    Either<String, Map<dynamic, dynamic>>? response;
+    Map<String, dynamic> data = {'storeId': storeID};
+    if (isFavourite)
+      response = await apiRepository.removeFavorite(data: data);
+    else
+      response = await apiRepository.addFavorite(data: data);
+    response?.fold((l) => CommonWidget.toast('Failed to Update'), (r) {
+      if (r['success']) {
+        storeDetails.value.isFavourite = !storeDetails.value.isFavourite;
+
+        HomeController controller =
+            Get.put(HomeController(apiRepository: Get.find()));
+        controller.updateIsFavourite(storeID, isFavourite);
+        update(['fav']);
+      } else
+        CommonWidget.toast('Failed to Update');
+    });
+
+    setLoading(false);
   }
 
   void filterList(String name, List<int> couponIds) {

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/constants/common.dart';
-import 'package:treat/shared/utils/size_config.dart';
 
 class ActionButton extends StatelessWidget {
   final height;
@@ -12,6 +12,7 @@ class ActionButton extends StatelessWidget {
   final buttonText;
   final buttonTextColor;
   final Function()? onTap;
+
   const ActionButton({
     required this.buttonText,
     required this.width,
@@ -38,9 +39,8 @@ class ActionButton extends StatelessWidget {
         child: Center(
           child: Text(
             buttonText,
-            style: TextStyle(
+            style: GoogleFonts.roboto(
                 color: buttonTextColor,
-                fontFamily: 'Rubik',
                 fontWeight: FontWeight.bold,
                 fontSize: 18),
           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:treat/shared/constants/colors.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CommonWidget {
   static AppBar appBar(
@@ -23,7 +23,7 @@ class CommonWidget {
       centerTitle: true,
       title: Text(
         title,
-        style: TextStyle(color: color, fontFamily: 'Rubik'),
+        style: GoogleFonts.roboto(color: color),
       ),
       backgroundColor: Colors.transparent,
       elevation: 0.0,
@@ -75,11 +75,8 @@ class CommonWidget {
             ],
           ),
           child: Center(
-            child: Text(
-              text.tr,
-              style: TextStyle(
-                  fontSize: 16, color: textColor, fontFamily: 'Rubik'),
-            ),
+            child: Text(text.tr,
+                style: GoogleFonts.roboto(fontSize: 16, color: textColor)),
           ),
         ),
       );

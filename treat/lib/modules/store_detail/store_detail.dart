@@ -7,6 +7,7 @@ import 'package:treat/modules/menu_detial/menu_detail.dart';
 import 'package:treat/modules/store_detail/widgets/menu_chip.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/shared.dart';
+import 'package:treat/shared/widgets/favourite.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
 
 class MenuDetail extends StatefulWidget {
@@ -58,13 +59,13 @@ class _MenuDetailState extends State<MenuDetail> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          IconButton(
-                            onPressed: null,
-                            icon: ImageIcon(
-                              AssetImage('$IMAGE_PATH/heart.png'),
-                              size: 46,
-                              color: const Color(0xFFFF6243),
-                            ),
+                          Container(
+                            padding: EdgeInsets.all(4),
+                            child: FavouriteButton(
+                                isFavourite: _storeDetails.isFavourite,
+                                storeID: _storeDetails.storeId,
+                                size: 30,
+                                onClick: () {}),
                           )
                         ],
                       ),

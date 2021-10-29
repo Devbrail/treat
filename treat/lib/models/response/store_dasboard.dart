@@ -5,6 +5,7 @@ class StoreDashboardResponse {
     required this.errorCode,
     required this.respData,
   });
+
   late final bool success;
   late final String message;
   late final String errorCode;
@@ -34,6 +35,7 @@ class StoreDashboard {
     required this.buttons,
     required this.sections,
   });
+
   late final Request request;
   late final List<Banners> banners;
   late final List<Buttons> buttons;
@@ -64,6 +66,7 @@ class Request {
     required this.type,
     required this.consumerLocation,
   });
+
   late final int type;
   late final ConsumerLocation consumerLocation;
 
@@ -85,6 +88,7 @@ class ConsumerLocation {
     required this.latitude,
     required this.longitude,
   });
+
   late final String latitude;
   late final String longitude;
 
@@ -108,7 +112,8 @@ class Banners {
     required this.assetId,
     required this.onClick,
   });
-  late final Null title;
+
+  late final dynamic title;
   late final String description;
   late final String assetId;
   late final String onClick;
@@ -136,9 +141,10 @@ class Buttons {
     required this.assetId,
     this.onClick,
   });
+
   late final String title;
   late final String assetId;
-  late final Null onClick;
+  late final dynamic onClick;
 
   Buttons.fromJson(Map<String, dynamic> json) {
     title = json['title'];
@@ -160,6 +166,7 @@ class Sections {
     required this.title,
     required this.stores,
   });
+
   late final String title;
   late final List<Stores> stores;
 
@@ -186,26 +193,35 @@ class Stores {
     required this.timeInMinutes,
     required this.rating,
     required this.storeSpecialities,
+    required this.isFavourite,
   });
+
   late final String title;
   late final int id;
   late final String description;
   late final String assetId;
   late final String distance;
   late final String timeInMinutes;
+  late final String street;
   late final double rating;
+  late bool isFavourite;
   late final List<String> storeSpecialities;
 
   Stores.fromJson(Map<String, dynamic> json) {
-    title = json['title'];
-    id = json['id'];
-    description = json['description'];
-    assetId = json['assetId'];
-    distance = json['distance'];
-    timeInMinutes = json['timeInMinutes'];
-    rating = json['rating'];
-    storeSpecialities =
-        List.castFrom<dynamic, String>(json['storeSpecialities']);
+    title = json['title'] ?? "";
+    id = json['id'] ?? json['storeID'];
+    description = json['description'] ?? "";
+    assetId = json['assetId'] ?? "";
+    distance = json['distance'] ?? "";
+    timeInMinutes = json['timeInMinutes'] ?? "";
+    rating = json['rating'] ?? 0;
+    isFavourite = json['isFavourite'] ?? false;
+    street = json['street'] ?? "";
+    if (json['storeSpecialities'] != null)
+      storeSpecialities =
+          List.castFrom<dynamic, String>(json['storeSpecialities']);
+    else
+      storeSpecialities = [];
   }
 
   Map<String, dynamic> toJson() {

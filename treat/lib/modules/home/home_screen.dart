@@ -38,6 +38,7 @@ class HomeScreen extends GetView<HomeController> {
                 children: [
                   buildBottomBar(
                     path: 'dinein.png',
+                    pathIa: 'dinein_ia.png',
                     text: 'DINING',
                     index: 0,
                     isCurrent: controller.currentTabIdx == 0,
@@ -45,18 +46,21 @@ class HomeScreen extends GetView<HomeController> {
                   ),
                   buildBottomBar(
                       path: 'retail.png',
+                      pathIa: 'retail_ia.png',
                       text: 'RETAIL',
                       index: 1,
                       isCurrent: controller.currentTabIdx == 1,
                       onTap: (int a) => controller.switchTab(a)),
                   buildBottomBar(
                       path: 'everyday.png',
+                      pathIa: 'everyday_ia.png',
                       text: 'EVERYDAY',
                       index: 2,
                       isCurrent: controller.currentTabIdx == 2,
                       onTap: (int a) => controller.switchTab(a)),
                   buildBottomBar(
                       path: 'fave.png',
+                      pathIa: 'fave_ia.png',
                       text: 'FAVES',
                       index: 3,
                       isCurrent: controller.currentTabIdx == 3,
@@ -70,12 +74,15 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget buildBottomBar(
-      {required String path,
-      required String text,
-      required int index,
-      bool isCurrent = false,
-      Function(int a)? onTap}) {
+  Widget buildBottomBar({
+    required String path,
+    required String text,
+    required int index,
+    bool isCurrent = false,
+    required String pathIa,
+    Function(int a)? onTap,
+  }) {
+    String pathTemp = isCurrent ? path : pathIa;
     return InkWell(
       onTap: () {
         onTap!(index);
@@ -84,10 +91,9 @@ class HomeScreen extends GetView<HomeController> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
-            '$IMAGE_PATH/$path',
+            '$IMAGE_PATH/$pathTemp',
             width: 40,
             height: 40,
-            color: !isCurrent ? Color(0xFFA6A6A6) : null,
           ),
           CommonWidget.rowHeight(height: 4),
           NormalText(
@@ -105,14 +111,9 @@ class HomeScreen extends GetView<HomeController> {
     switch (tab) {
       case MainTabs.home:
         return controller.mainTab;
-      case MainTabs.discover:
-        return controller.meTab;
-      case MainTabs.resource:
-        return controller.meTab;
-      case MainTabs.inbox:
-        return controller.meTab;
-      case MainTabs.me:
-        return controller.meTab;
+      case MainTabs.faveTab:
+        return controller.faveTab;
+
       default:
         return controller.mainTab;
     }

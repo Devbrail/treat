@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:treat/shared/shared.dart';
 
 class ThemeConfig {
@@ -91,19 +92,17 @@ class ThemeConfig {
       ),
       inputDecorationTheme: InputDecorationTheme(
         errorStyle: TextStyle(color: error),
-        labelStyle: TextStyle(
-          fontFamily: 'Rubik',
-          fontWeight: FontWeight.w600,
-          fontSize: 16.0,
-          color: primaryText.withOpacity(0.5),
-        ),
-        hintStyle: TextStyle(
+        labelStyle: GoogleFonts.roboto(
+            fontWeight: FontWeight.w600,
+            fontSize: 16.0,
+            color: primaryText.withOpacity(0.5)),
+        hintStyle: GoogleFonts.roboto(
           color: secondaryText,
           fontSize: 13.0,
           fontWeight: FontWeight.w300,
         ),
       ),
-      fontFamily: 'Rubik',
+      fontFamily: 'Roboto',
       unselectedWidgetColor: hexToColor('#DADCDD'),
       textTheme: TextTheme(
         headline1: baseTextTheme.headline1!.copyWith(

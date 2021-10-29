@@ -47,6 +47,7 @@ void configLoading() {
     ..loadingStyle = EasyLoadingStyle.custom
     // ..indicatorSize = 45.0
     ..radius = 10.0
+
     // ..progressColor = Colors.yellow
     ..backgroundColor = ColorConstants.lightGray
     ..indicatorColor = ColorConstants.violet

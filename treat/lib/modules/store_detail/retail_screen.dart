@@ -14,6 +14,7 @@ import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/shared.dart';
 import 'package:treat/shared/utils/common_function.dart';
 import 'package:treat/shared/widgets/banners.dart';
+import 'package:treat/shared/widgets/favourite.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
 
 import 'menu_controller.dart';
@@ -232,16 +233,21 @@ class _RetailMenuState extends State<RetailMenu> {
                                       ),
                                       Spacer(),
                                       Container(
-                                        margin: EdgeInsets.only(right: 16),
                                         padding: EdgeInsets.all(4),
-                                        decoration: BoxDecoration(
-                                            color: ColorConstants.white,
-                                            borderRadius:
-                                                BorderRadius.circular(26)),
-                                        child: Icon(
-                                          Icons.favorite,
-                                          size: 26,
-                                          color: Color(0xFFFF6243),
+                                        child: GetBuilder<MenuController>(
+                                          builder: (ctrl) => FavouriteButton(
+                                              isFavourite:
+                                                  storeDetails.isFavourite,
+                                              storeID: storeDetails.storeId,
+                                              size: 35,
+                                              onClick: () {
+                                                controller
+                                                    .favouriteButtonAction(
+                                                        storeDetails
+                                                            .isFavourite,
+                                                        storeDetails.storeId);
+                                              }),
+                                          id: 'fav',
                                         ),
                                       )
                                     ],
@@ -308,13 +314,16 @@ class _RetailMenuState extends State<RetailMenu> {
                                       }
                                     },
                                   ),
-                                menuButton(
-                                  'assets/images/info.png',
-                                  'More Info',
-                                  onTap: () => Get.toNamed(
-                                      Routes.RetailMenu + Routes.MenuDetail,
-                                      arguments: storeDetails),
-                                ),
+                                GetBuilder<MenuController>(
+                                  builder: (ctrl) => menuButton(
+                                    'assets/images/info.png',
+                                    'More Info',
+                                    onTap: () => Get.toNamed(
+                                        Routes.RetailMenu + Routes.MenuDetail,
+                                        arguments: ctrl.storeDetails.value),
+                                  ),
+                                  id: 'fav',
+                                )
                               ],
                             ),
                           ),
@@ -331,7 +340,6 @@ class _RetailMenuState extends State<RetailMenu> {
                               banners: Get.put(
                                       HomeController(apiRepository: Get.find()))
                                   .storeDashboard
-                                  .value!
                                   .banners,
                             ),
                           ),
