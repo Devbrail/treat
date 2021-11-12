@@ -17,4 +17,5 @@ abstract class Routes {
   static const MenuDetail = '/MenuDetail';
   static const DineINMenu = '/$RetailMenu/Dine';
   static const EVERYDAY = '/Everyday';
+  static const SEARCH_SCREEN = '/SearchScreen';
 }

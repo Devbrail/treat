@@ -3,8 +3,10 @@ import 'dart:math';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:treat/api/api.dart';
+import 'package:treat/models/response/addresses.dart';
 import 'package:treat/models/response/favourite_response.dart';
 import 'package:treat/models/response/store_dasboard.dart';
 import 'package:treat/models/response/users_response.dart';
@@ -39,20 +41,27 @@ class HomeController extends GetxController {
     super.onInit();
 
     mainTab = MainTab();
-    loadUsers();
-    loadStores('dining');
+    loadAddresses();
     faveTab = FaveTab();
   }
 
-  Future<void> loadStores(String storeType) async {
+  LocationData? locationData;
+
+  Future<void> loadStores({double? lat, double? lng}) async {
+    if (getAddrs.length < 1 && lat == null) return;
+
+    if (getAddrs.length > 0) {
+      lat = getDefAddr!.latitude;
+      lng = getDefAddr!.longitude;
+    }
     setLoading(true);
     apiRepository
-        .loadStores(lat: '65', lng: '-141', storeType: storeType)
+        .loadStores(
+            lat: lat.toString(), lng: lng.toString(), storeType: storeType)
         .then((value) {
-      'suhail  ${value?.toJson()}'.printInfo();
-      value?.toJson().printInfo();
-
       if (value != null) {
+        locationData =
+            LocationData.fromMap({'latitude': lat, 'longitude': lng});
         _storeDashboard.value = value.respData;
         setLoading(false);
       } else
@@ -60,6 +69,20 @@ class HomeController extends GetxController {
           'Server Unavailable',
         );
     });
+  }
+
+  String get storeType {
+    switch (currentTabIdx.value) {
+      case 0:
+        return 'dining';
+      case 1:
+        return 'retail';
+      case 2:
+        return 'dining';
+
+      default:
+        return 'dining';
+    }
   }
 
   var favouriteStores = Rxn<List<ConsumerFavoriteStores>>();
@@ -73,15 +96,6 @@ class HomeController extends GetxController {
     }).catchError((e) {
       setLoading(false);
     });
-  }
-
-  Future<void> loadUsers() async {
-    // var _users = await apiRepository.getUsers();
-    // if (_users!.data!.length > 0) {
-    //   users.value = _users;
-    //   users.refresh();
-    //   _saveUserInfo(_users);
-    // }
   }
 
   void signOut() async {
@@ -104,27 +118,19 @@ class HomeController extends GetxController {
   }
 
   void switchTab(index) {
+    currentTabIdx.value = index;
+    var tab = _getCurrentTab(index);
+    currentTab.value = tab;
     switch (index) {
       case 0:
-        loadStores('dining');
-        break;
       case 1:
-        loadStores('retail');
-        break;
       case 2:
-        loadStores('dining');
+        loadStores();
         break;
       case 3:
         if (!Utils.isGuest) getFaves();
         break;
-      default:
-        loadStores('dining');
     }
-
-    index.toString().printInfo();
-    currentTabIdx.value = index;
-    var tab = _getCurrentTab(index);
-    currentTab.value = tab;
   }
 
   int getCurrentIndex(MainTabs tab) {
@@ -163,6 +169,81 @@ class HomeController extends GetxController {
     loading.value = value;
   }
 
+  AddressReturns? get getDefAddr {
+    try {
+      return addresses.value!.addressReturns
+          .where((element) => element.addressId == defaultAddress.value)
+          .first;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  List<AddressReturns> get getAddrs {
+    try {
+      return addresses.value!.addressReturns;
+    } catch (e, s) {
+      return [];
+    }
+  }
+
+  var addresses = Rxn<Addresses>();
+
+  Future<void> loadAddresses() async {
+    apiRepository.getconsumeraddresses().then((value) {
+      value!.fold((l) {
+        if (l == 0) {
+          fetchCurrentLocation();
+        } else
+          CommonWidget.toast('Failed to fetch address');
+      }, (r) {
+        addresses.value = r;
+        defaultAddress.value = addresses.value!.defaultAddressId;
+        loadStores();
+
+        addresses.refresh();
+      });
+    });
+  }
+
+  var defaultAddress = 0.obs;
+
+  selectAddress(AddressReturns address) {
+    if (address.addressId != defaultAddress.value)
+      apiRepository.makeDefaultAddress(address.addressId);
+
+    defaultAddress.value = address.addressId;
+    loadStores();
+    defaultAddress.refresh();
+  }
+
+  void fetchCurrentLocation() async {
+    Location location = new Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+    loadStores(lat: _locationData.latitude, lng: _locationData.longitude);
+  }
+
   updateIsFavourite(int storeID, bool isFavourite) async {
     if (Utils.isGuest) {
       CommonWidget.toast(
@@ -172,12 +253,16 @@ class HomeController extends GetxController {
     }
     Map<String, dynamic> data = {'storeId': storeID};
     Either<String, Map<dynamic, dynamic>>? response;
-    if (isFavourite)
-      response = await apiRepository.removeFavorite(data: data);
-    else
-      response = await apiRepository.addFavorite(data: data);
+    response = await apiRepository.toggleFavourite(data: data);
+
     response?.fold((l) => CommonWidget.toast('Failed to Update'), (r) {
       if (r['success']) {
+        if (favouriteStores.value != null &&
+            favouriteStores.value!.isNotEmpty) {
+          favouriteStores.value!
+              .removeWhere((element) => element.storeID == storeID);
+          favouriteStores.refresh();
+        }
         _storeDashboard.value!.sections.forEach((element) {
           element.stores.forEach((store) {
             if (store.id == storeID) {

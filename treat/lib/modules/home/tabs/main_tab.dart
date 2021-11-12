@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:treat/models/response/addresses.dart';
 import 'package:treat/models/response/store_dasboard.dart';
 import 'package:treat/models/response/users_response.dart';
 import 'package:treat/modules/home/home.dart';
@@ -56,7 +57,12 @@ class MainTab extends GetView<HomeController> {
         ),
         Container(
           margin: EdgeInsets.only(top: 24, left: 24, right: 24),
-          child: SearchBar(),
+          child: SearchBar(
+              onTap: () => Get.toNamed(Routes.SEARCH_SCREEN, arguments: {
+                    "categories": [controller.storeType],
+                    "latitude": controller.locationData!.latitude ?? 0,
+                    "longitude": controller.locationData!.longitude ?? 0,
+                  })),
         ),
         if (controller.sponsoredShops.isNotEmpty)
           Column(
@@ -233,29 +239,35 @@ class MainTab extends GetView<HomeController> {
         children: [
           Expanded(
             child: Container(
-              height: 34,
-              decoration: BoxDecoration(
-                  color: Color(0xFFF4F4F4),
-                  borderRadius: BorderRadius.circular(18)),
-              child: Row(
-                children: [
-                  CommonWidget.rowWidth(width: 19),
-                  Image.asset(
-                    '$IMAGE_PATH/location.png',
-                    width: 18,
-                    height: 18,
-                  ),
-                  CommonWidget.rowWidth(width: 12),
-                  Container(
-                    margin: EdgeInsets.only(top: 4),
-                    child: NormalText(
-                      text: '9999 Barrington Street',
-                      fontSize: 16,
-                    ),
-                  )
-                ],
-              ),
-            ),
+                height: 34,
+                decoration: BoxDecoration(
+                    color: Color(0xFFF4F4F4),
+                    borderRadius: BorderRadius.circular(18)),
+                child: Obx(() => DropdownButton<AddressReturns>(
+                      focusColor: Colors.white,
+                      value: controller.getDefAddr,
+                      iconEnabledColor: Colors.black,
+                      underline: SizedBox(),
+                      isExpanded: true,
+                      iconSize: 26,
+                      icon: Icon(Icons.arrow_drop_down_sharp),
+                      items: controller.getAddrs
+                          .map<DropdownMenuItem<AddressReturns>>(
+                              (AddressReturns value) {
+                        return DropdownMenuItem<AddressReturns>(
+                          value: value,
+                          child: buildDropdownItem(
+                              '(${value.addressType}) ${value.addressLine1}',
+                              isTile: controller.defaultAddress.value ==
+                                  value.addressId),
+                        );
+                      }).toList(),
+                      hint: buildDropdownItem('Select your location',
+                          isTile: true),
+                      onChanged: (AddressReturns? value) {
+                        controller.selectAddress(value!);
+                      },
+                    ))),
           ),
           CommonWidget.rowWidth(width: 24),
           InkWell(
@@ -268,6 +280,28 @@ class MainTab extends GetView<HomeController> {
           )
         ],
       ),
+    );
+  }
+
+  Widget buildDropdownItem(String value, {required bool isTile}) {
+    return Row(
+      children: [
+        CommonWidget.rowWidth(width: 19),
+        if (isTile)
+          Image.asset(
+            '$IMAGE_PATH/location.png',
+            width: 18,
+            height: 18,
+          ),
+        CommonWidget.rowWidth(width: 12),
+        Container(
+          margin: EdgeInsets.only(top: 4),
+          child: NormalText(
+            text: value,
+            fontSize: 16,
+          ),
+        )
+      ],
     );
   }
 
@@ -362,5 +396,109 @@ class MainTab extends GetView<HomeController> {
 
   List<Datum>? get data {
     return controller.users.value == null ? [] : controller.users.value!.data;
+  }
+}
+
+class PopMenu extends StatefulWidget {
+  @override
+  _PopMenuState createState() => _PopMenuState();
+}
+
+class _PopMenuState extends State<PopMenu> {
+  List<String> _menuList = ['menu 1', 'menu 2', 'menu 3'];
+  final GlobalKey _key = LabeledGlobalKey("button_icon");
+  OverlayEntry? _overlayEntry;
+  Offset? _buttonPosition;
+  bool _isMenuOpen = false;
+
+  void _findButton() {
+    RenderBox box = _key.currentContext!.findRenderObject() as RenderBox;
+    _buttonPosition = box.localToGlobal(Offset.zero); //this is global position
+  }
+
+  void _openMenu() {
+    _findButton();
+    _overlayEntry = _overlayEntryBuilder();
+    Overlay.of(context)!.insert(_overlayEntry!);
+    _isMenuOpen = !_isMenuOpen;
+  }
+
+  void _closeMenu() {
+    _overlayEntry!.remove();
+    _isMenuOpen = !_isMenuOpen;
+  }
+
+  OverlayEntry _overlayEntryBuilder() {
+    return OverlayEntry(
+      builder: (context) {
+        return Positioned(
+          top: _buttonPosition!.dy + 70,
+          left: _buttonPosition!.dx,
+          width: 300,
+          child: _popMenu(),
+        );
+      },
+    );
+  }
+
+  Widget _popMenu() {
+    return Material(
+      child: Container(
+        width: 300,
+        height: 300,
+        decoration: BoxDecoration(
+          color: Color(0xFFF67C0B9),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(
+            _menuList.length,
+            (index) {
+              return GestureDetector(
+                onTap: () {},
+                child: Container(
+                  alignment: Alignment.center,
+                  width: 300,
+                  height: 100,
+                  child: Text(_menuList[index]),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Container(
+          key: _key,
+          width: 300,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Color(0xFFF5C6373),
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Center(child: Text('menu 1')),
+              ),
+              IconButton(
+                icon: Icon(Icons.arrow_downward),
+                color: Colors.white,
+                onPressed: () {
+                  _isMenuOpen ? _closeMenu() : _openMenu();
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

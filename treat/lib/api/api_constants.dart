@@ -30,12 +30,15 @@ class ApiConstants {
   static const String email = '/otp/email';
   static const String verify = '/otp/verify';
   static const String resendotp = '/otp/resendotp';
+  static const String getconsumeraddresses = '/getconsumeraddresses';
+  static const String makeDefaultAddress = '/makeDefaultAddress';
   static const String capture = '/additionaldetails/capture';
-  static const String addFavorite = '/addFavorite';
-  static const String removeFavorite = '/removeFavorite';
+  static const String toggleFavourite = '/toggleFavorite';
   static const String favoritestoredetails = '/favoritestoredetails';
 
 //STORE PREFIX
   static const String storedetails = '/storedetails';
   static const String stores = '/home';
+  static const String searchStores = '/searchstores';
+  static const String storeAmenities = '/storeAmenities';
 }

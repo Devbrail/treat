@@ -10,6 +10,8 @@ import 'package:treat/modules/me/cards/cards_screen.dart';
 import 'package:treat/modules/modules.dart';
 import 'package:treat/modules/store_detail/everyday_store_detail.dart';
 import 'package:treat/modules/store_detail/menu.dart';
+import 'package:treat/modules/store_search/search.dart';
+import 'package:treat/modules/store_search/search_screen.dart';
 import 'package:treat/modules/terms_and_condition/terms_and_condotion.dart';
 
 part 'app_routes.dart';
@@ -54,6 +56,11 @@ class AppPages {
       name: Routes.EVERYDAY,
       page: () => EveryDayStoreDetail(),
       binding: MenuBinding(),
+    ),
+    GetPage(
+      name: Routes.SEARCH_SCREEN,
+      page: () => SearchScreen(),
+      binding: SearchBinding(),
     )
   ];
 }

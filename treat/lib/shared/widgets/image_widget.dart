@@ -5,9 +5,15 @@ class ImageWidget extends StatelessWidget {
   final double? width;
   final double? height;
   final String image;
+  final Color? color;
 
-  ImageWidget({Key? key, this.width, this.height, required this.image})
-      : super(key: key);
+  ImageWidget({
+    Key? key,
+    this.width,
+    this.height,
+    this.color,
+    required this.image,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +23,7 @@ class ImageWidget extends StatelessWidget {
         child: CachedNetworkImage(
           imageUrl: image,
           width: width,
+          color: color,
           errorWidget: (context, url, error) => Container(
             height: height ?? 150,
             width: width,

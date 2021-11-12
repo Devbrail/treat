@@ -7,6 +7,7 @@ import 'package:treat/modules/home/home.dart';
 import 'package:treat/modules/home/shimmers/home_shimmer.dart';
 import 'package:treat/modules/home/widgets/search.dart';
 import 'package:treat/modules/home/widgets/store_item.dart';
+import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/shared.dart';
 import 'package:treat/shared/utils/common_function.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
@@ -40,6 +41,7 @@ class FaveTab extends GetView<HomeController> {
   }
 
   Widget buildBody() {
+    if (controller.favouriteStores.value == null) return Text('');
     return Container(
       child: Utils.isGuest
           ? Container(
@@ -74,6 +76,7 @@ class FaveTab extends GetView<HomeController> {
           Expanded(
             child: SearchBar(
               hint: 'Search Faves',
+              onTap: () => Get.toNamed(Routes.SEARCH_SCREEN),
             ),
           ),
           CommonWidget.rowWidth(width: 24),

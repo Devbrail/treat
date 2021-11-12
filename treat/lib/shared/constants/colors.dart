@@ -27,6 +27,7 @@ class ColorConstants {
   static const Color textColorBlack = const Color(0xFF707070);
   static const Color textColorGrey = const Color(0xFFAFAFAF);
   static const Color skipButtonBoxColor = const Color(0xFFF5E8FF);
+  static const Color filterDropDownSelected =const Color(0xFFE5E5E5);
 }
 
 Color hexToColor(String hex) {

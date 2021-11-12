@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:get/get_utils/src/extensions/dynamic_extensions.dart';
 import 'package:treat/models/models.dart';
+import 'package:treat/models/response/addresses.dart';
 import 'package:treat/models/response/everyday_store.detail.dart';
 import 'package:treat/models/response/favourite_response.dart';
 import 'package:treat/models/response/intial_token_response.dart';
+import 'package:treat/models/response/search_response.dart';
 import 'package:treat/models/response/store_dasboard.dart';
 import 'package:treat/models/response/store_details.dart';
 import 'package:treat/models/response/users_response.dart';
@@ -64,7 +66,7 @@ class ApiRepository {
     if (res.statusCode == 200) {
       return Right(res.body);
     } else {
-      printInfo(info: res.body['message']);
+      // printInfo(info: res.body['message']);
 
       return Left(res.body);
     }
@@ -94,22 +96,59 @@ class ApiRepository {
       return Left(res.body);
   }
 
-  Future<Either<String, Map>?> addFavorite({required Map data}) async {
-    final res = await apiProvider.addFavorite(ApiConstants.addFavorite, data);
+  Future<Either<int, Addresses>?> getconsumeraddresses() async {
+    final res = await apiProvider
+        .getconsumeraddresses(ApiConstants.getconsumeraddresses);
+
+    if (res.statusCode == 200) {
+      if (res.body['success'])
+        return Right(Addresses.fromJson(res.body['respData']));
+      else
+        return Left(0);
+    }
+    return Left(-1);
+  }
+
+  Future<Either<int, SearchResult>?> searchStores(Map  body) async {
+    final res = await apiProvider.searchStores(ApiConstants.searchStores, body);
+
+    if (res.statusCode == 200) {
+      if (res.body['success'])
+        return Right(SearchResult.fromJson(res.body['respData']));
+      else
+        return Left(0);
+    }
+    return Left(-1);
+  }
+  Future<Either<int,  List<dynamic>>> storeAmenities() async {
+    final res = await apiProvider.storeAmenities(ApiConstants.storeAmenities);
+
+    if (res.statusCode == 200) {
+      if (res.body['success'])
+        return Right(res.body['respData']['storeAmnetyDetails']);
+      else
+        return Left(0);
+    }
+    return Left(-1);
+  }
+
+  Future<Either<bool, bool>?> makeDefaultAddress(int addressID) async {
+    final res = await apiProvider.getconsumeraddresses(
+        ApiConstants.makeDefaultAddress + '?DefaultAddressId=$addressID');
+    '${res.statusCode}  ${res.statusText}'.printInfo();
+    if (res.statusCode == 200) {
+      return Right(true);
+    }
+    return Left(false);
+  }
+
+  Future<Either<String, Map>?> toggleFavourite({required Map data}) async {
+    final res =
+        await apiProvider.toggleFavourite(ApiConstants.toggleFavourite, data);
     if (res.statusCode == 200) {
       return Right(res.body);
     } else
-      return Left(res.body);
-  }
-
-  Future<Either<String, Map>?> removeFavorite(
-      {required Map<String, dynamic> data}) async {
-    final res =
-        await apiProvider.removeFavorite(ApiConstants.removeFavorite, data);
-    if (res.statusCode == 200)
-      return Right(res.body);
-    else
-      return Left(res.body);
+      return Left(res.body ?? '');
   }
 
   Future<Either<String, EveryDayStore>?> loadEveryDayStoreDetail(

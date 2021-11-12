@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:treat/api/base_provider.dart';
 import 'package:treat/models/models.dart';
@@ -21,6 +23,18 @@ class ApiProvider extends BaseProvider {
     return post('${ApiConstants.baseUrl}$path', data);
   }
 
+  Future<Response> getconsumeraddresses(String path) {
+    return get('${ApiConstants.baseUrl}$path');
+  }
+
+  Future<Response> searchStores(String path, Map data) {
+    return post('${ApiConstants.storeBaseUrl}$path', data);
+  }
+
+  Future<Response> storeAmenities(String path) {
+    return get('${ApiConstants.storeBaseUrl}$path');
+  }
+
   Future<Response> initialtoken(String path) {
     return get('${ApiConstants.baseUrl}$path');
   }
@@ -41,11 +55,7 @@ class ApiProvider extends BaseProvider {
     return get('${ApiConstants.storeBaseUrl}$path');
   }
 
-  Future<Response> addFavorite(String path, Map data) {
-    return post('${ApiConstants.baseUrl}$path', data);
-  }
-
-  Future<Response> removeFavorite(String path, Map data) {
+  Future<Response> toggleFavourite(String path, Map data) {
     return post('${ApiConstants.baseUrl}$path', data);
   }
 

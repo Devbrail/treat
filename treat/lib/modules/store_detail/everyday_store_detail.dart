@@ -628,8 +628,7 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       NormalText(
-                          text:
-                              '${coupon.couponName}\n(${coupon.couponTemplate})',
+                          text: '${coupon.couponName}\n(${coupon.couponDesc})',
                           textColor: coupon.canRedeem && !isDynamic
                               ? ColorConstants.textBlack
                               : Color(0xFF808080),

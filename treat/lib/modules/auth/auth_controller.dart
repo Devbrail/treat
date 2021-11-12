@@ -30,8 +30,10 @@ class AuthController extends GetxController {
 
     if (intialToken == null || intialToken!.isEmpty) {
       final IntialTokenResponse? result = await apiRepository.initialtoken();
-      intialToken = result!.respData!.initialToken;
-      sharedPreferences.setString(StorageConstants.intialToken, intialToken!);
+      if (result != null) {
+        intialToken = result.respData!.initialToken;
+        sharedPreferences.setString(StorageConstants.intialToken, intialToken!);
+      }
       // await fetchAuthToken();
     }
   }

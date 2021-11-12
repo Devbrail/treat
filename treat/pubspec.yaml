@@ -47,6 +47,8 @@ dependencies:
   shimmer: ^2.0.0
   progress_indicator: ^0.2.0
   google_fonts: ^2.1.0
+  location: ^4.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

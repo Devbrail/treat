@@ -72,10 +72,8 @@ class MenuController extends GetxController {
   void favouriteButtonAction(bool isFavourite, int storeID) async {
     Either<String, Map<dynamic, dynamic>>? response;
     Map<String, dynamic> data = {'storeId': storeID};
-    if (isFavourite)
-      response = await apiRepository.removeFavorite(data: data);
-    else
-      response = await apiRepository.addFavorite(data: data);
+    response = await apiRepository.toggleFavourite(data: data);
+
     response?.fold((l) => CommonWidget.toast('Failed to Update'), (r) {
       if (r['success']) {
         storeDetails.value.isFavourite = !storeDetails.value.isFavourite;

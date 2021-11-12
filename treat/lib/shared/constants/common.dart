@@ -17,6 +17,54 @@ class CommonConstants {
 
   static String retail = 'retail';
   static String dine = 'dine';
+
+  static const FILTER_DATA = [
+    {
+      "name": "Sort By",
+      "isSelected": true,
+      "data": [
+        {"id": 'POPULARITY', "key": "Popularity", "isSelected": false},
+        {
+          "id": 'RATING_HIGH',
+          "key": "Rating: High to Low",
+          "isSelected": false
+        },
+        {"id": '2', "COST_HIGH": "Price: Low to High", "isSelected": false},
+        {"id": '2', "COST_LOW": "Price: High to Low", "isSelected": false},
+        {"id": '2', "DISTANCE": "Distance  Nearest", "isSelected": false}
+      ]
+    },
+    {
+      "name": "Category",
+      "isSelected": false,
+      "data": [
+        {"key": "Retail", "isSelected": false},
+        {"key": "Grocery", "isSelected": false},
+        {"key": "Dining", "isSelected": false}
+      ]
+    },
+    {
+      "name": "Rating",
+      "isSelected": false,
+      "data": [
+        {"key": "1", "isSelected": false},
+        {"key": "2", "isSelected": false},
+        {"key": "3", "isSelected": false},
+        {"key": "4", "isSelected": false},
+        {"key": "5", "isSelected": false}
+      ]
+    },
+    {
+      "name": "Price Range",
+      "isSelected": false,
+      "data": [
+        {"key": "\$", "isSelected": false},
+        {"key": "\$\$", "isSelected": false},
+        {"key": "\$\$\$", "isSelected": false},
+        {"key": "\$\$\$\$", "isSelected": false}
+      ]
+    },
+  ];
 }
 
 const String IMAGE_PATH = 'assets/images';
