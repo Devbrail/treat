@@ -139,24 +139,26 @@ class Buttons {
   Buttons({
     required this.title,
     required this.assetId,
-    this.onClick,
   });
 
   late final String title;
   late final String assetId;
-  late final dynamic onClick;
+  late final String route;
+  late final String payload;
 
   Buttons.fromJson(Map<String, dynamic> json) {
     title = json['title'];
     assetId = json['assetId'];
-    onClick = null;
+    if (json['onClick'].isNotEmpty) {
+      route = json['onClick']['route'];
+      payload = json['onClick']['payload'];
+    }
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['title'] = title;
     _data['assetId'] = assetId;
-    _data['onClick'] = onClick;
     return _data;
   }
 }
@@ -193,6 +195,7 @@ class Stores {
     required this.timeInMinutes,
     required this.rating,
     required this.storeSpecialities,
+    required this.couponLayout,
     required this.isFavourite,
   });
 
@@ -203,6 +206,7 @@ class Stores {
   late final String distance;
   late final String timeInMinutes;
   late final String street;
+  late final String couponLayout;
   late final double rating;
   late bool isFavourite;
   late final List<String> storeSpecialities;
@@ -211,6 +215,7 @@ class Stores {
     title = json['title'] ?? "";
     id = json['id'] ?? json['storeID'];
     description = json['description'] ?? "";
+    couponLayout = json['couponLayout'] ?? "";
     assetId = json['assetId'] ?? "";
     distance = json['distance'] ?? "";
     timeInMinutes = json['timeInMinutes'] ?? "";

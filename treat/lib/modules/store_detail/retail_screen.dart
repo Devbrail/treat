@@ -102,7 +102,7 @@ class _RetailMenuState extends State<RetailMenu> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
+                           Container(
                             margin: EdgeInsets.symmetric(
                                 vertical: 24, horizontal: 24),
                             child: LoyaltyBarWidget(

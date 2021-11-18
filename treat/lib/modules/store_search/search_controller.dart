@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:core';
 
+import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:treat/api/api.dart';
@@ -22,6 +23,8 @@ class SearchController extends GetxController {
   void onInit() {
     super.onInit();
     generateDropDow();
+    searchTC.text = Get.arguments[1];
+    if (searchTC.text.isNotEmpty) getResults();
     Future.delayed(Duration(seconds: 2)).then((value) => setLoading(false));
   }
 
@@ -42,12 +45,12 @@ class SearchController extends GetxController {
   Map get getSearchDatum {
     String searchText = searchTC.text;
     Map<String, dynamic> body = {
-      ...Get.arguments as Map,
+      ...Get.arguments[0] as Map,
       "searchText": searchText,
       "sortOption": "NONE",
       "rating": 0,
       "priceRange": 0,
-      "amenities": [2],
+      "amenities": [],
       "popularity": 0
     };
 
@@ -56,26 +59,32 @@ class SearchController extends GetxController {
       switch (i) {
         case 0:
           for (int j = 0; j < filter.data.length; j++)
-            if (filter.data[j].isSelected)
+            if (filter.data[j].isSelected) {
               body['sortOption'] = filter.data[j].key;
+            }
           break;
         case 1:
           List<String> cat = [];
           for (int j = 0; j < filter.data.length; j++) {
-            if (filter.data[j].isSelected) cat.add(filter.data[j].key);
+            if (filter.data[j].isSelected) cat.add(filter.data[j].id);
           }
           if (cat.length > 0) body['categories'] = cat;
 
           break;
         case 2:
           for (int j = 0; j < filter.data.length; j++) {
-            if (filter.data[j].isSelected)
+            if (filter.data[j].isSelected) {
               body['rating'] = num.parse(filter.data[j].key);
+              break;
+            }
           }
           break;
         case 3:
           for (int j = 0; j < filter.data.length; j++) {
-            if (filter.data[j].isSelected) body['priceRange'] = 0;
+            if (filter.data[j].isSelected) {
+              body['priceRange'] = filter.data[j].key.length;
+              break;
+            }
           }
           break;
         case 4:
@@ -93,9 +102,24 @@ class SearchController extends GetxController {
     return body;
   }
 
-  Future<void> getResults() async {
-    _searchResponses.value = [];
+  Future<List<dynamic>> getSuggestion(String query) async {
+    if (query.length < 3) return [];
+    List result=await apiRepository.searchSuggestions(query);
+    'dkvjsdn.kj ${result.length}'.printInfo();
+    return result;
 
+    // return datum;
+  }
+
+  Future<List<SearchResponses>> getResults() async {
+    _searchResponses.value = [];
+    Either<int, SearchResult>? value =
+        await apiRepository.searchStores(getSearchDatum);
+    value?.fold((l) => null, (r) {
+      searchResponssse = r.searchResponses;
+      setLoading(false);
+    });
+    return searchResponses;
     apiRepository.searchStores(getSearchDatum).then((value) {
       value?.fold((l) => null, (r) {
         searchResponssse = r.searchResponses;

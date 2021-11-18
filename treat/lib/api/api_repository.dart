@@ -109,7 +109,7 @@ class ApiRepository {
     return Left(-1);
   }
 
-  Future<Either<int, SearchResult>?> searchStores(Map  body) async {
+  Future<Either<int, SearchResult>?> searchStores(Map body) async {
     final res = await apiProvider.searchStores(ApiConstants.searchStores, body);
 
     if (res.statusCode == 200) {
@@ -120,7 +120,21 @@ class ApiRepository {
     }
     return Left(-1);
   }
-  Future<Either<int,  List<dynamic>>> storeAmenities() async {
+
+  Future<List> searchSuggestions(String query) async {
+    final res = await apiProvider.searchSuggestions(
+        '${ApiConstants.searchSuggestions}?searchtext=$query');
+
+    if (res.statusCode == 200) {
+      if (res.body['success'])
+        return res.body['respData']['searchSuggestions'];
+      else
+        return [];
+    }
+    return [];
+  }
+
+  Future<Either<int, List<dynamic>>> storeAmenities() async {
     final res = await apiProvider.storeAmenities(ApiConstants.storeAmenities);
 
     if (res.statusCode == 200) {

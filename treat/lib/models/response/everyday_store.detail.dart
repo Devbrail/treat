@@ -57,13 +57,13 @@ class EveryDayStore {
     storeName = json['storeName'];
     rating = json['rating'];
     priceRange = json['priceRange'];
-    address1 = json['address1'];
-    address2 = json['address2'];
+    address1 = json['address1'] ?? '';
+    address2 = json['address2'] ?? '';
     postcode = json['postcode'];
     city = json['city'];
     province = json['province'];
-    contactNo = json['contactNo'];
-    website = json['website'];
+    contactNo = json['contactNo'] ?? '';
+    website = json['website'] ?? '';
     storeSpecialities =
         List.castFrom<dynamic, dynamic>(json['storeSpecialities']);
     storeCategotyId = json['storeCategotyId'];
@@ -72,14 +72,18 @@ class EveryDayStore {
     storeSubCategoryId = json['storeSubCategoryId'];
     storeSubCategoryName = json['storeSubCategoryName'];
     location = Location.fromJson(json['location']);
-    categoryData = CategoryData.fromJson(json['categoryData']);
+    if (json['advancedCouponLayoutDetails'] != null)
+      categoryData = CategoryData.fromJson(json['advancedCouponLayoutDetails']);
     photos = List.from(json['photos']).map((e) => Photos.fromJson(e)).toList();
     workingHours = List.from(json['workingHours'])
         .map((e) => WorkingHours.fromJson(e))
         .toList();
     amneties =
         List.from(json['amneties']).map((e) => Amneties.fromJson(e)).toList();
-    loyaltyInfo = LoyaltyInfo.fromJson(json['loyaltyInfo']);
+    if (json['loyaltyInfo'] != null)
+      loyaltyInfo = LoyaltyInfo.fromJson(json['loyaltyInfo']);
+    else
+      loyaltyInfo = LoyaltyInfo(visitFreqInDays: 0, percDiscount: 0);
     pingedCoupons = List.castFrom<dynamic, dynamic>(json['pingedCoupons']);
     storeCoupons = List.from(json['storeCoupons'])
         .map((e) => StoreCoupons.fromJson(e))
@@ -151,9 +155,9 @@ class CategoryData {
   late final Retail retail;
 
   CategoryData.fromJson(Map<String, dynamic> json) {
-    dining = Dining.fromJson(json['dining']);
-    everyday = Everyday.fromJson(json['everyday']);
-    retail = Retail.fromJson(json['retail']);
+    // dining = Dining.fromJson(json['dining']);
+    // everyday = Everyday.fromJson(json['everyday']);
+    retail = Retail.fromJson(json);
   }
 
   Map<String, dynamic> toJson() {
@@ -366,7 +370,6 @@ class LoyaltyInfo {
 class StoreCoupons {
   StoreCoupons(
       {required this.couponId,
-      required this.couponTemplate,
       required this.couponName,
       required this.couponDesc,
       required this.estimatedValue,
@@ -379,7 +382,6 @@ class StoreCoupons {
       this.isSelected = true});
 
   late final int couponId;
-  late final String couponTemplate;
   late final String couponName;
   late final String couponDesc;
   late final String estimatedValue;
@@ -393,7 +395,6 @@ class StoreCoupons {
 
   StoreCoupons.fromJson(Map<String, dynamic> json) {
     couponId = json['couponId'];
-    couponTemplate = json['couponTemplate'];
     couponName = json['couponName'];
     couponDesc = json['couponDesc'];
     estimatedValue = json['estimatedValue'];
@@ -409,7 +410,6 @@ class StoreCoupons {
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['couponId'] = couponId;
-    _data['couponTemplate'] = couponTemplate;
     _data['couponName'] = couponName;
     _data['couponDesc'] = couponDesc;
     _data['estimatedValue'] = estimatedValue;

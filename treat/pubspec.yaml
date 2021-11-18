@@ -48,7 +48,7 @@ dependencies:
   progress_indicator: ^0.2.0
   google_fonts: ^2.1.0
   location: ^4.2.0
-
+  flutter_typeahead: ^3.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

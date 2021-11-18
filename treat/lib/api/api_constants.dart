@@ -40,5 +40,6 @@ class ApiConstants {
   static const String storedetails = '/storedetails';
   static const String stores = '/home';
   static const String searchStores = '/searchstores';
+  static const String searchSuggestions = '/searchsuggestions';
   static const String storeAmenities = '/storeAmenities';
 }

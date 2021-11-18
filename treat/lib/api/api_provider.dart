@@ -31,6 +31,10 @@ class ApiProvider extends BaseProvider {
     return post('${ApiConstants.storeBaseUrl}$path', data);
   }
 
+  Future<Response> searchSuggestions(String path) {
+    return post('${ApiConstants.storeBaseUrl}$path', {});
+  }
+
   Future<Response> storeAmenities(String path) {
     return get('${ApiConstants.storeBaseUrl}$path');
   }

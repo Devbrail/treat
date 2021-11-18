@@ -20,6 +20,10 @@ class Utils {
       sharedPreferences.getString(StorageConstants.loginTye) ==
       StorageConstants.guest;
 
+
+  static bool isAdvanced(String couponLayout) =>
+      couponLayout==CommonConstants.ADVANCED;
+
   static saveLoginType(String type) {
     sharedPreferences.setString(StorageConstants.loginTye, type);
   }

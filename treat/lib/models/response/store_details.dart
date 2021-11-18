@@ -23,6 +23,7 @@ class StoreDetails {
     required this.amneties,
     required this.loyaltyInfo,
     required this.pingedCoupons,
+    required this.couponLayout,
     required this.storeCoupons,
     required this.isFavourite,
   });
@@ -43,6 +44,7 @@ class StoreDetails {
   late final String storeCategoryName;
   late final int storeSubCategoryId;
   late final String storeSubCategoryName;
+  late final String couponLayout;
   late final Location location;
   late final CategoryData categoryData;
   late final List<String> storeSpecialities;
@@ -61,6 +63,7 @@ class StoreDetails {
     address1 = json['address1'];
     address2 = json['address2'];
     postcode = json['postcode'];
+    couponLayout = json['couponLayout'];
     city = json['city'];
     contactNo = json['contactNo'];
     website = json['website'] ?? '';
@@ -74,14 +77,18 @@ class StoreDetails {
       storeSpecialities =
           List.castFrom<dynamic, String>(json['storeSpecialities']);
     location = Location.fromJson(json['location']);
-    categoryData = CategoryData.fromJson(json['categoryData']);
+
+    categoryData = CategoryData.fromJson(json['simpleCouponLayoutDetails']);
     photos = List.from(json['photos']).map((e) => Photos.fromJson(e)).toList();
     workingHours = List.from(json['workingHours'])
         .map((e) => WorkingHours.fromJson(e))
         .toList();
     amneties =
         List.from(json['amneties']).map((e) => Amneties.fromJson(e)).toList();
-    loyaltyInfo = LoyaltyInfo.fromJson(json['loyaltyInfo']);
+    if (json['loyaltyInfo'] != null)
+      loyaltyInfo = LoyaltyInfo.fromJson(json['loyaltyInfo']);
+    else
+      loyaltyInfo = LoyaltyInfo(visitFreqInDays: 0, percDiscount: 0);
     pingedCoupons = List.from(json['pingedCoupons'])
         .map((e) => Coupons.fromJson(e))
         .toList();
@@ -321,7 +328,6 @@ class LoyaltyInfo {
 class Coupons {
   Coupons({
     required this.couponId,
-    required this.couponTemplate,
     required this.couponName,
     required this.couponDesc,
     required this.estimatedValue,
@@ -334,7 +340,6 @@ class Coupons {
   });
 
   late final int couponId;
-  late final String couponTemplate;
   late final String couponName;
   late final String couponDesc;
   late final String estimatedValue;
@@ -347,7 +352,6 @@ class Coupons {
 
   Coupons.fromJson(Map<String, dynamic> json) {
     couponId = json['couponId'];
-    couponTemplate = json['couponTemplate'];
     couponName = json['couponName'];
     couponDesc = json['couponDesc'];
     estimatedValue = json['estimatedValue'];
@@ -362,7 +366,6 @@ class Coupons {
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['couponId'] = couponId;
-    _data['couponTemplate'] = couponTemplate;
     _data['couponName'] = couponName;
     _data['couponDesc'] = couponDesc;
     _data['estimatedValue'] = estimatedValue;

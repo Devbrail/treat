@@ -6,6 +6,7 @@ import 'package:treat/modules/store_detail/widgets/menu_chip.dart';
 import 'package:treat/routes/routes.dart';
 import 'package:treat/shared/constants/constants.dart';
 import 'package:treat/shared/shared.dart';
+import 'package:treat/shared/utils/common_function.dart';
 import 'package:treat/shared/widgets/favourite.dart';
 import 'package:treat/shared/widgets/image_widget.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
@@ -35,7 +36,7 @@ class StoreItem extends StatelessWidget {
       margin: EdgeInsets.only(right: isSingle ? 0 : 24),
       child: InkWell(
         onTap: () {
-          if (controller.currentTabIdx != 1)
+          if (!Utils.isAdvanced(stores.couponLayout))
             Get.toNamed(Routes.RetailMenu,
                 arguments: [CommonConstants.dine, stores.id]);
           else

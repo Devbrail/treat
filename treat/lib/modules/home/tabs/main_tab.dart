@@ -58,11 +58,13 @@ class MainTab extends GetView<HomeController> {
         Container(
           margin: EdgeInsets.only(top: 24, left: 24, right: 24),
           child: SearchBar(
-              onTap: () => Get.toNamed(Routes.SEARCH_SCREEN, arguments: {
-                    "categories": [controller.storeType],
-                    "latitude": controller.locationData!.latitude ?? 0,
-                    "longitude": controller.locationData!.longitude ?? 0,
-                  })),
+              onTap: () => Get.toNamed(Routes.SEARCH_SCREEN, arguments: [
+                    {
+                      "categories": [controller.storeType],
+                      "latitude": controller.locationData!.latitude ?? 0,
+                      "longitude": controller.locationData!.longitude ?? 0,
+                    },""
+                  ])),
         ),
         if (controller.sponsoredShops.isNotEmpty)
           Column(
@@ -311,22 +313,34 @@ class MainTab extends GetView<HomeController> {
       child: Row(
         children: [
           ...controller.storeDashboard.buttons.map(
-            (e) => Container(
-              margin: EdgeInsets.only(left: 24),
-              child: Column(
-                children: [
-                  ImageWidget(
-                    image: e.assetId,
-                    height: 36,
-                    width: 36,
-                  ),
-                  CommonWidget.rowHeight(height: 8),
-                  NormalText(
-                    text: e.title,
-                    fontSize: 10,
-                    textColor: ColorConstants.textBlack,
-                  )
-                ],
+            (e) => InkWell(
+              onTap: () {
+                Get.toNamed(e.route, arguments: [
+                  {
+                    "categories": [controller.storeType],
+                    "latitude": controller.locationData!.latitude ?? 0,
+                    "longitude": controller.locationData!.longitude ?? 0,
+                  },
+                  e.payload
+                ]);
+              },
+              child: Container(
+                margin: EdgeInsets.only(left: 24),
+                child: Column(
+                  children: [
+                    ImageWidget(
+                      image: e.assetId,
+                      height: 36,
+                      width: 36,
+                    ),
+                    CommonWidget.rowHeight(height: 8),
+                    NormalText(
+                      text: e.title,
+                      fontSize: 10,
+                      textColor: ColorConstants.textBlack,
+                    )
+                  ],
+                ),
               ),
             ),
           )

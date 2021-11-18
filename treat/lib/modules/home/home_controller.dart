@@ -78,7 +78,7 @@ class HomeController extends GetxController {
       case 1:
         return 'retail';
       case 2:
-        return 'dining';
+        return 'everyday';
 
       default:
         return 'dining';
@@ -190,17 +190,16 @@ class HomeController extends GetxController {
   var addresses = Rxn<Addresses>();
 
   Future<void> loadAddresses() async {
+    if (Utils.isGuest) {
+      fetchCurrentLocation();
+      return;
+    }
+
     apiRepository.getconsumeraddresses().then((value) {
-      value!.fold((l) {
-        if (l == 0) {
-          fetchCurrentLocation();
-        } else
-          CommonWidget.toast('Failed to fetch address');
-      }, (r) {
+      value!.fold((l) => CommonWidget.toast('Failed to fetch address'), (r) {
         addresses.value = r;
         defaultAddress.value = addresses.value!.defaultAddressId;
         loadStores();
-
         addresses.refresh();
       });
     });
@@ -217,7 +216,7 @@ class HomeController extends GetxController {
     defaultAddress.refresh();
   }
 
-  void fetchCurrentLocation() async {
+  Future<void> fetchCurrentLocation() async {
     Location location = new Location();
 
     bool _serviceEnabled;
