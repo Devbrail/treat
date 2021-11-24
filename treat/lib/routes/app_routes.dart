@@ -18,4 +18,7 @@ abstract class Routes {
   static const DineINMenu = '/$RetailMenu/Dine';
   static const EVERYDAY = '/Everyday';
   static const SEARCH_SCREEN = '/SearchScreen';
+  static const ACCOUNT = '/Account';
+  static const VIEW_PROFILE = '/ViewProfile';
+  static const EDIT_PROFILE = '/EditProfile';
 }

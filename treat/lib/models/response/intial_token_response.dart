@@ -1,7 +1,7 @@
 class IntialTokenResponse {
   bool? success;
   String? message;
-  int? errorCode;
+  dynamic errorCode;
   RespData? respData;
 
   IntialTokenResponse(

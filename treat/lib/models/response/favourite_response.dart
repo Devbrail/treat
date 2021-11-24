@@ -63,6 +63,7 @@ class ConsumerFavoriteStores {
   late final String distance;
   late final dynamic time;
   late final String title;
+  late final String couponLayout;
   late final StoreAsset storeAsset;
   late final dynamic description;
   late final dynamic rating;
@@ -74,6 +75,8 @@ class ConsumerFavoriteStores {
     distance = json['distance'];
     time = null;
     title = json['title'];
+    couponLayout = json['couponLayout'] ?? "";
+
     storeAsset = StoreAsset.fromJson(json['storeAsset']);
     description = null;
     rating = double.parse(json['rating'].toString());
@@ -88,6 +91,7 @@ class ConsumerFavoriteStores {
     _data['time'] = time;
     _data['title'] = title;
     _data['assetId'] = storeAsset.assetId;
+    _data['couponLayout'] = couponLayout;
     _data['description'] = description;
     _data['rating'] = rating;
     _data['isFavourite'] = true;

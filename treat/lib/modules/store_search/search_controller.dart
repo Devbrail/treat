@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
-import 'dart:core';
 
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,6 +9,7 @@ import 'package:treat/api/api.dart';
 import 'package:treat/models/filter_modal.dart';
 import 'package:treat/models/response/search_response.dart';
 import 'package:treat/shared/constants/common.dart';
+import 'package:treat/shared/shared.dart';
 
 class SearchController extends GetxController {
   final ApiRepository apiRepository;
@@ -23,9 +23,11 @@ class SearchController extends GetxController {
   void onInit() {
     super.onInit();
     generateDropDow();
-    searchTC.text = Get.arguments[1];
+    if (Get.arguments[1].toString().isNotEmpty) {
+      searchTC.text = Get.arguments[1];
+    }
+
     if (searchTC.text.isNotEmpty) getResults();
-    Future.delayed(Duration(seconds: 2)).then((value) => setLoading(false));
   }
 
   setLoading(bool value) {
@@ -103,8 +105,8 @@ class SearchController extends GetxController {
   }
 
   Future<List<dynamic>> getSuggestion(String query) async {
-    if (query.length < 3) return [];
-    List result=await apiRepository.searchSuggestions(query);
+    if (query.length < 3 || searchTC.text == Get.arguments[1]) return [];
+    List result = await apiRepository.searchSuggestions(query);
     'dkvjsdn.kj ${result.length}'.printInfo();
     return result;
 
@@ -120,12 +122,6 @@ class SearchController extends GetxController {
       setLoading(false);
     });
     return searchResponses;
-    apiRepository.searchStores(getSearchDatum).then((value) {
-      value?.fold((l) => null, (r) {
-        searchResponssse = r.searchResponses;
-        setLoading(false);
-      });
-    });
   }
 
   List<SearchResponses> get searchResponses => _searchResponses.value ?? [];

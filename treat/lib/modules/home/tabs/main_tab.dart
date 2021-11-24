@@ -63,7 +63,8 @@ class MainTab extends GetView<HomeController> {
                       "categories": [controller.storeType],
                       "latitude": controller.locationData!.latitude ?? 0,
                       "longitude": controller.locationData!.longitude ?? 0,
-                    },""
+                    },
+                    ""
                   ])),
         ),
         if (controller.sponsoredShops.isNotEmpty)
@@ -273,7 +274,7 @@ class MainTab extends GetView<HomeController> {
           ),
           CommonWidget.rowWidth(width: 24),
           InkWell(
-            onTap: () => Get.to(MeTab()),
+            onTap: () => Get.toNamed(Routes.HOME + Routes.ACCOUNT),
             child: Image.asset(
               '$IMAGE_PATH/profile.png',
               width: 24,

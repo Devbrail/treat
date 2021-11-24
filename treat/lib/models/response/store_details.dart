@@ -17,7 +17,6 @@ class StoreDetails {
     required this.storeSubCategoryId,
     required this.storeSubCategoryName,
     required this.location,
-    required this.categoryData,
     required this.photos,
     required this.workingHours,
     required this.amneties,
@@ -45,8 +44,8 @@ class StoreDetails {
   late final int storeSubCategoryId;
   late final String storeSubCategoryName;
   late final String couponLayout;
+  late final List<String> menuAssetId;
   late final Location location;
-  late final CategoryData categoryData;
   late final List<String> storeSpecialities;
   late final List<Photos> photos;
   late final List<WorkingHours> workingHours;
@@ -77,8 +76,17 @@ class StoreDetails {
       storeSpecialities =
           List.castFrom<dynamic, String>(json['storeSpecialities']);
     location = Location.fromJson(json['location']);
+    try {
+      if (json.containsKey('menuAssetId')) {
+        menuAssetId = List.castFrom<dynamic, String>(json['menuAssetId'] ?? []);
+      } else
+        menuAssetId = List.castFrom<dynamic, String>(
+            json['simpleCouponLayoutDetails']['menuAssetId'] ?? []);
+    } catch (e) {
+      menuAssetId = [];
+      print(e);
+    }
 
-    categoryData = CategoryData.fromJson(json['simpleCouponLayoutDetails']);
     photos = List.from(json['photos']).map((e) => Photos.fromJson(e)).toList();
     workingHours = List.from(json['workingHours'])
         .map((e) => WorkingHours.fromJson(e))
@@ -113,7 +121,6 @@ class StoreDetails {
     _data['storeSubCategoryId'] = storeSubCategoryId;
     _data['storeSubCategoryName'] = storeSubCategoryName;
     _data['location'] = location.toJson();
-    _data['categoryData'] = categoryData.toJson();
     _data['photos'] = photos.map((e) => e.toJson()).toList();
     _data['workingHours'] = workingHours.map((e) => e.toJson()).toList();
     _data['amneties'] = amneties.map((e) => e.toJson()).toList();
@@ -142,81 +149,6 @@ class Location {
     final _data = <String, dynamic>{};
     _data['latitude'] = latitude;
     _data['longitude'] = longitude;
-    return _data;
-  }
-}
-
-class CategoryData {
-  CategoryData({
-    required this.dining,
-    required this.everyday,
-    required this.retail,
-  });
-
-  late final Dining dining;
-  late final Everyday everyday;
-  late final Retail retail;
-
-  CategoryData.fromJson(Map<String, dynamic> json) {
-    if (json['dining'] != null) dining = Dining.fromJson(json['dining']);
-    if (json['everyday'] != null)
-      everyday = Everyday.fromJson(json['everyday']);
-    if (json['retail'] != null) retail = Retail.fromJson(json['retail']);
-  }
-
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['dining'] = dining.toJson();
-    _data['everyday'] = everyday.toJson();
-    _data['retail'] = retail.toJson();
-    return _data;
-  }
-}
-
-class Dining {
-  Dining({
-    required this.restaurantService,
-    required this.menuAssetId,
-  });
-
-  late final String restaurantService;
-  late final List<String> menuAssetId;
-
-  Dining.fromJson(Map<String, dynamic> json) {
-    try {
-      restaurantService = json['restaurantService'];
-      menuAssetId = List.castFrom<dynamic, String>(json['menuAssetId']);
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['restaurantService'] = restaurantService;
-    _data['menuAssetId'] = menuAssetId;
-    return _data;
-  }
-}
-
-class Everyday {
-  Everyday();
-
-  Everyday.fromJson(Map json);
-
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    return _data;
-  }
-}
-
-class Retail {
-  Retail();
-
-  Retail.fromJson(Map json);
-
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
     return _data;
   }
 }

@@ -8,4 +8,8 @@ class AppFocus {
       currentFocus.unfocus();
     }
   }
+
+  static void focus(BuildContext context) {
+    FocusScope.of(context).requestFocus();
+  }
 }

@@ -1,16 +1,17 @@
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
+import 'package:get/get_connect/http/src/multipart/form_data.dart';
 import 'package:get/get_utils/src/extensions/dynamic_extensions.dart';
 import 'package:treat/models/models.dart';
 import 'package:treat/models/response/addresses.dart';
 import 'package:treat/models/response/everyday_store.detail.dart';
 import 'package:treat/models/response/favourite_response.dart';
 import 'package:treat/models/response/intial_token_response.dart';
+import 'package:treat/models/response/profile_response.dart';
 import 'package:treat/models/response/search_response.dart';
 import 'package:treat/models/response/store_dasboard.dart';
 import 'package:treat/models/response/store_details.dart';
-import 'package:treat/models/response/users_response.dart';
 
 import 'api.dart';
 
@@ -134,6 +135,15 @@ class ApiRepository {
     return [];
   }
 
+  Future<dynamic> uploadAsset(FormData form) async {
+    final res = await apiProvider.uploadAsset(ApiConstants.uploadAsset, form);
+
+    if (res.statusCode == 200) {
+      return res.body['respData']['assetId'];
+    }
+    return -1;
+  }
+
   Future<Either<int, List<dynamic>>> storeAmenities() async {
     final res = await apiProvider.storeAmenities(ApiConstants.storeAmenities);
 
@@ -198,17 +208,21 @@ class ApiRepository {
       return Left(res.body);
   }
 
-  Future<LoginResponse?> login(LoginRequest data) async {
-    final res = await apiProvider.login(ApiConstants.login, data);
+  Future<dynamic> getProfileDetails() async {
+    final res =
+        await apiProvider.getProfileDetails(ApiConstants.getProfileDetails);
     if (res.statusCode == 200) {
-      return LoginResponse.fromJson(res.body);
+      return ProfileDetails.fromJson(res.body['respData']['basicDetails']);
     }
+    return -1;
   }
 
-  Future<UsersResponse?> getUsers() async {
-    final res = await apiProvider.getUsers('/api/users?page=1&per_page=12');
+  Future<int> editProfileDetails(Map data) async {
+    final res = await apiProvider.editProfileDetails(
+        ApiConstants.editProfileDetails, data);
     if (res.statusCode == 200) {
-      return UsersResponse.fromJson(res.body);
+      return 0;
     }
+    return -1;
   }
 }

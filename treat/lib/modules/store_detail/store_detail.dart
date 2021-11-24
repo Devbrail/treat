@@ -2,12 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:google_static_maps_controller/google_static_maps_controller.dart'
+    as L;
 import 'package:treat/models/response/store_details.dart';
 import 'package:treat/modules/menu_detial/menu_detail.dart';
 import 'package:treat/modules/store_detail/widgets/menu_chip.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/shared.dart';
 import 'package:treat/shared/widgets/favourite.dart';
+import 'package:treat/shared/widgets/static_map.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
 
 class MenuDetail extends StatefulWidget {
@@ -31,7 +34,12 @@ class _MenuDetailState extends State<MenuDetail> {
             children: [
               Stack(
                 children: [
-                  Image.asset('$IMAGE_PATH/static_map.png'),
+                  StaticMapWidget(
+                      latLng: L.Location(
+                          double.parse(_storeDetails.location.latitude),
+                          double.parse(_storeDetails.location.longitude)),
+                      label: _storeDetails.storeName),
+                  // Image.asset('$IMAGE_PATH/static_map.png'),
                   CommonWidget.actionbutton(
                     onTap: () => Get.back(),
                     text: 'BACK',
@@ -103,8 +111,7 @@ class _MenuDetailState extends State<MenuDetail> {
                       ),
                       CommonWidget.rowHeight(height: 16),
                       timingWidget(),
-                      if (_storeDetails.storeCategotyId == 1 ||
-                          _storeDetails.storeCategotyId == 3)
+                      if (_storeDetails.menuAssetId.isNotEmpty)
                         CommonWidget.actionbutton(
                           text: 'Menu',
                           buttoncolor: const Color(0xFFFFED84),
@@ -114,14 +121,16 @@ class _MenuDetailState extends State<MenuDetail> {
                           onTap: () {
                             try {
                               Get.to(MenuPDFView(
-                                  url: _storeDetails
-                                      .categoryData.dining.menuAssetId.first,
-                                  menus: _storeDetails
-                                      .categoryData.dining.menuAssetId,
+                                  url: _storeDetails.menuAssetId.first,
+                                  menus: _storeDetails.menuAssetId,
                                   storeName: _storeDetails.storeName));
-                            } catch (e) {
+                            } catch (e, s) {
                               CommonWidget.toast('Menu details not available');
-                              print(e);
+                              e.printInfo();
+                              print('${_storeDetails.menuAssetId}sksmdlk');
+                              s.printInfo();
+                              print(s);
+                              print(s);
                             }
                           },
                         ),

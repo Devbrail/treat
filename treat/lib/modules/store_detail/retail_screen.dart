@@ -102,7 +102,7 @@ class _RetailMenuState extends State<RetailMenu> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                           Container(
+                          Container(
                             margin: EdgeInsets.symmetric(
                                 vertical: 24, horizontal: 24),
                             child: LoyaltyBarWidget(
@@ -293,24 +293,23 @@ class _RetailMenuState extends State<RetailMenu> {
                             child: Row(
                               children: [
                                 menuButton('assets/images/send.png', 'Ping'),
-                                if (pageType == CommonConstants.retail)
+                                if (storeDetails.menuAssetId.isNotEmpty)
                                   menuButton(
                                     'assets/images/menu.png',
                                     'Menu',
                                     onTap: () {
-                                      // controller.loadUsers('1');
-
                                       try {
                                         Get.to(MenuPDFView(
-                                            url: storeDetails.categoryData
-                                                .dining.menuAssetId.first,
-                                            menus: storeDetails.categoryData
-                                                .dining.menuAssetId,
+                                            url: storeDetails.menuAssetId.first,
+                                            menus: storeDetails.menuAssetId,
                                             storeName: storeDetails.storeName));
                                       } catch (e) {
                                         CommonWidget.toast(
                                             'Menu details not available');
                                         print(e);
+                                        CommonWidget.toast(
+                                            'Menu details not available');
+                                        e.printInfo();
                                       }
                                     },
                                   ),

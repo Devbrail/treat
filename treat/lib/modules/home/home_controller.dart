@@ -1,13 +1,17 @@
-import 'dart:math';
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:treat/api/api.dart';
 import 'package:treat/models/response/addresses.dart';
 import 'package:treat/models/response/favourite_response.dart';
+import 'package:treat/models/response/profile_response.dart';
 import 'package:treat/models/response/store_dasboard.dart';
 import 'package:treat/models/response/users_response.dart';
 import 'package:treat/modules/home/home.dart';
@@ -42,6 +46,7 @@ class HomeController extends GetxController {
 
     mainTab = MainTab();
     loadAddresses();
+    getUserInfo();
     faveTab = FaveTab();
   }
 
@@ -106,11 +111,11 @@ class HomeController extends GetxController {
   }
 
   void _saveUserInfo(UsersResponse users) {
-    var random = new Random();
-    var index = random.nextInt(users.data!.length);
-    user.value = users.data![index];
-    var prefs = Get.find<SharedPreferences>();
-    prefs.setString(StorageConstants.userInfo, users.data![index].toRawJson());
+    // var random = new Random();
+    // var index = random.nextInt(users.data!.length);
+    // user.value = users.data![index];
+    // var prefs = Get.find<SharedPreferences>();
+    // prefs.setString(StorageConstants.userInfo, users.data![index].toRawJson());
 
     // var userInfo = prefs.getString(StorageConstants.userInfo);
     // var userInfoObj = Datum.fromRawJson(xx!);
@@ -196,7 +201,10 @@ class HomeController extends GetxController {
     }
 
     apiRepository.getconsumeraddresses().then((value) {
-      value!.fold((l) => CommonWidget.toast('Failed to fetch address'), (r) {
+      value!.fold((l) {
+        fetchCurrentLocation();
+        // CommonWidget.toast('Failed to fetch address');
+      }, (r) {
         addresses.value = r;
         defaultAddress.value = addresses.value!.defaultAddressId;
         loadStores();
@@ -354,5 +362,63 @@ class HomeController extends GetxController {
     }
 
     return [];
+  }
+
+  var profileDetails = Rxn<ProfileDetails>();
+  TextEditingController firstNameTC = TextEditingController();
+  TextEditingController lastNameTC = TextEditingController();
+
+  getUserInfo() async {
+    var value = await apiRepository.getProfileDetails();
+    if (value != -1) {
+      profileDetails.value = value;
+      firstNameTC.text = (value).firstName;
+      lastNameTC.text = (value).lastName;
+      profileDetails.refresh();
+    }
+  }
+
+  uploadImage() async {
+    log('djnlks');
+    final ImagePicker _picker = ImagePicker();
+    // Pick an image
+    final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxHeight: 480,
+        maxWidth: 640,
+        imageQuality: 75);
+
+    profileDetails.value!.setAssetUploadedFile(File(image!.path));
+    profileDetails.refresh();
+    final form = FormData({
+      'inputFile': MultipartFile(File(image.path), filename: image.name),
+    });
+    apiRepository.uploadAsset(form).then((value) {
+      if (value != -1)
+        profileDetails.value!.setAssetUploadedID(value);
+      else
+        CommonWidget.toast('Cant upload profile pic');
+    });
+  }
+
+  saveUserInfo() {
+    if (firstNameTC.text.isEmpty) CommonWidget.toast('Please fill First name');
+
+    var dddd = {
+      ...profileDetails.value!.toJson(),
+      'firstName': firstNameTC.text,
+      'lastName': lastNameTC.text
+    };
+    dddd.printInfo();
+    apiRepository.editProfileDetails({
+      ...profileDetails.value!.toJson(),
+      'firstName': firstNameTC.text,
+      'lastName': lastNameTC.text
+    }).then((value) async {
+      if (value == 0) {
+        await getUserInfo();
+        Get.back();
+      }
+    });
   }
 }
