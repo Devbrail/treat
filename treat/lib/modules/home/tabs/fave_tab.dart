@@ -81,7 +81,7 @@ class FaveTab extends GetView<HomeController> {
           ),
           CommonWidget.rowWidth(width: 24),
           InkWell(
-            onTap: () => Get.to(MeTab()),
+            onTap: () => Get.toNamed(Routes.HOME + Routes.ACCOUNT),
             child: Image.asset(
               '$IMAGE_PATH/profile.png',
               width: 24,

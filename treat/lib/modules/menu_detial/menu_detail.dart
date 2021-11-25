@@ -225,6 +225,7 @@ class _MenuPDFViewState extends State<MenuPDFView> {
       child: PDFView.fromUrl(
         value,
         cache: true,
+
         // password: widget.password,
         onDownload: (f) {
           //print("downloaded file! $f");

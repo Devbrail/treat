@@ -1,20 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:treat/models/response/search_response.dart';
-import 'package:treat/modules/home/home.dart';
-import 'package:treat/modules/home/tabs/tabs.dart';
 import 'package:treat/modules/store_detail/widgets/menu_chip.dart';
 import 'package:treat/modules/store_search/search.dart';
 import 'package:treat/routes/routes.dart';
 import 'package:treat/shared/constants/common.dart';
 import 'package:treat/shared/shared.dart';
 import 'package:treat/shared/utils/common_function.dart';
-import 'package:treat/shared/widgets/favourite.dart';
 import 'package:treat/shared/widgets/image_widget.dart';
 import 'package:treat/shared/widgets/rating_widget.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
@@ -25,7 +20,10 @@ class SearchScreen extends GetView<SearchController> {
   @override
   Widget build(BuildContext context) {
     printInfo(info: 'dnsfdjkfns.dkj   ${Get.arguments}');
-
+    if (Get.arguments[1].toString().isNotEmpty)
+      AppFocus.unfocus(context);
+    else
+      AppFocus.focus(context);
     return SafeArea(
       child: WillPopScope(
         onWillPop: () async => true,
@@ -50,40 +48,6 @@ class SearchScreen extends GetView<SearchController> {
               ),
             ],
           ),
-          // Container(
-          //   height: 34,
-          //   margin: EdgeInsets.only(top: 18, bottom: 14, right: 21, left: 21),
-          //   decoration: BoxDecoration(
-          //       color: Color(0xFFF4F4F4),
-          //       borderRadius: BorderRadius.circular(18)),
-          //   alignment: Alignment.center,
-          //   child: TextField(
-          //     controller: controller.searchTC,
-          //     // autofocus: true,
-          //     onSubmitted: (s) => controller.onSearched(),
-          //     textInputAction: TextInputAction.search,
-          //     decoration: InputDecoration(
-          //       focusColor: ColorConstants.black,
-          //       hintStyle: GoogleFonts.roboto(
-          //         color: ColorConstants.black,
-          //         fontWeight: FontWeight.w400,
-          //         fontSize: 15,
-          //       ),
-          //       hintText: 'Search',
-          //       prefixIcon: Icon(
-          //         Icons.search,
-          //         color: ColorConstants.black,
-          //       ),
-          //       border: InputBorder.none,
-          //     ),
-          //     style: GoogleFonts.roboto(
-          //       color: ColorConstants.black,
-          //       fontWeight: FontWeight.w500,
-          //       fontSize: 15,
-          //     ),
-          //     cursorColor: ColorConstants.black,
-          //   ),
-          // ),
           Container(
             height: 34,
             margin: EdgeInsets.only(top: 18, bottom: 14, right: 21, left: 21),
@@ -93,7 +57,6 @@ class SearchScreen extends GetView<SearchController> {
             alignment: Alignment.center,
             child: TypeAheadField(
               textFieldConfiguration: TextFieldConfiguration(
-                autofocus: true,
                 controller: controller.searchTC,
                 // autofocus: true,
                 onSubmitted: (s) => controller.onSearched(),
@@ -122,6 +85,10 @@ class SearchScreen extends GetView<SearchController> {
               suggestionsCallback: (pattern) async {
                 return await controller.getSuggestion(pattern);
               },
+              hideOnLoading: true,
+              hideOnEmpty: true,
+              loadingBuilder: (context) => Text(''),
+              hideSuggestionsOnKeyboardHide: false,
               itemBuilder: (context, suggestion) {
                 return ListTile(
                   title: Text('$suggestion'),
@@ -245,11 +212,6 @@ class BuildResult extends StatelessWidget {
                             ],
                           ),
                         ),
-                        // FavouriteButton(
-                        //   onClick: () {},
-                        //   isFavourite: true,
-                        //   storeID: 5,
-                        // ),
                       ],
                     ),
                   ),

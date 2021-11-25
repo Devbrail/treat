@@ -1,14 +1,11 @@
-import 'dart:convert';
-
 import 'package:get/get.dart';
 import 'package:treat/api/base_provider.dart';
-import 'package:treat/models/models.dart';
 
 import 'api_constants.dart';
 
 class ApiProvider extends BaseProvider {
-  Future<Response> login(String path, LoginRequest data) {
-    return post('${ApiConstants.baseUrl}$path', data.toJson());
+  Future<Response> getProfileDetails(String path) {
+    return get('${ApiConstants.baseUrl}$path');
   }
 
   Future<Response> sentOtpPhone(String path, Map data) {
@@ -51,8 +48,8 @@ class ApiProvider extends BaseProvider {
     return post('${ApiConstants.baseUrl}$path', data);
   }
 
-  Future<Response> getUsers(String path) {
-    return get('${ApiConstants.baseUrl}$path');
+  Future<Response> editProfileDetails(String path, Map data) {
+    return post('${ApiConstants.baseUrl}$path', data);
   }
 
   Future<Response> getStoreDetails(String path) {
@@ -69,5 +66,9 @@ class ApiProvider extends BaseProvider {
 
   Future<Response> favoriteStoreDetails(String path) {
     return get('${ApiConstants.baseUrl}$path');
+  }
+
+  Future<Response> uploadAsset(String path, FormData form) {
+    return post('${ApiConstants.miscBaseUrl}$path', form);
   }
 }

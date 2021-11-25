@@ -8,14 +8,19 @@ class AuthTextField extends StatelessWidget {
   final int maxLength;
   TextEditingController? controller;
   Function(String text)? onChange;
-  AuthTextField({
-    Key? key,
-    required this.hint,
-    this.textInputType = TextInputType.text,
-    this.maxLength = 30,
-    this.controller,
-    this.onChange,
-  }) : super(key: key);
+  final Color fillColor;
+  final EdgeInsets padding;
+
+  AuthTextField(
+      {Key? key,
+      required this.hint,
+      this.textInputType = TextInputType.text,
+      this.maxLength = 30,
+      this.controller,
+      this.onChange,
+      this.fillColor = ColorConstants.whiteGrey,
+      this.padding = const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0)})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +37,7 @@ class AuthTextField extends StatelessWidget {
         decoration: InputDecoration(
           filled: true,
           counterText: "",
-          fillColor: ColorConstants.whiteGrey,
+          fillColor: fillColor,
           hintText: hint,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -53,7 +58,7 @@ class AuthTextField extends StatelessWidget {
             fontWeight: FontWeight.normal,
             fontSize: 16,
           ),
-          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          contentPadding: padding,
 
           // contentPadding:
           //     const EdgeInsets.only(left: 12, right: 4, bottom: 18),

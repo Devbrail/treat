@@ -1,6 +1,7 @@
 class ApiConstants {
   static const baseUrl = 'http://treatdev.consumerapi.virtuosoft.in';
   static const storeBaseUrl = 'http://treatdev.storeapi.virtuosoft.in';
+  static const miscBaseUrl = 'http://treatdev.miscapi.virtuosoft.in';
 
   static const List consumerList = [
     ApiConstants.login,
@@ -35,6 +36,8 @@ class ApiConstants {
   static const String capture = '/additionaldetails/capture';
   static const String toggleFavourite = '/toggleFavorite';
   static const String favoritestoredetails = '/favoritestoredetails';
+  static const String getProfileDetails = '/getprofiledetails';
+  static const String editProfileDetails = '/editprofiledetails';
 
 //STORE PREFIX
   static const String storedetails = '/storedetails';
@@ -42,4 +45,7 @@ class ApiConstants {
   static const String searchStores = '/searchstores';
   static const String searchSuggestions = '/searchsuggestions';
   static const String storeAmenities = '/storeAmenities';
+
+//MISC PREFIX
+  static const String uploadAsset = '/Asset/uploadasset';
 }

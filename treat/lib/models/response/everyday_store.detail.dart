@@ -42,6 +42,7 @@ class EveryDayStore {
   late final String storeCategoryName;
   late final int storeSubCategoryId;
   late final String storeSubCategoryName;
+  late final String couponLayout;
   late final Location location;
   late bool isFavourite;
   late final CategoryData categoryData;
@@ -51,6 +52,7 @@ class EveryDayStore {
   late final LoyaltyInfo loyaltyInfo;
   late final List<dynamic> pingedCoupons;
   late final List<StoreCoupons> storeCoupons;
+  late final List<String> menuAssetId;
 
   EveryDayStore.fromJson(Map<String, dynamic> json) {
     storeId = json['storeId'];
@@ -61,6 +63,7 @@ class EveryDayStore {
     address2 = json['address2'] ?? '';
     postcode = json['postcode'];
     city = json['city'];
+    couponLayout = json['couponLayout'];
     province = json['province'];
     contactNo = json['contactNo'] ?? '';
     website = json['website'] ?? '';
@@ -70,6 +73,17 @@ class EveryDayStore {
     storeCategoryName = json['storeCategoryName'];
     isFavourite = json['isFavourite'];
     storeSubCategoryId = json['storeSubCategoryId'];
+    try {
+      if (json['simpleCouponLayoutDetails']['menuAssetId'] != null)
+        menuAssetId = List.castFrom<dynamic, String>(
+            json['simpleCouponLayoutDetails']['menuAssetId']);
+      else
+        menuAssetId = [];
+    } catch (e) {
+      menuAssetId = [];
+
+      print(e);
+    }
     storeSubCategoryName = json['storeSubCategoryName'];
     location = Location.fromJson(json['location']);
     if (json['advancedCouponLayoutDetails'] != null)
@@ -104,6 +118,10 @@ class EveryDayStore {
     _data['contactNo'] = contactNo;
     _data['website'] = website;
     _data['storeSpecialities'] = storeSpecialities;
+    _data['menuAssetId'] = menuAssetId;
+    // _data['simpleCouponLayoutDetails']['menuAssetId'] =
+    //     menuAssetId.isNotEmpty ? menuAssetId.asMap() : [];
+    _data['couponLayout'] = couponLayout;
     _data['storeCategotyId'] = storeCategotyId;
     _data['storeCategoryName'] = storeCategoryName;
     _data['storeSubCategoryId'] = storeSubCategoryId;
@@ -111,6 +129,7 @@ class EveryDayStore {
     _data['location'] = location.toJson();
     _data['categoryData'] = categoryData.toJson();
     _data['photos'] = photos.map((e) => e.toJson()).toList();
+
     _data['workingHours'] = workingHours.map((e) => e.toJson()).toList();
     _data['amneties'] = amneties.map((e) => e.toJson()).toList();
     _data['loyaltyInfo'] = loyaltyInfo.toJson();
@@ -162,8 +181,8 @@ class CategoryData {
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
-    _data['dining'] = dining.toJson();
-    _data['everyday'] = everyday.toJson();
+    // _data['dining'] = dining.toJson();
+    // _data['everyday'] = everyday.toJson();
     _data['retail'] = retail.toJson();
     return _data;
   }
