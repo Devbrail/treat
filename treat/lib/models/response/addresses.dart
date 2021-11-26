@@ -3,14 +3,16 @@ class Addresses {
     required this.defaultAddressId,
     required this.addressReturns,
   });
+
   late final int defaultAddressId;
-  late final List<AddressReturns> addressReturns;
+  late List<AddressReturns> addressReturns = [];
 
   Addresses.fromJson(Map<String, dynamic> json) {
     defaultAddressId = json['defaultAddressId'];
-    addressReturns = List.from(json['addressReturns'])
+
+    addressReturns.addAll(List.from(json['addressReturns'])
         .map((e) => AddressReturns.fromJson(e))
-        .toList();
+        .toList());
   }
 
   Map<String, dynamic> toJson() {
@@ -33,11 +35,12 @@ class AddressReturns {
     required this.province,
     required this.zipCode,
   });
+
   late final int addressId;
   late final String addressType;
-  late final dynamic latitude;
-  late final dynamic longitude;
-  late final String addressLine1;
+  late dynamic latitude;
+  late dynamic longitude;
+  late String addressLine1;
   late final String apartment;
   late final String city;
   late final String province;

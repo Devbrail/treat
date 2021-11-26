@@ -67,168 +67,172 @@ class MainTab extends GetView<HomeController> {
                     ""
                   ])),
         ),
-        if (controller.sponsoredShops.isNotEmpty)
-          Column(
-            children: [
-              Container(
-                margin: EdgeInsets.only(top: 24, left: 24),
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    NormalText(
-                      text: 'Sponsored Vendors',
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    CommonWidget.rowHeight(height: 6),
-                    buildVendors(controller.sponsoredShops),
-                  ],
-                ),
-              ),
-              CommonWidget.rowHeight(height: 8),
-              Divider(
-                color: Color(0xFFEBEBEB),
-                height: 7,
-                thickness: 7,
-              ),
-            ],
-          ),
-        if (controller.allNearbyShops.isNotEmpty)
-          Column(
-            children: [
-              CommonWidget.rowHeight(height: 8),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 24),
-                child: buildStoreItem(controller.sponsoredShops.first,
-                    width: double.infinity),
-              ),
-              CommonWidget.rowHeight(height: 8),
-              Divider(
-                color: Color(0xFFEBEBEB),
-                height: 7,
-                thickness: 7,
-              ),
-            ],
-          ),
-        CommonWidget.rowHeight(height: 8),
-        Container(
-          margin: EdgeInsets.only(top: 24, left: 24),
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              NormalText(
-                text: 'New To Treat',
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-              CommonWidget.rowHeight(height: 6),
-              buildVendors(controller.newToTreat),
-            ],
-          ),
-        ),
-        CommonWidget.rowHeight(height: 8),
-        if (controller.allNearbyShops.length > 1)
-          Column(
-            children: [
-              Divider(
-                color: Color(0xFFEBEBEB),
-                height: 7,
-                thickness: 7,
-              ),
-              CommonWidget.rowHeight(height: 8),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 24),
-                child: buildStoreItem(controller.allNearbyShops[1],
-                    width: double.infinity),
-              ),
-            ],
-          ),
-        CommonWidget.rowHeight(height: 8),
-        if (controller.nearbyShops.isNotEmpty)
-          Column(
-            children: [
-              Divider(
-                color: Color(0xFFEBEBEB),
-                height: 7,
-                thickness: 7,
-              ),
-              CommonWidget.rowHeight(height: 8),
-              Container(
-                margin: EdgeInsets.only(left: 24),
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    NormalText(
-                      text: 'Nearby Offers',
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    CommonWidget.rowHeight(height: 8),
-                    buildVendors(controller.nearbyShops),
-                  ],
-                ),
-              ),
-              CommonWidget.rowHeight(height: 8),
-              Divider(
-                color: Color(0xFFEBEBEB),
-                height: 7,
-                thickness: 7,
-              ),
-            ],
-          ),
-        CommonWidget.rowHeight(height: 14),
-        if (controller.allNearbyShops.length > 2)
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 24),
-            child: buildStoreItem(controller.allNearbyShops[2],
-                width: double.infinity),
-          ),
-        CommonWidget.rowHeight(height: 8),
         Column(
           children: [
+            if (controller.sponsoredShops.isNotEmpty)
+              Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 24, left: 24),
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        NormalText(
+                          text: 'Sponsored Vendors',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        CommonWidget.rowHeight(height: 6),
+                        buildVendors(controller.sponsoredShops),
+                      ],
+                    ),
+                  ),
+                  CommonWidget.rowHeight(height: 8),
+                  Divider(
+                    color: Color(0xFFEBEBEB),
+                    height: 7,
+                    thickness: 7,
+                  ),
+                ],
+              ),
+            if (controller.allNearbyShops.isNotEmpty)
+              Column(
+                children: [
+                  CommonWidget.rowHeight(height: 8),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 24),
+                    child: buildStoreItem(controller.sponsoredShops.first,
+                        width: double.infinity),
+                  ),
+                  CommonWidget.rowHeight(height: 8),
+                  Divider(
+                    color: Color(0xFFEBEBEB),
+                    height: 7,
+                    thickness: 7,
+                  ),
+                ],
+              ),
+            CommonWidget.rowHeight(height: 8),
+            Container(
+              margin: EdgeInsets.only(top: 24, left: 24),
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  NormalText(
+                    text: 'New To Treat',
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  CommonWidget.rowHeight(height: 6),
+                  buildVendors(controller.newToTreat),
+                ],
+              ),
+            ),
+            CommonWidget.rowHeight(height: 8),
+            if (controller.allNearbyShops.length > 1)
+              Column(
+                children: [
+                  Divider(
+                    color: Color(0xFFEBEBEB),
+                    height: 7,
+                    thickness: 7,
+                  ),
+                  CommonWidget.rowHeight(height: 8),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 24),
+                    child: buildStoreItem(controller.allNearbyShops[1],
+                        width: double.infinity),
+                  ),
+                ],
+              ),
+            CommonWidget.rowHeight(height: 8),
+            if (controller.nearbyShops.isNotEmpty)
+              Column(
+                children: [
+                  Divider(
+                    color: Color(0xFFEBEBEB),
+                    height: 7,
+                    thickness: 7,
+                  ),
+                  CommonWidget.rowHeight(height: 8),
+                  Container(
+                    margin: EdgeInsets.only(left: 24),
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        NormalText(
+                          text: 'Nearby Offers',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        CommonWidget.rowHeight(height: 8),
+                        buildVendors(controller.nearbyShops),
+                      ],
+                    ),
+                  ),
+                  CommonWidget.rowHeight(height: 8),
+                  Divider(
+                    color: Color(0xFFEBEBEB),
+                    height: 7,
+                    thickness: 7,
+                  ),
+                ],
+              ),
+            CommonWidget.rowHeight(height: 14),
+            if (controller.allNearbyShops.length > 2)
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 24),
+                child: buildStoreItem(controller.allNearbyShops[2],
+                    width: double.infinity),
+              ),
+            CommonWidget.rowHeight(height: 8),
+            Column(
+              children: [
+                Divider(
+                  color: Color(0xFFEBEBEB),
+                  height: 7,
+                  thickness: 7,
+                ),
+                CommonWidget.rowHeight(height: 8),
+                Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 24, left: 24),
+                      width: double.infinity,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          NormalText(
+                            text: 'Top Rated',
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          CommonWidget.rowHeight(height: 6),
+                          buildVendors(controller.topRatedShops),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            CommonWidget.rowHeight(height: 8),
             Divider(
               color: Color(0xFFEBEBEB),
               height: 7,
               thickness: 7,
             ),
-            CommonWidget.rowHeight(height: 8),
-            Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: 24, left: 24),
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      NormalText(
-                        text: 'Top Rated',
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      CommonWidget.rowHeight(height: 6),
-                      buildVendors(controller.topRatedShops),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            ...controller.balanceNearbyShops.map(
+              (e) => Container(
+                margin: EdgeInsets.symmetric(horizontal: 24),
+                child: buildStoreItem(e, width: double.infinity),
+              ),
+            )
           ],
         ),
-        CommonWidget.rowHeight(height: 8),
-        Divider(
-          color: Color(0xFFEBEBEB),
-          height: 7,
-          thickness: 7,
-        ),
-        ...controller.balanceNearbyShops.map(
-          (e) => Container(
-            margin: EdgeInsets.symmetric(horizontal: 24),
-            child: buildStoreItem(e, width: double.infinity),
-          ),
-        )
       ],
     );
   }
@@ -246,7 +250,7 @@ class MainTab extends GetView<HomeController> {
                 decoration: BoxDecoration(
                     color: Color(0xFFF4F4F4),
                     borderRadius: BorderRadius.circular(18)),
-                child: Obx(() => DropdownButton<AddressReturns>(
+                child: Obx(() => DropdownButton(
                       focusColor: Colors.white,
                       value: controller.getDefAddr,
                       iconEnabledColor: Colors.black,
@@ -254,21 +258,19 @@ class MainTab extends GetView<HomeController> {
                       isExpanded: true,
                       iconSize: 26,
                       icon: Icon(Icons.arrow_drop_down_sharp),
-                      items: controller.getAddrs
-                          .map<DropdownMenuItem<AddressReturns>>(
-                              (AddressReturns value) {
-                        return DropdownMenuItem<AddressReturns>(
+                      items: controller.getAddress.map((value) {
+                        return DropdownMenuItem(
                           value: value,
                           child: buildDropdownItem(
-                              '(${value.addressType}) ${value.addressLine1}',
+                              '${value.addressType.isNotEmpty ? '(' + value.addressType + ')' : ''}  ${value.addressLine1}',
                               isTile: controller.defaultAddress.value ==
                                   value.addressId),
                         );
                       }).toList(),
                       hint: buildDropdownItem('Select your location',
                           isTile: true),
-                      onChanged: (AddressReturns? value) {
-                        controller.selectAddress(value!);
+                      onChanged: (value) {
+                        controller.selectAddress(value as AddressReturns);
                       },
                     ))),
           ),
@@ -297,11 +299,13 @@ class MainTab extends GetView<HomeController> {
             height: 18,
           ),
         CommonWidget.rowWidth(width: 12),
-        Container(
-          margin: EdgeInsets.only(top: 4),
-          child: NormalText(
-            text: value,
-            fontSize: 16,
+        Flexible(
+          child: Container(
+            margin: EdgeInsets.only(top: 4),
+            child: NormalText(
+              text: value,
+              fontSize: 16,
+            ),
           ),
         )
       ],

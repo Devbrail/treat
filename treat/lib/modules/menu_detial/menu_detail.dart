@@ -238,7 +238,7 @@ class _MenuPDFViewState extends State<MenuPDFView> {
             loading = false;
           });
         },
-        swipeHorizontal: true,
+        swipeHorizontal: false,
       ),
     );
   }

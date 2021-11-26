@@ -19,6 +19,7 @@ class CommonConstants {
   static const String dine = 'dine';
   static const String SIMPLE = 'SIMPLE';
   static const String ADVANCED = 'ADVANCED';
+  static const int CURRENT_ADDRESS = 1111111;
 
   static const FILTER_DATA = [
     {
@@ -67,6 +68,7 @@ class CommonConstants {
       ]
     },
   ];
+
 }
 
 enum couponLayout { SIMPLE, ADVANCED }

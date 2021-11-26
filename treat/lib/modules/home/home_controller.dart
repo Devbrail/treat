@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:geocoding/geocoding.dart' as G;
 import 'package:get/get.dart';
+import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +20,8 @@ import 'package:treat/modules/home/home.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/shared.dart';
 import 'package:treat/shared/utils/common_function.dart';
+import 'package:google_maps_flutter_platform_interface/src/types/location.dart'
+    as L;
 
 class HomeController extends GetxController {
   final ApiRepository apiRepository;
@@ -46,16 +50,16 @@ class HomeController extends GetxController {
 
     mainTab = MainTab();
     loadAddresses();
-    getUserInfo();
+    if (!Utils.isGuest) getUserInfo();
     faveTab = FaveTab();
   }
 
   LocationData? locationData;
 
   Future<void> loadStores({double? lat, double? lng}) async {
-    if (getAddrs.length < 1 && lat == null) return;
+    if (getAddress.length < 1 && lat == null) return;
 
-    if (getAddrs.length > 0) {
+    if (getAddress.length > 0) {
       lat = getDefAddr!.latitude;
       lng = getDefAddr!.longitude;
     }
@@ -176,19 +180,24 @@ class HomeController extends GetxController {
 
   AddressReturns? get getDefAddr {
     try {
-      return addresses.value!.addressReturns
-          .where((element) => element.addressId == defaultAddress.value)
-          .first;
+      if (defaultAddress.value == CommonConstants.CURRENT_ADDRESS)
+        return getAddress.first;
+      else
+        return addresses.value!.addressReturns
+            .where((element) => element.addressId == defaultAddress.value)
+            .first;
     } catch (e) {
       return null;
     }
   }
 
-  List<AddressReturns> get getAddrs {
+  List get getAddress {
+    List<AddressReturns> list = [currentAddrReturn];
     try {
-      return addresses.value!.addressReturns;
+      list.addAll(addresses.value!.addressReturns.reversed.toList());
+      return list;
     } catch (e, s) {
-      return [];
+      return list;
     }
   }
 
@@ -203,24 +212,47 @@ class HomeController extends GetxController {
     apiRepository.getconsumeraddresses().then((value) {
       value!.fold((l) {
         fetchCurrentLocation();
-        // CommonWidget.toast('Failed to fetch address');
       }, (r) {
         addresses.value = r;
         defaultAddress.value = addresses.value!.defaultAddressId;
-        loadStores();
         addresses.refresh();
+        loadStores();
       });
     });
   }
 
   var defaultAddress = 0.obs;
 
-  selectAddress(AddressReturns address) {
-    if (address.addressId != defaultAddress.value)
+  selectAddress(AddressReturns address) async {
+    if (address.addressId != defaultAddress.value &&
+        address.addressId != CommonConstants.CURRENT_ADDRESS)
       apiRepository.makeDefaultAddress(address.addressId);
 
     defaultAddress.value = address.addressId;
-    loadStores();
+    if (address.addressId == CommonConstants.CURRENT_ADDRESS) {
+      await Get.to(
+        () => PlacePicker(
+          apiKey: ApiConstants.API_KEY,
+          onPlacePicked: (PickResult result) {
+            setDefaultAddress(
+                LocationData.fromMap({
+                  'latitude': result.geometry!.location.lat,
+                  'longitude': result.geometry!.location.lng
+                }),
+                result.formattedAddress!);
+            loadStores(
+                lat: result.geometry!.location.lat,
+                lng: result.geometry!.location.lng);
+            Get.back();
+          },
+          useCurrentLocation: true,
+          initialPosition: L.LatLng(56.1304, 106.3468),
+        ),
+      );
+
+      // fetchCurrentLocation();
+    } else
+      loadStores();
     defaultAddress.refresh();
   }
 
@@ -248,7 +280,24 @@ class HomeController extends GetxController {
     }
 
     _locationData = await location.getLocation();
+    List<G.Placemark> placemarks = await G.placemarkFromCoordinates(
+      _locationData.latitude!,
+      _locationData.longitude!,
+    );
+    setDefaultAddress(_locationData,
+        '${placemarks.first.name!} ,${placemarks.last.street!},${placemarks.first.postalCode!}');
     loadStores(lat: _locationData.latitude, lng: _locationData.longitude);
+  }
+
+  setDefaultAddress(LocationData locationData, String address) {
+    if (Utils.isGuest ||
+        defaultAddress.value == CommonConstants.CURRENT_ADDRESS) {
+      currentAddrReturn.latitude = locationData.latitude;
+      currentAddrReturn.longitude = locationData.longitude;
+      currentAddrReturn.addressLine1 = address;
+      defaultAddress.value = currentAddrReturn.addressId;
+      defaultAddress.refresh();
+    }
   }
 
   updateIsFavourite(int storeID, bool isFavourite) async {
@@ -421,4 +470,15 @@ class HomeController extends GetxController {
       }
     });
   }
+
+  AddressReturns currentAddrReturn = AddressReturns(
+      addressId: CommonConstants.CURRENT_ADDRESS,
+      addressType: '',
+      latitude: 0,
+      longitude: 0,
+      addressLine1: 'Current Location',
+      apartment: '',
+      city: '',
+      province: '',
+      zipCode: '');
 }

@@ -27,6 +27,8 @@ class NormalText extends StatelessWidget {
       style: GoogleFonts.roboto(
           color: textColor, fontSize: fontSize, fontWeight: fontWeight),
       textAlign: textAlign,
+      overflow: TextOverflow.ellipsis,
+      softWrap: true,
     );
   }
 }

@@ -324,10 +324,11 @@ class _MenuDetailState extends State<MenuDetail> {
     );
   }
 
-  Container buildPersonalInfo(
+  Widget buildPersonalInfo(
       {required String description,
       required String icon,
       required String title}) {
+    if (description.isEmpty) return SizedBox();
     return Container(
       margin: EdgeInsets.only(top: 14),
       child: Row(
