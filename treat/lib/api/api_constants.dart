@@ -1,7 +1,8 @@
 class ApiConstants {
-  static const baseUrl = 'http://treatuat.consumerapi.virtuosoft.in';
-  static const storeBaseUrl = 'http://treatuat.storeapi.virtuosoft.in';
-  static const miscBaseUrl = 'http://treatuat.miscapi.virtuosoft.in';
+  static const baseUrl = 'http://treatdev.consumerapi.virtuosoft.in';
+  static const storeBaseUrl = 'http://treatdev.storeapi.virtuosoft.in';
+  static const miscBaseUrl = 'http://treatdev.miscapi.virtuosoft.in';
+  static const couponBaseUrl = 'http://treatdev.couponapi.virtuosoft.in';
   static const API_KEY = 'AIzaSyDsaPA8h1O6afo6J5ZuJFQDORVHo1fsFSU';
   static const List consumerList = [
     ApiConstants.login,
@@ -31,13 +32,16 @@ class ApiConstants {
   static const String email = '/otp/email';
   static const String verify = '/otp/verify';
   static const String resendotp = '/otp/resendotp';
-  static const String getconsumeraddresses = '/getconsumeraddresses';
+  static const String getconsumeraddresses = '/ProfileAddress/List';
   static const String makeDefaultAddress = '/makeDefaultAddress';
   static const String capture = '/additionaldetails/capture';
   static const String toggleFavourite = '/toggleFavorite';
   static const String favoritestoredetails = '/favoritestoredetails';
-  static const String getProfileDetails = '/getprofiledetails';
-  static const String editProfileDetails = '/editprofiledetails';
+  static const String getProfileDetails = '/Profile/getdetails';
+  static const String editProfileDetails = '/Profile/updatedetails';
+  static const String addRemoveCart = '/Cart/addremoveitem';
+  static const String redeemCoupon = '/Redemption/staticcoupon';
+  static const String postRating = '/StoreRating/add';
 
 //STORE PREFIX
   static const String storedetails = '/storedetails';
@@ -48,4 +52,10 @@ class ApiConstants {
 
 //MISC PREFIX
   static const String uploadAsset = '/Asset/uploadasset';
+
+
+//COUPON PREFIX
+  static const String couponSummary = '/redeemcoupon/staticcouponsummary';
+
+
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:treat/api/base_provider.dart';
 
@@ -26,6 +28,12 @@ class ApiProvider extends BaseProvider {
 
   Future<Response> searchStores(String path, Map data) {
     return post('${ApiConstants.storeBaseUrl}$path', data);
+  }
+
+  Future<Response> addRemoveCart(
+    String path,
+  ) {
+    return post('${ApiConstants.baseUrl}$path', {});
   }
 
   Future<Response> searchSuggestions(String path) {
@@ -70,5 +78,18 @@ class ApiProvider extends BaseProvider {
 
   Future<Response> uploadAsset(String path, FormData form) {
     return post('${ApiConstants.miscBaseUrl}$path', form);
+  }
+
+  Future<Response> getCouponSummary(String path) {
+    return get('${ApiConstants.couponBaseUrl}$path');
+  }
+
+  Future<Response> redeemCoupon(String path, Map data) {
+    return post('${ApiConstants.baseUrl}$path', data);
+  }
+
+  Future<Response> postRating(String path, Map data) {
+    '${ApiConstants.baseUrl}$path\n ${json.encode(data)}'.printInfo();
+    return post('${ApiConstants.baseUrl}$path', data);
   }
 }
