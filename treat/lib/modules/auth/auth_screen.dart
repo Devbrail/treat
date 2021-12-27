@@ -9,6 +9,7 @@ import 'package:treat/modules/auth/widgets/mobile_entry_widget.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/shared.dart';
+import 'package:treat/shared/utils/common_function.dart';
 import 'package:treat/shared/widgets/action_button.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
 
@@ -18,6 +19,7 @@ class AuthScreen extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
+    Utils.setStatusBarColor();
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -30,7 +32,12 @@ class AuthScreen extends GetView<AuthController> {
                 Container(
                   height: SizeConfig().screenHeight * .65,
                   width: SizeConfig().screenWidth,
-                  color: ColorConstants.lightViolet,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('$IMAGE_PATH/auth_logo.png'),
+                        fit: BoxFit.fill
+                    ),
+                  ),
                   child: Stack(
                     children: [
                       Positioned(
@@ -111,6 +118,7 @@ class AuthScreen extends GetView<AuthController> {
                               'assets/svgs/icon_apple.svg',
                               width: 38,
                               height: 38,
+                              allowDrawingOutsideViewBox: true,
                             ),
                           ),
                           InkWell(
@@ -119,6 +127,7 @@ class AuthScreen extends GetView<AuthController> {
                               'assets/svgs/icon_search.svg',
                               width: 38,
                               height: 38,
+
                             ),
                           ),
                           InkWell(

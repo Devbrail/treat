@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:treat/api/api.dart';
 import 'package:treat/models/models.dart';
 import 'package:treat/models/response/intial_token_response.dart';
+import 'package:treat/modules/account/account_controller.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/shared.dart';
 import 'package:treat/shared/utils/common_function.dart';
@@ -144,7 +145,7 @@ class AuthController extends GetxController {
     final Either<String, Map>? result = await apiRepository
         .verifyOTP(data: {'initialToken': intialToken, 'otpValue': otp});
 
-    result?.fold((l) => CommonWidget.toast(l), (r) {
+    result?.fold((l) => CommonWidget.toast(l), (r) async {
       printInfo(info: 'success');
       if (r['success']) {
         CommonWidget.toast('OTP verifed succesfully');
@@ -158,8 +159,11 @@ class AuthController extends GetxController {
         } else if (loginResponse!.respData!.missingInfo == 'EMAIL')
           Get.toNamed(Routes.AUTH + Routes.EmailSignup,
               arguments: [this, CommonConstants.fromOtp]);
-        else
+        else {
+          await Get.find<AccountController>().getUserInfo();
+
           Get.toNamed(Routes.AUTH + Routes.AuthLoading);
+        }
       } else
         CommonWidget.toast('Invalid OTP');
     });

@@ -6,37 +6,66 @@ import 'package:treat/shared/constants/colors.dart';
 
 class PinInputField extends StatelessWidget {
   Function(String otp)? completed;
+
   PinInputField({
     Key? key,
+    this.selectedColor = ColorConstants.darkGray,
+    this.activeFillColor = ColorConstants.pinInputBackround,
+    this.inactiveColor = Colors.white,
+    this.activeColor = Colors.white,
+    this.inactiveFillColor = ColorConstants.pinInputBackround,
+    this.selectedFillColor = ColorConstants.pinInputBackround,
+    this.hzMargin = 45,
+    this.radius = 8,
+    this.controller,
+    this.onTap,
+    this.hideKeyboard = false,
     this.completed,
   }) : super(key: key);
+  Color selectedColor;
+  Color activeFillColor;
+  Color inactiveColor;
+  Color activeColor;
+  Color inactiveFillColor;
+  Color selectedFillColor;
+  double hzMargin;
+  double radius;
+  bool hideKeyboard;
+  Function()? onTap;
+  TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 45),
+      margin: EdgeInsets.symmetric(horizontal: hzMargin),
       child: PinCodeTextField(
         appContext: context,
         length: 4,
-        obscureText: false,
+        controller: controller,
         animationType: AnimationType.fade,
         cursorColor: ColorConstants.lightViolet,
         inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9]"))],
         keyboardType: TextInputType.number,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        readOnly: hideKeyboard,
+        enabled: !hideKeyboard,
+        onTap: onTap,
+
         pinTheme: PinTheme(
             shape: PinCodeFieldShape.box,
-            borderRadius: BorderRadius.circular(5),
-            fieldHeight: 64,
+            borderRadius: BorderRadius.circular(radius),
+            fieldHeight: 63,
+
             fieldWidth: 46,
-            selectedColor: ColorConstants.darkGray,
-            activeFillColor: ColorConstants.pinInputBackround,
-            inactiveColor: Colors.white,
-            activeColor: Colors.white,
-            inactiveFillColor: ColorConstants.pinInputBackround,
-            selectedFillColor: ColorConstants.pinInputBackround,
+            selectedColor: selectedColor,
+            activeFillColor: activeFillColor,
+            inactiveColor: activeFillColor,
+            activeColor: selectedColor,
+            inactiveFillColor: inactiveFillColor,
+            selectedFillColor: selectedFillColor,
+            disabledColor: activeColor,
             fieldOuterPadding: EdgeInsets.all(0)),
         animationDuration: Duration(milliseconds: 300),
-        enableActiveFill: true,
         onCompleted: (v) {
           Get.printInfo(info: "Completed");
           completed!(v);

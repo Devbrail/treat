@@ -20,8 +20,6 @@ import 'package:treat/modules/home/home.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/shared.dart';
 import 'package:treat/shared/utils/common_function.dart';
-import 'package:google_maps_flutter_platform_interface/src/types/location.dart'
-    as L;
 
 class HomeController extends GetxController {
   final ApiRepository apiRepository;
@@ -59,9 +57,11 @@ class HomeController extends GetxController {
   Future<void> loadStores({double? lat, double? lng}) async {
     if (getAddress.length < 1 && lat == null) return;
 
-    if (getAddress.length > 0) {
-      lat = getDefAddr!.latitude;
-      lng = getDefAddr!.longitude;
+    if (getAddress.length > 0 && getDefAddr!.latitude != 0) {
+      '${getDefAddr!.latitude}'.printInfo();
+
+      lat = double.parse(getDefAddr!.latitude.toString());
+      lng = double.parse(getDefAddr!.longitude.toString());
     }
     setLoading(true);
     apiRepository
@@ -127,6 +127,7 @@ class HomeController extends GetxController {
   }
 
   void switchTab(index) {
+    'sdmsk'.printInfo();
     currentTabIdx.value = index;
     var tab = _getCurrentTab(index);
     currentTab.value = tab;
@@ -191,7 +192,7 @@ class HomeController extends GetxController {
     }
   }
 
-  List get getAddress {
+  List<AddressReturns> get getAddress {
     List<AddressReturns> list = [currentAddrReturn];
     try {
       list.addAll(addresses.value!.addressReturns.reversed.toList());
@@ -225,32 +226,24 @@ class HomeController extends GetxController {
 
   selectAddress(AddressReturns address) async {
     if (address.addressId != defaultAddress.value &&
-        address.addressId != CommonConstants.CURRENT_ADDRESS)
+        address.addressId != CommonConstants.CURRENT_ADDRESS) {
       apiRepository.makeDefaultAddress(address.addressId);
 
-    defaultAddress.value = address.addressId;
-    if (address.addressId == CommonConstants.CURRENT_ADDRESS) {
-      await Get.to(
-        () => PlacePicker(
-          apiKey: ApiConstants.API_KEY,
-          onPlacePicked: (PickResult result) {
-            setDefaultAddress(
-                LocationData.fromMap({
-                  'latitude': result.geometry!.location.lat,
-                  'longitude': result.geometry!.location.lng
-                }),
-                result.formattedAddress!);
-            loadStores(
-                lat: result.geometry!.location.lat,
-                lng: result.geometry!.location.lng);
-            Get.back();
-          },
-          useCurrentLocation: true,
-          initialPosition: L.LatLng(56.1304, 106.3468),
-        ),
-      );
+      defaultAddress.value = address.addressId;
+    }
 
-      // fetchCurrentLocation();
+    if (address.addressId == CommonConstants.CURRENT_ADDRESS) {
+      Get.toNamed(Routes.LOCATION_PICKER, arguments: locationData)!
+          .then((value) {
+        if (value is Map) {
+          setDefaultAddress(
+              LocationData.fromMap(
+                  {'latitude': value['lat'], 'longitude': value['lng']}),
+              value['address']);
+          loadStores(lat: value['lat'], lng: value['lng']);
+        }
+          // fetchCurrentLocation();
+      });
     } else
       loadStores();
     defaultAddress.refresh();
@@ -278,14 +271,11 @@ class HomeController extends GetxController {
         return;
       }
     }
-
     _locationData = await location.getLocation();
-    List<G.Placemark> placemarks = await G.placemarkFromCoordinates(
-      _locationData.latitude!,
-      _locationData.longitude!,
-    );
-    setDefaultAddress(_locationData,
-        '${placemarks.first.name!} ,${placemarks.last.street!},${placemarks.first.postalCode!}');
+    setDefaultAddress(
+        _locationData,
+        await Utils.getAddressFromLatLng(
+            _locationData.latitude!, _locationData.longitude!));
     loadStores(lat: _locationData.latitude, lng: _locationData.longitude);
   }
 

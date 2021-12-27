@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:treat/modules/home/home.dart';
+import 'package:treat/modules/account/account_controller.dart';
 import 'package:treat/routes/routes.dart';
 import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/shared.dart';
@@ -8,7 +8,7 @@ import 'package:treat/shared/utils/common_function.dart';
 import 'package:treat/shared/widgets/image_widget.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
 
-class Account extends GetView<HomeController> {
+class Account extends GetView<AccountController> {
   @override
   Widget build(BuildContext context) {
     if (Utils.isGuest || controller.profileDetails.value == null) {
@@ -73,7 +73,7 @@ class Account extends GetView<HomeController> {
                               color: const Color(0xFF8B8B8B),
                             )
                           : ImageWidget(
-                              image: controller.profileDetails.value!.assetId),
+                              image: controller.profileDetails.value!.assetUrl),
                     ),
                   ),
                   CommonWidget.rowHeight(height: 12),
@@ -85,7 +85,8 @@ class Account extends GetView<HomeController> {
                   ),
                   CommonWidget.rowHeight(height: 12),
                   InkWell(
-                    onTap: () => Get.toNamed(Routes.HOME + Routes.VIEW_PROFILE),
+                    onTap: () =>
+                        Get.toNamed(Routes.ACCOUNT + Routes.VIEW_PROFILE),
                     child: NormalText(
                       text: 'View Profile',
                       fontSize: 14,
@@ -98,59 +99,64 @@ class Account extends GetView<HomeController> {
                         Expanded(
                           child: Column(
                             children: [
-                              Container(
-                                height: 86,
-                                padding: EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                    color: ColorConstants.green,
-                                    gradient: LinearGradient(
-                                      colors: <Color>[
-                                        ColorConstants.violet,
-                                        ColorConstants.lightViolet,
-                                      ],
-                                      begin: Alignment.centerRight,
-                                      end: Alignment.centerLeft,
-                                      stops: [
-                                        0.0,
-                                        1.0,
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    Container(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          NormalText(
-                                            text: 'Total\nSavings',
-                                            fontSize: 19,
-                                            textColor: ColorConstants.white,
-                                            fontWeight: FontWeight.bold,
-                                            textAlign: TextAlign.start,
-                                          ),
-                                          NormalText(
-                                            text: 'CAD',
-                                            fontSize: 9,
-                                            textColor: ColorConstants.white,
-                                            fontWeight: FontWeight.w400,
-                                          )
+                              InkWell(
+                                onTap: () => Get.toNamed(
+                                    Routes.ACCOUNT + Routes.MY_SAVINGS),
+                                child: Container(
+                                  height: 86,
+                                  padding: EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                      color: ColorConstants.green,
+                                      gradient: LinearGradient(
+                                        colors: <Color>[
+                                          ColorConstants.violet,
+                                          ColorConstants.lightViolet,
+                                        ],
+                                        begin: Alignment.centerRight,
+                                        end: Alignment.centerLeft,
+                                        stops: [
+                                          0.0,
+                                          1.0,
                                         ],
                                       ),
-                                    ),
-                                    Positioned(
-                                      bottom: 0,
-                                      right: 0,
-                                      child: NormalText(
-                                        text: '\$1234',
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        textColor: ColorConstants.white,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Stack(
+                                    fit: StackFit.expand,
+                                    children: [
+                                      Container(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            NormalText(
+                                              text: 'Total\nSavings',
+                                              fontSize: 19,
+                                              textColor: ColorConstants.white,
+                                              fontWeight: FontWeight.bold,
+                                              textAlign: TextAlign.start,
+                                            ),
+                                            NormalText(
+                                              text: 'CAD',
+                                              fontSize: 9,
+                                              textColor: ColorConstants.white,
+                                              fontWeight: FontWeight.w400,
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    )
-                                  ],
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child: NormalText(
+                                          text:
+                                              '\$${controller.profileDetails.value!.totalSavings}',
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          textColor: ColorConstants.white,
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                               CommonWidget.rowHeight(height: 12),
@@ -194,7 +200,9 @@ class Account extends GetView<HomeController> {
                                       bottom: 0,
                                       right: 0,
                                       child: NormalText(
-                                        text: '12',
+                                        text: controller
+                                            .profileDetails.value!.couponsUsed
+                                            .toString(),
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
                                         textColor: ColorConstants.white,
