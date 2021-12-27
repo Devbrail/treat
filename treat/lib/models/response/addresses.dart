@@ -10,7 +10,7 @@ class Addresses {
   Addresses.fromJson(Map<String, dynamic> json) {
     defaultAddressId = json['defaultAddressId'];
 
-    addressReturns.addAll(List.from(json['addressReturns'])
+    addressReturns.addAll(List.from(json['addressDetailList'])
         .map((e) => AddressReturns.fromJson(e))
         .toList());
   }

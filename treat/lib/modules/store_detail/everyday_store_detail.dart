@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:treat/models/response/everyday_store.detail.dart';
@@ -330,15 +331,31 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
                             ],
                           ),
                           buildClipSection(),
-                          buildGrocery(storeDetails
-                              .categoryData.retail.couponMenuGroupings
-                              .where((element) => element.availableInMenu)
-                              .toList()),
-                          buildOfferSectionList(
-                              title: 'My Offers :',
-                              offerList: storeDetails.storeCoupons,
-                              chipsFilter: storeDetails
-                                  .categoryData.retail.couponMenuGroupings),
+                          GetBuilder<MenuController>(
+                              id: 'offer',
+                              builder: (MenuController c) {
+                                final EveryDayStore? storeDetail =
+                                    c.storeDetails.value;
+
+                                List<CouponMenuGroupings> list = storeDetail!
+                                    .categoryData
+                                    .retail
+                                    .couponMenuGroupings
+                                    .reversed
+                                    .where((element) => element.availableInMenu)
+                                    .toList();
+
+                                return Column(
+                                  children: [
+                                    buildGrocery(list),
+                                    buildOfferSectionList(
+                                        title: 'My Offers :',
+                                        offerList: storeDetail.storeCoupons,
+                                        chipsFilter: storeDetail.categoryData
+                                            .retail.couponMenuGroupings),
+                                  ],
+                                );
+                              }),
                           CommonWidget.rowHeight(height: 24),
                           AppBanner(),
                           CommonWidget.rowHeight(height: 32)
@@ -366,53 +383,50 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
             fontSize: 14,
           ),
           CommonWidget.rowHeight(height: 12),
-          GetBuilder<MenuController>(
-            id: 'offer',
-            builder: (_c) => SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  ...couponMenuGroupings.map(
-                    (e) => InkWell(
-                      onTap: () {
-                        controller.filterList(e.menuGroup, e.couponIds);
-                      },
-                      child: Container(
-                        width: 74,
-                        height: 74,
-                        margin: EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                            color: e.isSelected
-                                ? Color(0xFF818181)
-                                : ColorConstants.chipBackround,
-                            borderRadius: BorderRadius.circular(8)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              child: Image.network(
-                                e.assetId,
-                                fit: BoxFit.fill,
-                                width: 48,
-                                height: 48,
-                              ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                ...couponMenuGroupings.map(
+                  (e) => InkWell(
+                    onTap: () {
+                      controller.filterList(e.menuGroup, e.couponIds);
+                    },
+                    child: Container(
+                      width: 74,
+                      height: 74,
+                      margin: EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                          color: e.isSelected
+                              ? Color(0xFF818181)
+                              : ColorConstants.chipBackround,
+                          borderRadius: BorderRadius.circular(8)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            child: Image.network(
+                              e.assetId,
+                              fit: BoxFit.fill,
+                              width: 48,
+                              height: 48,
                             ),
-                            NormalText(
-                              text: e.menuGroup,
-                              fontSize: 10,
-                              textColor: e.isSelected
-                                  ? ColorConstants.white
-                                  : ColorConstants.textBlack,
-                            )
-                          ],
-                        ),
+                          ),
+                          NormalText(
+                            text: e.menuGroup,
+                            fontSize: 10,
+                            textColor: e.isSelected
+                                ? ColorConstants.white
+                                : ColorConstants.textBlack,
+                          )
+                        ],
                       ),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
-          ),
+          )
         ],
       ),
     );
@@ -457,7 +471,10 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                buildAddButton('add.png'),
+                                Container(
+                                  margin: EdgeInsets.only(left: 8),
+                                  child: buildCartButton(e.couponId),
+                                ),
                                 Spacer(),
                                 NormalText(
                                   text: e.couponName,
@@ -483,21 +500,81 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
     );
   }
 
-  Container buildAddButton(String path) {
-    return Container(
-      height: 34,
-      width: 34,
-      margin: EdgeInsets.only(top: 4),
+  double _height = 50.0;
+  bool _isExpanded = false;
+
+  Future<bool> _showList() async {
+    await Future.delayed(Duration(milliseconds: 300));
+    return true;
+  }
+
+  Widget buildCartButton(int couponID) {
+    String qty = controller.getQuantity(couponID).toString();
+    bool _hasAdded = controller.getQuantity(couponID) > 0;
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+
+      height: 30,
+      width: _hasAdded ? 99 : 32,
+      // padding: EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         color: ColorConstants.white,
         borderRadius: BorderRadius.circular(34),
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 6),
-        child: ImageIcon(
-          AssetImage('$IMAGE_PATH/$path'),
-          color: Colors.black,
-          size: 24,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          if (_hasAdded)
+            InkWell(
+              onTap: () => controller.updateCart(couponID, isAdd: false),
+              child: Container(
+                height: 16,
+                width: 16,
+                child: Image.asset(
+                  '$IMAGE_PATH/delete_cart.png',
+                  height: 22,
+                  width: 22,
+                  scale: .5,
+                ),
+              ),
+            ),
+          if (_hasAdded)
+            NormalText(
+              text: qty,
+              fontWeight: FontWeight.w500,
+            ),
+          InkWell(
+            onTap: () => controller.updateCart(couponID, isAdd: true),
+            child: ImageIcon(
+              AssetImage('$IMAGE_PATH/add.png'),
+              color: Colors.black,
+              size: 24,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildAddButton(String path, {Function()? onClick}) {
+    return InkWell(
+      onTap: onClick,
+      child: Container(
+        height: 34,
+        width: 34,
+        margin: EdgeInsets.only(top: 4),
+        decoration: BoxDecoration(
+          color: ColorConstants.white,
+          borderRadius: BorderRadius.circular(34),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: ImageIcon(
+            AssetImage('$IMAGE_PATH/$path'),
+            color: Colors.black,
+            size: 24,
+          ),
         ),
       ),
     );
@@ -636,19 +713,23 @@ class _EveryDayStoreDetailState extends State<EveryDayStoreDetail> {
                           fontWeight: FontWeight.w400,
                           textAlign: TextAlign.start),
                       if (coupon.canRedeem)
-                        Row(
-                          children: [
-                            buildAddButton('add.png'),
-                            CommonWidget.rowWidth(width: 8),
-                            NormalText(
-                              text: 'ADD COUPON',
-                              textColor: isDynamic
-                                  ? ColorConstants.white
-                                  : ColorConstants.textBlack,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ],
+                        Container(
+                          margin: EdgeInsets.only(top: 8),
+                          child: Row(
+                            children: [
+                              buildCartButton(coupon.couponId),
+                              CommonWidget.rowWidth(width: 8),
+                              if (controller.getQuantity(coupon.couponId) < 1)
+                                NormalText(
+                                  text: 'ADD COUPON',
+                                  textColor: isDynamic
+                                      ? ColorConstants.white
+                                      : ColorConstants.textBlack,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                            ],
+                          ),
                         )
                       else
                         Row(

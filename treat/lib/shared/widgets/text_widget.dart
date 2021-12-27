@@ -6,6 +6,7 @@ class NormalText extends StatelessWidget {
   final String text;
   final Color textColor;
   final double fontSize;
+  final double? letterSpacing;
   final String fontFamily;
   final TextAlign textAlign;
   final FontWeight fontWeight;
@@ -17,6 +18,7 @@ class NormalText extends StatelessWidget {
     this.fontFamily = 'Roboto',
     this.textAlign = TextAlign.center,
     this.fontWeight = FontWeight.normal,
+    this.letterSpacing,
     Key? key,
   }) : super(key: key);
 
@@ -25,7 +27,13 @@ class NormalText extends StatelessWidget {
     return Text(
       text,
       style: GoogleFonts.roboto(
-          color: textColor, fontSize: fontSize, fontWeight: fontWeight),
+        color: textColor,
+        fontSize: fontSize,
+        letterSpacing: letterSpacing,
+        fontWeight: fontWeight,
+
+      ),
+
       textAlign: textAlign,
       overflow: TextOverflow.ellipsis,
       softWrap: true,

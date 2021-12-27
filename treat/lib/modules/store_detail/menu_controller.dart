@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:get/get.dart';
 import 'package:treat/api/api.dart';
@@ -28,8 +30,7 @@ class MenuController extends GetxController {
     Either<String, EveryDayStore>? response =
         await apiRepository.loadEveryDayStoreDetail(storeID);
     response?.fold((l) {
-      printInfo(info: 'sdksmdlks $l');
-      setLoading(false);
+       setLoading(false);
     }, (r) {
       storeDetails.value = r;
       setLoading(false);
@@ -41,17 +42,17 @@ class MenuController extends GetxController {
     Either<String, StoreDetails>? response =
         await apiRepository.getStoreDetails(storeID);
     response?.fold((l) {
-      printInfo(info: 'sdksmdlks $l');
-      setLoading(false);
+       setLoading(false);
     }, (r) {
       storeDetails.value = r;
       setLoading(false);
     });
   }
 
+  EveryDayStore get store => storeDetails.value;
+
   List<StoreCoupons> get getClipperList {
     List<StoreCoupons> clipCoupons = [];
-    EveryDayStore store = storeDetails.value;
 
     try {
       CouponMenuGroupings couponMenuGroupings = store
@@ -64,9 +65,47 @@ class MenuController extends GetxController {
         });
       });
     } catch (e) {
-      e.printInfo();
+      e.printError();
     }
     return clipCoupons;
+  }
+
+  int getQuantity(int couponID) {
+    int quantity = 0;
+    store.couponsInStoreCart
+        .where((element) => element.couponId == couponID)
+        .forEach((element) {
+      quantity = element.quantity;
+    });
+
+    return quantity;
+  }
+
+  void updateCart(int couponID, {required bool isAdd}) async {
+    dynamic result = await apiRepository.addRemoveCart(
+        '?StoreId=${store.storeId}&CouponId=$couponID&Quantity=0&Operation=${isAdd ? 'ADD' : 'REMOVE'}');
+
+    if (result == 0) {
+      List<CartData> couponsInStoreCart = storeDetails.value.couponsInStoreCart
+          .where((element) => element.couponId == couponID)
+          .toList();
+      if (couponsInStoreCart.isEmpty) {
+        storeDetails.value.couponsInStoreCart
+            .add(CartData(couponId: couponID, quantity: 1));
+      } else {
+        (storeDetails.value as EveryDayStore)
+            .couponsInStoreCart
+            .forEach((element) {
+          if (element.couponId == couponID) {
+            element.quantity = isAdd ? ++element.quantity : --element.quantity;
+          }
+        });
+      }
+      storeDetails.refresh();
+    } else if (result is String) {
+      CommonWidget.toast(result);
+    } else
+      CommonWidget.toast('Failed to update cart');
   }
 
   void favouriteButtonAction(bool isFavourite, int storeID) async {
@@ -89,9 +128,18 @@ class MenuController extends GetxController {
     setLoading(false);
   }
 
-  void filterList(String name, List<int> couponIds) {
-    EveryDayStore store = storeDetails.value;
+  void selectCoupon(int couponID) {
+    StoreDetails storeDetail = this.storeDetails.value;
+    storeDetail.storeCoupons.forEach((element) {
+      element.isSelected = false;
+      if (element.couponId == couponID)
+        element.isSelected = !element.isSelected;
+    });
+    update(['ping']);
+    storeDetails.refresh();
+  }
 
+  void filterList(String name, List<int> couponIds) {
     store.categoryData.retail.couponMenuGroupings.forEach((element) {
       // element.isSelected = false;
 

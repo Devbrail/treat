@@ -1,7 +1,12 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_controller/google_maps_controller.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../shared.dart';
@@ -20,14 +25,47 @@ class Utils {
       sharedPreferences.getString(StorageConstants.loginTye) ==
       StorageConstants.guest;
 
-
   static bool isAdvanced(String couponLayout) =>
-      couponLayout==CommonConstants.ADVANCED;
+      couponLayout == CommonConstants.ADVANCED;
 
   static saveLoginType(String type) {
     sharedPreferences.setString(StorageConstants.loginTye, type);
   }
-}
 
-/// zom zom arbic cafe
-/*https://treatstorage.blob.core.windows.net/assets/000/000/000000425054c21.png?sv=2020-08-04&se=2021-10-27T17%3A20%3A06Z&sr=c&sp=r&sig=5OYjRxSwW8OUG3TP4zpPG%2B9RzjJhqDn9NzhZtqZIfJA%3D"*/
+  static Future<String> getAddressFromLatLng(double lat, double lng) async {
+    List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+    return '${placemarks.first.name!} ,${placemarks.last.street!},${placemarks.first.postalCode!}';
+  }
+
+  static Future<Location> locationFromAddresses(String address) async {
+    return (await locationFromAddress(address)).first;
+  }
+
+  static IconData addressType(String addressType) {
+    addressType.printInfo();
+    switch (addressType) {
+      case 'Home':
+        return CupertinoIcons.home;
+      case 'Office':
+        return CupertinoIcons.briefcase;
+      default:
+        return CupertinoIcons.flag;
+    }
+  }
+
+  static List<Map> getMonthsInYear() {
+    DateFormat dateFormat = DateFormat("MMM");
+    DateTime userCreatedDate = DateTime.now();
+
+    return List.generate(12, (int index) {
+      final date =
+      DateTime(userCreatedDate.year, userCreatedDate.month + index);
+      return {
+        'title': dateFormat.format(date),
+        'id': index,
+        'isSelected': userCreatedDate.month == date.month ? true : false
+      };
+    });
+  }
+
+}

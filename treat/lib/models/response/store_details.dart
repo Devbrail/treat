@@ -279,8 +279,13 @@ class Coupons {
   late final String groupName;
   late final bool canRedeem;
   late final bool canPing;
+  late bool isSelected = false;
   late final String assetID;
   late final int remainingCount;
+
+  selectCoupon(bool value) {
+    isSelected = value;
+  }
 
   Coupons.fromJson(Map<String, dynamic> json) {
     couponId = json['couponId'];

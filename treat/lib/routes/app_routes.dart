@@ -21,4 +21,8 @@ abstract class Routes {
   static const ACCOUNT = '/Account';
   static const VIEW_PROFILE = '/ViewProfile';
   static const EDIT_PROFILE = '/EditProfile';
+  static const STATIC_REDEEM = '/StaticRedeem';
+  static const LOCATION_PICKER = '/LocationPicker';
+  static const MY_SAVINGS = '$ACCOUNT/MySavings';
+
 }

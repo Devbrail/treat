@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:treat/modules/account/account_controller.dart';
 import 'package:treat/modules/home/home.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/constants/colors.dart';
@@ -8,7 +9,7 @@ import 'package:treat/shared/utils/common_widget.dart';
 import 'package:treat/shared/widgets/image_widget.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
 
-class ViewProfile extends GetView<HomeController> {
+class ViewProfile extends GetView<AccountController> {
   const ViewProfile({Key? key}) : super(key: key);
 
   @override
@@ -49,7 +50,7 @@ class ViewProfile extends GetView<HomeController> {
                     width: 100,
                     color: ColorConstants.filterDropDownSelected,
                     alignment: Alignment.center,
-                    child: controller.profileDetails.value!.assetId == null
+                    child: controller.profileDetails.value!.assetUrl == null
                         ? IconButton(
                             onPressed: () {},
                             icon: Icon(
@@ -59,7 +60,7 @@ class ViewProfile extends GetView<HomeController> {
                             ),
                           )
                         : ImageWidget(
-                            image: controller.profileDetails.value!.assetId,
+                            image: controller.profileDetails.value!.assetUrl,
                           ),
                   ),
                 ),
@@ -109,7 +110,7 @@ class ViewProfile extends GetView<HomeController> {
                 ),
                 Spacer(),
                 InkWell(
-                    onTap: () => Get.toNamed(Routes.HOME + Routes.EDIT_PROFILE),
+                    onTap: () => Get.toNamed( Routes.ACCOUNT+ Routes.EDIT_PROFILE),
                     child: NormalText(text: 'Edit Profile')),
                 Spacer(),
               ],

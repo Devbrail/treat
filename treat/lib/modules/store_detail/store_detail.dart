@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_static_maps_controller/google_static_maps_controller.dart'
     as L;
 import 'package:treat/models/response/store_details.dart';
-import 'package:treat/modules/menu_detial/menu_detail.dart';
+import 'package:treat/modules/menu_detail/menu_detail.dart';
 import 'package:treat/modules/store_detail/widgets/menu_chip.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/shared.dart';
@@ -249,7 +249,7 @@ class _MenuDetailState extends State<MenuDetail> {
             height: 70,
             width: 70,
             decoration: BoxDecoration(
-                color: const Color(0xFFEFEFEF),
+                color:ColorConstants.containerAshBackgroundColor,
                 borderRadius: BorderRadius.circular(8)),
             child: Image.network(
               image,

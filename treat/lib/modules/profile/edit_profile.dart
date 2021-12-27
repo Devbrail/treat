@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:treat/modules/home/home.dart';
+import 'package:treat/modules/account/account_controller.dart';
 import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/constants/constants.dart';
 import 'package:treat/shared/utils/common_widget.dart';
@@ -9,7 +9,7 @@ import 'package:treat/shared/widgets/auth_input_field.dart';
 import 'package:treat/shared/widgets/image_widget.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
 
-class EditProfile extends GetView<HomeController> {
+class EditProfile extends GetView<AccountController> {
   const EditProfile({Key? key}) : super(key: key);
 
   @override
@@ -66,7 +66,7 @@ class EditProfile extends GetView<HomeController> {
                                 .profileDetails.value!.assetUploadedFile)
                             : ImageWidget(
                                 image:
-                                    controller.profileDetails.value!.assetId),
+                                    controller.profileDetails.value!.assetUrl),
                   ),
                 )),
             CommonWidget.rowHeight(height: 12),

@@ -6,14 +6,18 @@ class ProfileDetails {
     required this.lastName,
     required this.emailId,
     required this.mobileNumber,
-    required this.assetId,
+    required this.assetUrl,
   });
 
   late String firstName;
   late String lastName;
   late final String emailId;
   late final String mobileNumber;
+  late final String assetUrl;
   late final String assetId;
+
+  late final int totalSavings;
+  late final int couponsUsed;
   late String assetUploaded = '';
   var assetUploadedFile;
 
@@ -30,7 +34,10 @@ class ProfileDetails {
     lastName = json['lastName'];
     emailId = json['emailId'];
     mobileNumber = json['mobileNumber'];
+    assetUrl = json['assetUrl'];
     assetId = json['assetId'];
+    totalSavings = json['totalSavings'];
+    couponsUsed = json['couponsUsed'];
   }
 
   Map<String, dynamic> toJson() {
@@ -39,7 +46,11 @@ class ProfileDetails {
     _data['lastName'] = lastName;
     _data['emailId'] = emailId;
     _data['mobileNumber'] = mobileNumber;
-    if (assetUploaded.isNotEmpty) _data['assetId'] = assetUploaded;
+    if (assetUploaded.isNotEmpty)
+      _data['assetId'] = assetUploaded;
+    else
+      _data['assetId'] = assetId;
+
     return _data;
   }
 }

@@ -52,6 +52,7 @@ class EveryDayStore {
   late final LoyaltyInfo loyaltyInfo;
   late final List<dynamic> pingedCoupons;
   late final List<StoreCoupons> storeCoupons;
+  late List<CartData> couponsInStoreCart;
   late final List<String> menuAssetId;
 
   EveryDayStore.fromJson(Map<String, dynamic> json) {
@@ -86,9 +87,15 @@ class EveryDayStore {
     }
     storeSubCategoryName = json['storeSubCategoryName'];
     location = Location.fromJson(json['location']);
-    if (json['advancedCouponLayoutDetails'] != null)
+    if (json['advancedCouponLayoutDetails'] != null) {
       categoryData = CategoryData.fromJson(json['advancedCouponLayoutDetails']);
+      couponsInStoreCart =
+          List.from(json['advancedCouponLayoutDetails']['couponsInStoreCart'])
+              .map((e) => CartData.fromJson(e))
+              .toList();
+    }
     photos = List.from(json['photos']).map((e) => Photos.fromJson(e)).toList();
+
     workingHours = List.from(json['workingHours'])
         .map((e) => WorkingHours.fromJson(e))
         .toList();
@@ -137,6 +144,21 @@ class EveryDayStore {
     _data['isFavourite'] = isFavourite;
     _data['storeCoupons'] = storeCoupons.map((e) => e.toJson()).toList();
     return _data;
+  }
+}
+
+class CartData {
+  CartData({
+    required this.couponId,
+    required this.quantity,
+  });
+
+  late final int couponId;
+  late int quantity;
+
+  CartData.fromJson(Map<String, dynamic> json) {
+    couponId = json['couponId'];
+    quantity = json['quantity'];
   }
 }
 

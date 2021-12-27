@@ -19,8 +19,7 @@ import 'search_shimmer.dart';
 class SearchScreen extends GetView<SearchController> {
   @override
   Widget build(BuildContext context) {
-    printInfo(info: 'dnsfdjkfns.dkj   ${Get.arguments}');
-    if (Get.arguments[1].toString().isNotEmpty)
+    if (Get.arguments != null && Get.arguments[1].toString().isNotEmpty)
       AppFocus.unfocus(context);
     else
       AppFocus.focus(context);
@@ -58,7 +57,6 @@ class SearchScreen extends GetView<SearchController> {
             child: TypeAheadField(
               textFieldConfiguration: TextFieldConfiguration(
                 controller: controller.searchTC,
-                // autofocus: true,
                 onSubmitted: (s) => controller.onSearched(),
                 textInputAction: TextInputAction.done,
                 cursorColor: ColorConstants.black,

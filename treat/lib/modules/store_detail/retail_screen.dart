@@ -7,7 +7,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:treat/models/response/store_details.dart';
 import 'package:treat/modules/home/home.dart';
-import 'package:treat/modules/menu_detial/menu_detail.dart';
+import 'package:treat/modules/menu_detail/menu_detail.dart';
 import 'package:treat/modules/store_detail/widgets/loyalty_bar.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/constants/colors.dart';
@@ -50,6 +50,7 @@ class _RetailMenuState extends State<RetailMenu> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -60,8 +61,11 @@ class _RetailMenuState extends State<RetailMenu> {
               );
             else {
               final StoreDetails? storeDetails = controller.storeDetails.value;
+
               if (storeDetails == null) {
-                return Center(child: Text('Parse Error'));
+                return Center(
+                  child: Text('Parse Error'),
+                );
               }
               return CustomScrollView(
                 slivers: <Widget>[
@@ -174,64 +178,67 @@ class _RetailMenuState extends State<RetailMenu> {
                                   margin: EdgeInsets.only(bottom: 24, left: 16),
                                   child: Row(
                                     children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8.0),
-                                            child: NormalText(
-                                              text: storeDetails.storeName,
-                                              textColor: ColorConstants.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 25,
-                                            ),
-                                          ),
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                child: RatingBar.builder(
-                                                  itemSize: 24,
-                                                  initialRating:
-                                                      storeDetails.rating,
-                                                  minRating: 1,
-                                                  tapOnlyMode: false,
-                                                  ignoreGestures: true,
-                                                  direction: Axis.horizontal,
-                                                  allowHalfRating: true,
-                                                  itemCount: 5,
-                                                  itemPadding:
-                                                      EdgeInsets.symmetric(
-                                                          horizontal: 4.0),
-                                                  unratedColor: ColorConstants
-                                                      .ratingBlack,
-                                                  itemBuilder: (context, _) =>
-                                                      Icon(
-                                                    Icons.star,
-                                                    size: 24,
-                                                    color: ColorConstants
-                                                        .ratingBarYellow,
-                                                  ),
-                                                  onRatingUpdate: (rating) {
-                                                    print(rating);
-                                                  },
-                                                ),
-                                              ),
-                                              NormalText(
-                                                text:
-                                                    '(${storeDetails.rating}/5)',
-                                                fontSize: 14,
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 6.0),
+                                              child: NormalText(
+                                                text: storeDetails.storeName,
                                                 textColor: ColorConstants.white,
+                                                fontWeight: FontWeight.bold,
+                                                textAlign: TextAlign.start,
+                                                fontSize: 25,
                                               ),
-                                            ],
-                                          )
-                                        ],
+                                            ),
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  child: RatingBar.builder(
+                                                    itemSize: 24,
+                                                    initialRating:
+                                                        storeDetails.rating,
+                                                    minRating: 1,
+                                                    tapOnlyMode: false,
+                                                    ignoreGestures: true,
+                                                    direction: Axis.horizontal,
+                                                    allowHalfRating: true,
+                                                    itemCount: 5,
+                                                    itemPadding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 4.0),
+                                                    unratedColor: ColorConstants
+                                                        .ratingBlack,
+                                                    itemBuilder: (context, _) =>
+                                                        Icon(
+                                                      Icons.star,
+                                                      size: 24,
+                                                      color: ColorConstants
+                                                          .ratingBarYellow,
+                                                    ),
+                                                    onRatingUpdate: (rating) {
+                                                      print(rating);
+                                                    },
+                                                  ),
+                                                ),
+                                                NormalText(
+                                                  text:
+                                                      '(${storeDetails.rating}/5)',
+                                                  fontSize: 14,
+                                                  textColor:
+                                                      ColorConstants.white,
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                      Spacer(),
                                       Container(
                                         padding: EdgeInsets.all(4),
                                         child: GetBuilder<MenuController>(
@@ -292,7 +299,13 @@ class _RetailMenuState extends State<RetailMenu> {
                                 EdgeInsets.only(left: 24, right: 24, top: 24),
                             child: Row(
                               children: [
-                                menuButton('assets/images/send.png', 'Ping'),
+                                menuButton(
+                                  'assets/images/send.png',
+                                  'Ping',
+                                  onTap: () {
+                                    showPingDialog(storeDetails);
+                                  },
+                                ),
                                 if (storeDetails.menuAssetId.isNotEmpty)
                                   menuButton(
                                     'assets/images/menu.png',
@@ -375,6 +388,7 @@ class _RetailMenuState extends State<RetailMenu> {
           physics: NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             Coupons coupon = offerList[index];
+
             return couponItem(coupon);
           },
         ),
@@ -382,92 +396,97 @@ class _RetailMenuState extends State<RetailMenu> {
     );
   }
 
-  Container couponItem(Coupons coupon) {
+  Widget couponItem(Coupons coupon) {
     bool isDynamic = coupon.couponType == 'DYNAMIC';
 
-    return Container(
-      margin: EdgeInsets.only(left: 24, right: 24, top: 12),
-      width: double.infinity,
-      height: 80,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment(0.01, 0.0),
-          colors: isDynamic
-              ? <Color>[Color(0xFFCC80FF), Color(0xff9D64C3)]
-              : coupon.canRedeem
-                  ? <Color>[Color(0xFFFCCC00), Color(0xffFDC100)]
-                  : <Color>[Color(0xFFDEDEDE), Color(0xffC9C9C9)],
+    return InkWell(
+      onTap: () {
+        if (!isDynamic)
+          Get.toNamed(Routes.STATIC_REDEEM,
+              arguments: [coupon.couponId, storeID]);
+      },
+      child: Container(
+        margin: EdgeInsets.only(left: 24, right: 24, top: 12),
+        width: double.infinity,
+        height: 80,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment(0.01, 0.0),
+            colors: isDynamic
+                ? <Color>[Color(0xFFCC80FF), Color(0xff9D64C3)]
+                : coupon.canRedeem
+                    ? <Color>[Color(0xFFFCCC00), Color(0xffFDC100)]
+                    : <Color>[Color(0xFFDEDEDE), Color(0xffC9C9C9)],
+          ),
         ),
-      ),
-      child: Stack(
-        children: [
-          Container(
-            child: ShaderMask(
-              shaderCallback: (rect) {
-                return LinearGradient(
+        child: Stack(
+          children: [
+            Container(
+              child: ShaderMask(
+                shaderCallback: (rect) => LinearGradient(
                   end: Alignment.centerLeft,
                   begin: Alignment.centerRight,
                   colors: [Colors.black, Colors.transparent],
-                ).createShader(Rect.fromLTRB(70, 0, rect.width, rect.height));
-              },
-              blendMode: BlendMode.dstIn,
-              child: Container(
-                // padding: EdgeInsets.only(left: 24),
-                child: Image.asset(
-                  'assets/images/offer_bck.png',
-                  color: Colors.white,
+                ).createShader(Rect.fromLTRB(70, 0, rect.width, rect.height)),
+                blendMode: BlendMode.dstIn,
+                child: Container(
+                  // padding: EdgeInsets.only(left: 24),
+                  child: Image.asset(
+                    'assets/images/offer_bck.png',
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
-          ),
-          Center(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  height: 52,
-                  width: 52,
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(horizontal: 14),
-                  decoration: BoxDecoration(
-                      color: ColorConstants.white,
-                      borderRadius: BorderRadius.circular(26)),
-                  child: CachedNetworkImage(
-                      imageUrl: coupon.assetID, width: 34, height: 34),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    NormalText(
-                      text: coupon.couponName,
-                      textColor: isDynamic
-                          ? ColorConstants.white
-                          : coupon.canRedeem
-                              ? ColorConstants.textColorBlack
-                              : ColorConstants.textColorGrey,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    CommonWidget.rowHeight(height: 4),
-                    NormalText(
-                      text: coupon.couponDesc,
-                      textColor: isDynamic
-                          ? ColorConstants.white
-                          : coupon.canRedeem
-                              ? ColorConstants.textColorBlack
-                              : ColorConstants.textColorGrey,
-                      fontSize: 13,
-                    ),
-                  ],
-                )
-              ],
-            ),
-          )
-        ],
+            Center(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 52,
+                    width: 52,
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                        color: ColorConstants.white,
+                        borderRadius: BorderRadius.circular(26)),
+                    child: CachedNetworkImage(
+                        imageUrl: coupon.assetID, width: 34, height: 34),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      NormalText(
+                        text: coupon.couponName,
+                        textColor: isDynamic
+                            ? ColorConstants.white
+                            : coupon.canRedeem
+                                ? ColorConstants.textColorBlack
+                                : ColorConstants.textColorGrey,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      CommonWidget.rowHeight(height: 4),
+                      NormalText(
+                        text: coupon.couponDesc,
+                        textColor: isDynamic
+                            ? ColorConstants.white
+                            : coupon.canRedeem
+                                ? ColorConstants.textColorBlack
+                                : ColorConstants.textColorGrey,
+                        fontSize: 13,
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -502,5 +521,164 @@ class _RetailMenuState extends State<RetailMenu> {
         ),
       ),
     );
+  }
+
+  void showPingDialog(StoreDetails storeDetails) {
+    List<Coupons> pingedCoupons = storeDetails.storeCoupons
+        .where((element) =>
+            element.couponType == 'STATIC' &&
+            element.canPing &&
+            element.canRedeem)
+        .toList();
+    if (pingedCoupons.length < 1) {
+      CommonWidget.toast('No Pinged coupons available');
+      return;
+    }
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return GetBuilder<MenuController>(
+              id: 'ping',
+              builder: (ctrl) {
+                pingedCoupons = ctrl.storeDetails.value.storeCoupons
+                    .where((element) =>
+                        element.couponType == 'STATIC' &&
+                        element.canPing &&
+                        element.canRedeem)
+                    .toList();
+
+                return Container(
+                  padding: EdgeInsets.only(top: 14),
+                  decoration: BoxDecoration(
+                    color: ColorConstants.white,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(20.0),
+                      topLeft: Radius.circular(20.0),
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      NormalText(
+                        text: 'Share Pings',
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      MenuChip(
+                        bGColor: ColorConstants.chipBackround,
+                        margin: EdgeInsets.only(top: 12, bottom: 24),
+                        text:
+                            ' You have ${pingedCoupons.length} offers left to ping ',
+                        textColor: ColorConstants.textBlack,
+                      ),
+                      ...pingedCoupons.map(
+                        (e) => Container(
+                          width: Get.width,
+                          margin: EdgeInsets.symmetric(vertical: 4),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 16),
+                          color: e.isSelected
+                              ? const Color(0xFFA35DDB)
+                              : ColorConstants.chipBackround,
+                          child: InkWell(
+                            onTap: () {
+                              ctrl.selectCoupon(e.couponId);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                NormalText(
+                                  text: e.couponDesc,
+                                  textAlign: TextAlign.start,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                  textColor: e.isSelected
+                                      ? ColorConstants.white
+                                      : ColorConstants.redemptionTextBlack,
+                                ),
+                                Container(
+                                  width: 20,
+                                  height: 20,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                      color: ColorConstants.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                          color: e.isSelected
+                                              ? ColorConstants.white
+                                              : const Color(0xFFBABABA))),
+                                  child: Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      color: e.isSelected
+                                          ? ColorConstants.black
+                                          : ColorConstants.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 18,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ...[
+                            {
+                              'title': 'SMS',
+                              'icon': 'sms.png',
+                            },
+                            {
+                              'title': 'Whatsapp',
+                              'icon': 'whatsapp.png',
+                            },
+                            {
+                              'title': 'Email',
+                              'icon': 'email.png',
+                            },
+                            {
+                              'title': 'Instagram',
+                              'icon': 'insta.png',
+                            },
+                            {
+                              'title': 'Share',
+                              'icon': 'share_icon.png',
+                            },
+                          ].map(
+                            (Map e) => Column(
+                              children: [
+                                Image.asset(
+                                  '$IMAGE_PATH/${e['icon']}',
+                                  width: 32,
+                                  height: 32,
+                                ),
+                                SizedBox(
+                                  height: 4,
+                                ),
+                                NormalText(
+                                  text: e['title'],
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                    ],
+                  ),
+                );
+              });
+        });
   }
 }

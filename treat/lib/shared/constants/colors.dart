@@ -28,7 +28,11 @@ class ColorConstants {
   static const Color textColorGrey = const Color(0xFFAFAFAF);
   static const Color skipButtonBoxColor = const Color(0xFFF5E8FF);
   static const Color filterDropDownSelected =const Color(0xFFE5E5E5);
-}
+
+  static const Color containerAshBackgroundColor=const Color(0xFFEFEFEF);
+  static const Color redemptionBackground =const Color(0xFFB063E3);
+  static const Color redemptionTextBlack =const Color(0xFF2B2B2B);
+ }
 
 Color hexToColor(String hex) {
   assert(RegExp(r'^#([0-9a-fA-F]{6})|([0-9a-fA-F]{8})$').hasMatch(hex),
