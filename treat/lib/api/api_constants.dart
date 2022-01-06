@@ -42,6 +42,8 @@ class ApiConstants {
   static const String addRemoveCart = '/Cart/addremoveitem';
   static const String redeemCoupon = '/Redemption/staticcoupon';
   static const String postRating = '/StoreRating/add';
+  static const String getMySavings = '/savings';
+  static const String getMySavingList = '/savingslist';
 
 //STORE PREFIX
   static const String storedetails = '/storedetails';

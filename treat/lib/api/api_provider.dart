@@ -92,4 +92,9 @@ class ApiProvider extends BaseProvider {
     '${ApiConstants.baseUrl}$path\n ${json.encode(data)}'.printInfo();
     return post('${ApiConstants.baseUrl}$path', data);
   }
+
+  Future<Response> getSavings(String path) {
+    '${ApiConstants.baseUrl}$path'.printInfo();
+    return get('${ApiConstants.baseUrl}$path');
+  }
 }

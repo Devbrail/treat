@@ -27,12 +27,17 @@ class ColorConstants {
   static const Color textColorBlack = const Color(0xFF707070);
   static const Color textColorGrey = const Color(0xFFAFAFAF);
   static const Color skipButtonBoxColor = const Color(0xFFF5E8FF);
-  static const Color filterDropDownSelected =const Color(0xFFE5E5E5);
+  static const Color filterDropDownSelected = const Color(0xFFE5E5E5);
 
-  static const Color containerAshBackgroundColor=const Color(0xFFEFEFEF);
-  static const Color redemptionBackground =const Color(0xFFB063E3);
-  static const Color redemptionTextBlack =const Color(0xFF2B2B2B);
- }
+  static const Color containerAshBackgroundColor = const Color(0xFFEFEFEF);
+  static const Color redemptionBackground = const Color(0xFFB063E3);
+  static const Color redemptionTextBlack = const Color(0xFF2B2B2B);
+
+  static const Color graphDineIn = const Color(0xFFDFBCF8);
+  static const Color graphGrocery = const Color(0xFF35B5ED);
+  static const Color graphRetail = const Color(0xFFF47D7D);
+  static const Color graphEntertainment = const Color(0xFFFFC15D);
+}
 
 Color hexToColor(String hex) {
   assert(RegExp(r'^#([0-9a-fA-F]{6})|([0-9a-fA-F]{8})$').hasMatch(hex),

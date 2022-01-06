@@ -1,4 +1,6 @@
+import 'dart:developer';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,9 @@ import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:treat/api/api.dart';
 import 'package:treat/models/response/addresses.dart';
+import 'package:treat/models/response/my_savings.dart';
 import 'package:treat/models/response/profile_response.dart';
+import 'package:treat/models/response/savings_list.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/shared.dart';
 import 'package:treat/shared/utils/common_function.dart';
@@ -19,8 +23,18 @@ class AccountController extends GetxController {
   AccountController({required this.apiRepository});
 
   var _months = Rxn<List<Map>>([]);
+  var _years = Rxn<List<Map>>([
+    {'title': '2021', 'id': 0, 'isSelected': false},
+    {'title': '2022', 'id': 1, 'isSelected': true}
+  ]);
 
   List<Map>? get months => _months.value;
+
+  List<Map>? get years => _years.value;
+
+  RxBool _isLoading = false.obs;
+
+  bool get isLoading => _isLoading.value;
 
   void onInit() async {
     super.onInit();
@@ -28,8 +42,35 @@ class AccountController extends GetxController {
     '%%%%%%%%%%%%%%%%%%%'.printInfo();
   }
 
+  var _mySavings = Rxn<MySaving>();
+
+  MySaving get mySavings => _mySavings.value!;
+  DateTime _cDate = DateTime.now();
+
+  setLoading(value) {
+    _isLoading.value = !value;
+    update(['loading']);
+  }
+
   iniMonths() {
     _months.value = Utils.getMonthsInYear();
+    getSavingsData('${_cDate.year}/${_cDate.month}');
+  }
+
+  getSavingsData(String params) {
+    setLoading(isLoading);
+    apiRepository.getMySavings(params).then((value) {
+      setLoading(isLoading);
+
+      if (value != -1) _mySavings.value = MySaving.fromJson(value);
+      _mySavings.value!.entries!.forEach((element) {
+        if (mySavings.reqMonth == element.month)
+          element.isSelected = true;
+        else
+          element.isSelected = false;
+      });
+      _mySavings.refresh();
+    });
   }
 
   LocationData? locationData;
@@ -182,17 +223,110 @@ class AccountController extends GetxController {
     });
   }
 
-  selectMonth(int selectedIdx) {
+  bool isGraphView = false;
+  bool isLifeTime = false;
+
+  updateTenureType(bool isThisYear) {
+    if (isLifeTime != isThisYear) {
+      isLifeTime = !isLifeTime;
+      if (!isThisYear)
+        getSavingsData('${_cDate.year}/${00}');
+      else
+        getSavingsData('${_cDate.year}/${_cDate.month}');
+    }
+
+    // update(['i']);
+  }
+
+  updateGraphView() {
+    isGraphView = !isGraphView;
+    update(['i']);
+  }
+
+  Map getChartData(month) {
+    print('month ${month.toString()}');
+    num h = Get.height / 1.75;
+    num tot = 0, value;
+
+    try {
+      Entries? entries;
+      if(isLifeTime)
+      entries =
+          mySavings.entries!.firstWhere((element) => element.month == month);
+      else {
+     Map yesl=   years!.firstWhere((element) => element['isSelected']);
+     print('yeslyesl');
+         entries = mySavings.entries!.firstWhere(
+                (element) =>
+             element.year == int.parse(yesl['title']));
+     print(yesl);
+
+      }
+      if (entries != null) {
+        tot = entries.amount!;
+        value = (tot / h) * 100;
+
+        return {
+          'total': tot.toString(),
+          'height': h / value.abs(),
+          'splits': [
+            ...entries.breakUps!.map((e) =>
+                {'value': e.amount, 'name': e.name, 'color': getColor(e.name!)})
+          ]
+        };
+      }
+    } catch (e, s) {
+      // print(s);
+      // print(e);
+    }
+
+    return {'total': '0', 'height': 0, 'splits': []};
+  }
+
+  num getEarnings(Map item, String name) {
+    try {
+      for (int i = 0; i < item['splits'].length; i++) {
+        print(item['splits']);
+        print(item['splits'][i].runtimeType);
+        if (item['splits'][i]['name'] == name)
+          return item['splits'][i]['value'];
+      }
+    } catch (e) {
+      print(e);
+    }
+    return 0;
+  }
+
+  getColor(String name) {
+    if (name.toLowerCase().contains('din'))
+      return ColorConstants.graphDineIn;
+    else if (name.toLowerCase().contains('ret'))
+      return ColorConstants.graphRetail;
+    else if (name.toLowerCase().contains('gro'))
+      return ColorConstants.graphGrocery;
+    else if (name.toLowerCase().contains('ente'))
+      return ColorConstants.graphEntertainment;
+  }
+
+  int currentMonth = DateTime.now().month - 1;
+
+  selectTenureYear(int id) {
+    _years.value!.forEach((e) {
+      if (e['isSelected']) e['isSelected'] = false;
+
+      if (e['id'] == id) e['isSelected'] = true;
+    });
+  }
+
+  selectTenure(int selectedIdx) {
+    currentMonth = selectedIdx;
     _months.value!.forEach((e) {
       if (e['isSelected']) e['isSelected'] = false;
 
       if (e['id'] == selectedIdx) e['isSelected'] = true;
     });
-    '$selectedIdx  ${(selectedIdx - 6).abs()}'.printInfo();
 
-    _months.value = rotate(months!, 0).cast<Map>();
-    _months.value = rotate(months!, (selectedIdx - 6).abs()).cast<Map>();
-    _months.refresh();
+    update(['i']);
   }
 
   List<Object> rotate(List<Object> list, int v) {
@@ -211,4 +345,15 @@ class AccountController extends GetxController {
       city: '',
       province: '',
       zipCode: '');
+
+  SavingList? savingList;
+
+  void getSavingsList(params) {
+    apiRepository.getMySavingList(params).then((value) {
+      if (value != -1) {
+        savingList = SavingList.fromJson(value);
+        update(['l']);
+      }
+    });
+  }
 }

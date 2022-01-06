@@ -60,10 +60,11 @@ class Utils {
     return List.generate(12, (int index) {
       final date =
       DateTime(userCreatedDate.year, userCreatedDate.month + index);
+      print('is current month $index ${ DateTime.now().month == date.month}');
       return {
         'title': dateFormat.format(date),
         'id': index,
-        'isSelected': userCreatedDate.month == date.month ? true : false
+        'isSelected': DateTime.now().month == date.month ? true : false
       };
     });
   }

@@ -41,7 +41,7 @@ class SearchResponses {
   late final String category;
   late final String subCategory;
   late final String couponLayout;
-  late final num rating;
+   var rating;
   late final int priceRange;
   late final bool promoted;
   late final dynamic distance;
@@ -55,6 +55,8 @@ class SearchResponses {
     category = json['category'];
     couponLayout = json['couponLayout'];
     subCategory = json['subCategory'];
+    print('json[');
+    print(json['rating'].runtimeType);
     rating = json['rating'];
     priceRange = json['priceRange'];
     promoted = json['promoted'];

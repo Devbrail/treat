@@ -16,7 +16,7 @@ class ProfileDetails {
   late final String assetUrl;
   late final String assetId;
 
-  late final int totalSavings;
+  late final num totalSavings;
   late final int couponsUsed;
   late String assetUploaded = '';
   var assetUploadedFile;

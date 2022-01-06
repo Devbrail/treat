@@ -196,7 +196,8 @@ class BuildResult extends StatelessWidget {
                                 children: [
                                   Container(
                                     child: Rating(
-                                      rating: searchResponses.rating.toDouble(),
+                                      rating: 0,
+                                        isTapOnly:false
                                     ),
                                   ),
                                   NormalText(

@@ -61,6 +61,8 @@ dependencies:
       url: https://github.com/Devbrail/numeric_keyboard.git
   progress_state_button: "^1.0.4"
   intl: ^0.17.0
+  infinite_carousel: ^1.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

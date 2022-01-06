@@ -207,6 +207,7 @@ class _StaticRedemptionState extends State<StaticRedemption>
               SizedBox(
                 height: 8,
               ),
+              // TODO
               NormalText(
                 text: 'Please ask Sake Halifax for their pin',
                 fontSize: 14,
