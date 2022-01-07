@@ -54,6 +54,8 @@ class AccountController extends GetxController {
 
   iniMonths() {
     _months.value = Utils.getMonthsInYear();
+    isLifeTime = true;
+    isGraphView = true;
     getSavingsData('${_cDate.year}/${_cDate.month}');
   }
 
@@ -229,10 +231,14 @@ class AccountController extends GetxController {
   updateTenureType(bool isThisYear) {
     if (isLifeTime != isThisYear) {
       isLifeTime = !isLifeTime;
-      if (!isThisYear)
+      if (!isThisYear) {
         getSavingsData('${_cDate.year}/${00}');
-      else
+        getSavingsList('${_cDate.year}/${00}');
+      } else {
         getSavingsData('${_cDate.year}/${_cDate.month}');
+        getSavingsList('${_cDate.year}/${_cDate.month}');
+
+      }
     }
 
     // update(['i']);
@@ -250,17 +256,19 @@ class AccountController extends GetxController {
 
     try {
       Entries? entries;
-      if(isLifeTime)
-      entries =
-          mySavings.entries!.firstWhere((element) => element.month == month);
+      if (isLifeTime)
+        entries =
+            mySavings.entries!.firstWhere((element) => element.month == month);
       else {
-     Map yesl=   years!.firstWhere((element) => element['isSelected']);
-     print('yeslyesl');
-         entries = mySavings.entries!.firstWhere(
-                (element) =>
-             element.year == int.parse(yesl['title']));
-     print(yesl);
-
+        Map yesl = years!.firstWhere((element) => element['isSelected']);
+        print('yeslyesl');
+        if(month.toString().length>1)
+        entries = mySavings.entries!
+            .firstWhere((element) => element.year == int.parse(month));
+        else
+        entries = mySavings.entries!
+            .firstWhere((element) => element.year == int.parse(yesl['title']));
+        print(yesl);
       }
       if (entries != null) {
         tot = entries.amount!;
@@ -276,7 +284,7 @@ class AccountController extends GetxController {
         };
       }
     } catch (e, s) {
-      // print(s);
+      print(s);
       // print(e);
     }
 
@@ -316,6 +324,8 @@ class AccountController extends GetxController {
 
       if (e['id'] == id) e['isSelected'] = true;
     });
+    update(['i']);
+
   }
 
   selectTenure(int selectedIdx) {

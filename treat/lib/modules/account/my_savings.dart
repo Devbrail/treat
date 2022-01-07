@@ -34,6 +34,7 @@ class _MySavingsState extends State<MySavings>
   late InfiniteScrollController IFController = InfiniteScrollController();
   late InfiniteScrollController IFControllerYrGph = InfiniteScrollController();
   late InfiniteScrollController IFControllerYr = InfiniteScrollController();
+  late InfiniteScrollController IFControllerSlider = InfiniteScrollController();
   int selectedIndex = 0;
 
   @override
@@ -143,207 +144,29 @@ class _MySavingsState extends State<MySavings>
                           builder: (controller) {
                             return Column(
                               children: [
-                                if (controller.isGraphView)
-
-                                    Column(
-                                      children: [
-                                        Container(
-                                          height: Get.height / 3.5,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 24, vertical: 16),
-                                          child: InfiniteCarousel.builder(
-                                              itemCount: 12,
-                                              itemExtent: 70,
-                                              center: true,
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              onIndexChanged: (index) {},
-                                              controller: IFController,
-                                              axisDirection: Axis.horizontal,
-                                              loop: true,
-                                              itemBuilder:
-                                                  (context, index, realIndex) {
-                                                Map cMonth = controller.months![
-                                                    index %
-                                                        controller
-                                                            .months!.length];
-
-                                                Map content =
-                                                    controller.getChartData(
-                                                        cMonth["id"] + 1);
-
-                                                return Container(
-                                                  margin: EdgeInsets.only(
-                                                      top: content['height'] /
-                                                          2),
-                                                  child: Column(
-                                                    children: [
-                                                      if (content['height'] > 0)
-                                                        Container(
-                                                          child: NormalText(
-                                                              text: content[
-                                                                  'total']),
-                                                        ),
-                                                      Expanded(
-                                                        child: Container(
-                                                          margin: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      12),
-                                                          color: cMonth[
-                                                                  'isSelected']
-                                                              ? ColorConstants
-                                                                  .graphDineIn
-                                                              : ColorConstants
-                                                                  .containerAshBackgroundColor,
-                                                          child: Column(
-                                                            children: [
-                                                              ...content[
-                                                                      'splits']
-                                                                  .map(
-                                                                (e) => Expanded(
-                                                                  flex: e['value']!
-                                                                      .toInt(),
-                                                                  child:
-                                                                      Container(
-                                                                    color: cMonth[
-                                                                            'isSelected']
-                                                                        ? e[
-                                                                            'color']
-                                                                        : ColorConstants
-                                                                            .containerAshBackgroundColor,
-                                                                  ),
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              }),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.symmetric(
-                                              vertical: 12),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              ...[
-                                                {
-                                                  'color': ColorConstants
-                                                      .graphDineIn,
-                                                  'text': 'Dine In',
-                                                },
-                                                {
-                                                  'color': ColorConstants
-                                                      .graphGrocery,
-                                                  'text': 'Grocery',
-                                                },
-                                                {
-                                                  'color': ColorConstants
-                                                      .graphRetail,
-                                                  'text': 'Retail',
-                                                },
-                                                {
-                                                  'color': ColorConstants
-                                                      .graphEntertainment,
-                                                  'text': 'Entertainment',
-                                                },
-                                              ].map(
-                                                (Map e) => Row(
-                                                  children: [
-                                                    Container(
-                                                      height: 14,
-                                                      width: 14,
-                                                      color: e['color'],
-                                                    ),
-                                                    SizedBox(
-                                                      width: 4,
-                                                    ),
-                                                    NormalText(
-                                                      text: e['text'],
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    )
+                                if (controller.isLifeTime)
+                                  Column(
+                                    children: [
+                                      if (controller.isGraphView)
+                                        buildYGraph(controller)
+                                      else
+                                        buildContainerView(controller,
+                                            isYearly: false),
+                                      buildSliderPicker(controller,
+                                          itemCount: 12)
+                                    ],
+                                  )
                                 else
-                                  buildContainerView(controller),
-
-                                  SizedBox(
-                                    height: 42,
-                                    child: InfiniteCarousel.builder(
-                                      itemCount: 12,
-                                      itemExtent: 42,
-                                      center: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      onIndexChanged: (index) {},
-                                      controller: IFController,
-                                      axisDirection: Axis.horizontal,
-                                      loop: true,
-                                      itemBuilder: (context, index, realIndex) {
-                                        Map e = controller.months![
-                                            index % controller.months!.length];
-                                        return InkWell(
-                                          onTap: () {
-                                            IFController.animateToItem(
-                                                realIndex);
-                                            controller.selectTenure(e['id']);
-                                          },
-                                          child: Stack(
-                                            children: [
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  color: ColorConstants
-                                                      .containerAshBackgroundColor,
-                                                ),
-                                                margin: EdgeInsets.symmetric(
-                                                    vertical: 6),
-                                              ),
-                                              Container(
-                                                width:
-                                                    e['isSelected'] ? 65 : null,
-                                                height:
-                                                    e['isSelected'] ? 50 : null,
-                                                alignment: Alignment.center,
-                                                margin: EdgeInsets.symmetric(
-                                                    vertical: e['isSelected']
-                                                        ? 0
-                                                        : 6),
-                                                decoration: e['isSelected']
-                                                    ? BoxDecoration(
-                                                        color: const Color(
-                                                            0xFF7E7E7E),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(100))
-                                                    : BoxDecoration(
-                                                        color: ColorConstants
-                                                            .containerAshBackgroundColor),
-                                                child: NormalText(
-                                                  text: e['title'],
-                                                  fontSize:
-                                                      e['isSelected'] ? 16 : 8,
-                                                  textColor: e['isSelected']
-                                                      ? ColorConstants.white
-                                                      : Color(0xFF797979),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                  Column(
+                                    children: [
+                                      if (controller.isGraphView)
+                                        buildLtGraph(controller)
+                                      else
+                                        buildContainerView(controller,
+                                            isYearly: true),
+                                      buildSliderPicker(controller,
+                                          itemCount: 2, loop: false)
+                                    ],
                                   ),
                               ],
                             );
@@ -427,15 +250,26 @@ class _MySavingsState extends State<MySavings>
                                                 children: [
                                                   Expanded(
                                                     flex: 2,
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              25),
-                                                      child: CachedNetworkImage(
-                                                        imageUrl:
-                                                            e.logoAssetUrl!,
-                                                        height: 50,
-                                                        width: 50,
+                                                    child: SizedBox(
+                                                      height: 50,
+                                                      width: 50,
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                50),
+                                                        child: Container(
+                                                          color: ColorConstants
+                                                              .yellow,
+
+                                                          child:
+                                                              CachedNetworkImage(
+                                                                height: 50,
+                                                                width: 50,
+                                                            imageUrl:
+                                                                e.logoAssetUrl!,
+                                                            fit: BoxFit.fill,
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -474,53 +308,46 @@ class _MySavingsState extends State<MySavings>
                                                       ),
                                                     ),
                                                   ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Container(
-                                                      child: Column(
-                                                        children: [
-                                                          NormalText(
-                                                            text: 'You Saved',
-                                                            fontSize: 10,
+                                                  Container(
+                                                    child: Column(
+                                                      children: [
+                                                        NormalText(
+                                                          text: 'You Saved',
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          textColor: ColorConstants
+                                                              .redemptionTextBlack,
+                                                        ),
+                                                        Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      10,
+                                                                  vertical: 3),
+                                                          margin: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical: 4),
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  ColorConstants
+                                                                      .white,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          4)),
+                                                          child: NormalText(
+                                                            text:
+                                                                '\$${e.savedAmount}',
+                                                            fontSize: 16,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             textColor:
                                                                 ColorConstants
                                                                     .redemptionTextBlack,
                                                           ),
-                                                          Container(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        10,
-                                                                    vertical:
-                                                                        3),
-                                                            margin: EdgeInsets
-                                                                .symmetric(
-                                                                    vertical:
-                                                                        4),
-                                                            decoration: BoxDecoration(
-                                                                color:
-                                                                    ColorConstants
-                                                                        .white,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            4)),
-                                                            child: NormalText(
-                                                              text:
-                                                                  '\$${e.savedAmount}',
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              textColor:
-                                                                  ColorConstants
-                                                                      .redemptionTextBlack,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                   Spacer(),
@@ -545,7 +372,283 @@ class _MySavingsState extends State<MySavings>
     );
   }
 
-  Container buildContainerView(AccountController controller) {
+  Column buildYGraph(AccountController controller) {
+    return Column(
+      children: [
+        Container(
+          height: Get.height / 3.5,
+          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: InfiniteCarousel.builder(
+              itemCount: 12,
+              itemExtent: 70,
+              center: true,
+              physics: NeverScrollableScrollPhysics(),
+              onIndexChanged: (index) {},
+              controller: IFController,
+              axisDirection: Axis.horizontal,
+              loop: true,
+              itemBuilder: (context, index, realIndex) {
+                Map cMonth =
+                    controller.months![index % controller.months!.length];
+                if (cMonth['isSelected']) IFController.animateToItem(index);
+                Map content = controller.getChartData(cMonth["id"] + 1);
+
+                return Container(
+                  margin: EdgeInsets.only(top: content['height'] / 2),
+                  child: Column(
+                    children: [
+                      if (content['height'] > 0)
+                        Container(
+                          child: NormalText(text: content['total']),
+                        ),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 12),
+                          color: cMonth['isSelected']
+                              ? ColorConstants.graphDineIn
+                              : ColorConstants.containerAshBackgroundColor,
+                          child: Column(
+                            children: [
+                              ...content['splits'].map(
+                                (e) => Expanded(
+                                  flex: e['value']!.toInt(),
+                                  child: Container(
+                                    color: cMonth['isSelected']
+                                        ? e['color']
+                                        : ColorConstants
+                                            .containerAshBackgroundColor,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ...[
+                {
+                  'color': ColorConstants.graphDineIn,
+                  'text': 'Dine In',
+                },
+                {
+                  'color': ColorConstants.graphGrocery,
+                  'text': 'Grocery',
+                },
+                {
+                  'color': ColorConstants.graphRetail,
+                  'text': 'Retail',
+                },
+                {
+                  'color': ColorConstants.graphEntertainment,
+                  'text': 'Entertainment',
+                },
+              ].map(
+                (Map e) => Row(
+                  children: [
+                    Container(
+                      height: 14,
+                      width: 14,
+                      color: e['color'],
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    NormalText(
+                      text: e['text'],
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Column buildLtGraph(AccountController controller) {
+    return Column(
+      children: [
+        Container(
+          height: Get.height / 3.5,
+          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: InfiniteCarousel.builder(
+              itemCount: 2,
+              itemExtent: 70,
+              center: true,
+              physics: NeverScrollableScrollPhysics(),
+              onIndexChanged: (index) {},
+              controller: IFController,
+              axisDirection: Axis.horizontal,
+              loop: false,
+              itemBuilder: (context, index, realIndex) {
+                Map cMonth =
+                    controller.years![index % controller.years!.length];
+
+                Map content = controller.getChartData(cMonth["title"]);
+
+                return Container(
+                  margin: EdgeInsets.only(top: content['height'] / 2),
+                  child: Column(
+                    children: [
+                      if (content['height'] > 0)
+                        Container(
+                          child: NormalText(text: content['total']),
+                        ),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 12),
+                          color: cMonth['isSelected']
+                              ? ColorConstants.graphDineIn
+                              : ColorConstants.containerAshBackgroundColor,
+                          child: Column(
+                            children: [
+                              ...content['splits'].map(
+                                (e) => Expanded(
+                                  flex: e['value']!.toInt(),
+                                  child: Container(
+                                    color: cMonth['isSelected']
+                                        ? e['color']
+                                        : ColorConstants
+                                            .containerAshBackgroundColor,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ...[
+                {
+                  'color': ColorConstants.graphDineIn,
+                  'text': 'Dine In',
+                },
+                {
+                  'color': ColorConstants.graphGrocery,
+                  'text': 'Grocery',
+                },
+                {
+                  'color': ColorConstants.graphRetail,
+                  'text': 'Retail',
+                },
+                {
+                  'color': ColorConstants.graphEntertainment,
+                  'text': 'Entertainment',
+                },
+              ].map(
+                (Map e) => Row(
+                  children: [
+                    Container(
+                      height: 14,
+                      width: 14,
+                      color: e['color'],
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    NormalText(
+                      text: e['text'],
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  SizedBox buildSliderPicker(AccountController controller,
+      {itemCount, scrollController, loop = true}) {
+    return SizedBox(
+      height: 42,
+      child: InfiniteCarousel.builder(
+        itemCount: itemCount,
+        itemExtent: 42,
+        center: true,
+        physics: NeverScrollableScrollPhysics(),
+        onIndexChanged: (index) {},
+        controller: IFControllerSlider,
+        axisDirection: Axis.horizontal,
+        loop: loop,
+        itemBuilder: (context, index, realIndex) {
+          Map e;
+          if (!loop)
+            e = controller.years![index % controller.months!.length];
+          else
+            e = controller.months![index % controller.months!.length];
+          return InkWell(
+            onTap: () {
+              if (!loop)
+                controller.selectTenureYear(e['id']);
+              else
+                controller.selectTenure(e['id']);
+              IFControllerSlider.animateToItem(index);
+              IFController.animateToItem(index);
+            },
+            child: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: ColorConstants.containerAshBackgroundColor,
+                  ),
+                  margin: EdgeInsets.symmetric(vertical: 6),
+                ),
+                Container(
+                  width: e['isSelected'] ? 65 : null,
+                  height: e['isSelected'] ? 50 : null,
+                  alignment: Alignment.center,
+                  margin:
+                      EdgeInsets.symmetric(vertical: e['isSelected'] ? 0 : 6),
+                  decoration: e['isSelected']
+                      ? BoxDecoration(
+                          color: const Color(0xFF7E7E7E),
+                          borderRadius: BorderRadius.circular(100))
+                      : BoxDecoration(
+                          color: ColorConstants.containerAshBackgroundColor),
+                  child: NormalText(
+                    text: e['title'],
+                    fontSize: e['isSelected'] ? 16 : 8,
+                    textColor: e['isSelected']
+                        ? ColorConstants.white
+                        : Color(0xFF797979),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Container buildContainerView(AccountController controller,
+      {required bool isYearly}) {
+    print('curent selcted in container $isYearly');
     Map content = controller.getChartData(controller.currentMonth + 1);
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 12),
