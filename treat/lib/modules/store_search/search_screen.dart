@@ -194,11 +194,14 @@ class BuildResult extends StatelessWidget {
                               ),
                               Row(
                                 children: [
-                                  Container(
-                                    child: Rating(
-                                      rating: 0,
-                                        isTapOnly:false
-                                    ),
+                                  Rating(
+                                    rating: searchResponses.rating,
+                                    size: 16,
+                                    isTapOnly: true,
+                                    itemPadding:
+                                        EdgeInsets.symmetric(horizontal: 2),
+                                    unratedColor: const Color(0xFFB7B7B7),
+                                    onRatingUpdate: (rating) {},
                                   ),
                                   NormalText(
                                     text: '  ${searchResponses.rating}',

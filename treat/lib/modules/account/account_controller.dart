@@ -237,7 +237,6 @@ class AccountController extends GetxController {
       } else {
         getSavingsData('${_cDate.year}/${_cDate.month}');
         getSavingsList('${_cDate.year}/${_cDate.month}');
-
       }
     }
 
@@ -256,18 +255,23 @@ class AccountController extends GetxController {
 
     try {
       Entries? entries;
-      if (isLifeTime)
+      if (isLifeTime) {
         entries =
             mySavings.entries!.firstWhere((element) => element.month == month);
-      else {
+        Map yesl = months!.firstWhere((element) => element['isSelected']);
+
+        getSavingsList('${_cDate.year}/${months![yesl['id'] + 1]['id']}');
+      } else {
         Map yesl = years!.firstWhere((element) => element['isSelected']);
-        print('yeslyesl');
-        if(month.toString().length>1)
-        entries = mySavings.entries!
-            .firstWhere((element) => element.year == int.parse(month));
+        print('yeslyesl $yesl');
+        getSavingsList('${yesl['title']}/00');
+
+        if (month.toString().length > 1)
+          entries = mySavings.entries!
+              .firstWhere((element) => element.year == int.parse(month));
         else
-        entries = mySavings.entries!
-            .firstWhere((element) => element.year == int.parse(yesl['title']));
+          entries = mySavings.entries!.firstWhere(
+              (element) => element.year == int.parse(yesl['title']));
         print(yesl);
       }
       if (entries != null) {
@@ -284,7 +288,7 @@ class AccountController extends GetxController {
         };
       }
     } catch (e, s) {
-      print(s);
+      // print(s);
       // print(e);
     }
 
@@ -325,7 +329,6 @@ class AccountController extends GetxController {
       if (e['id'] == id) e['isSelected'] = true;
     });
     update(['i']);
-
   }
 
   selectTenure(int selectedIdx) {
@@ -358,12 +361,21 @@ class AccountController extends GetxController {
 
   SavingList? savingList;
 
+  List<SavingsByStores>? get savingsByStores {
+    try {
+      return savingList!.respData!.savingsByStores??[];
+    } catch (e) {
+      return [];
+    }
+  }
+
   void getSavingsList(params) {
+    savingList = null;
     apiRepository.getMySavingList(params).then((value) {
       if (value != -1) {
         savingList = SavingList.fromJson(value);
-        update(['l']);
       }
+      update(['l']);
     });
   }
 }

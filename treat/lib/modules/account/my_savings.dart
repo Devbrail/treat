@@ -174,23 +174,22 @@ class _MySavingsState extends State<MySavings>
                       SizedBox(
                         height: 24,
                       ),
-                      NormalText(
-                        text: 'Biggest Savings',
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        textAlign: TextAlign.center,
-                        textColor: ColorConstants.redemptionTextBlack,
-                      ),
+                      if (accountController.savingsByStores!.length > 0)
+                        NormalText(
+                          text: 'Biggest Savings',
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          textAlign: TextAlign.center,
+                          textColor: ColorConstants.redemptionTextBlack,
+                        ),
                       SizedBox(
                         height: 12,
                       ),
                       GetBuilder<AccountController>(
                           id: 'l',
                           builder: (ctrl) {
-                            if (ctrl.savingList == null ||
-                                ctrl.savingList!.respData == null) Text('');
                             List<SavingsByStores>? savingsByStores =
-                                ctrl.savingList!.respData!.savingsByStores;
+                                ctrl.savingsByStores;
 
                             return Column(
                               children: [
@@ -245,36 +244,34 @@ class _MySavingsState extends State<MySavings>
                                           child: Column(
                                             children: [
                                               Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
                                                 children: [
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: SizedBox(
-                                                      height: 50,
-                                                      width: 50,
-                                                      child: ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                50),
-                                                        child: Container(
-                                                          color: ColorConstants
-                                                              .yellow,
-
-                                                          child:
-                                                              CachedNetworkImage(
-                                                                height: 50,
-                                                                width: 50,
-                                                            imageUrl:
-                                                                e.logoAssetUrl!,
-                                                            fit: BoxFit.fill,
-                                                          ),
+                                                  Container(
+                                                    height: 50,
+                                                    width: 50,
+                                                    margin:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 14),
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                      child: Container(
+                                                        height: 50,
+                                                        width: 50,
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          height: 50,
+                                                          width: 50,
+                                                          imageUrl:
+                                                              e.logoAssetUrl!,
                                                         ),
                                                       ),
                                                     ),
                                                   ),
                                                   Expanded(
-                                                    flex: 3,
+                                                    flex: 10,
                                                     child: Container(
                                                       margin:
                                                           EdgeInsets.symmetric(

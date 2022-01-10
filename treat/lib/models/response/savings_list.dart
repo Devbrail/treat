@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class SavingList {
   bool? success;
   String? message;
@@ -75,7 +77,11 @@ class SavingsByStores {
     logoAssetUrl = json['logoAssetUrl'];
     storeLocation = json['storeLocation'];
     savedAmount = json['savedAmount'];
-    redemptionDate = json['redemptionDate'];
+    if(json['redemptionDate']!=null) {
+       var format=DateTime.parse(json['redemptionDate']);
+      var outputFormat = DateFormat('MM/dd/yy');
+      redemptionDate = outputFormat.format(format);
+    }
     referenceCode = json['referenceCode'];
   }
 
