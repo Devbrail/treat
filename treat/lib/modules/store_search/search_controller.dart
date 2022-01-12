@@ -18,11 +18,13 @@ class SearchController extends GetxController {
 
   var searchTC = TextEditingController();
   var loading = false.obs;
+  var arguments;
 
   @override
   void onInit() {
     super.onInit();
     generateDropDow();
+    arguments = Get.arguments;
     if (Get.arguments[1].toString().isNotEmpty) {
       searchTC.text = Get.arguments[1];
     }
@@ -47,7 +49,7 @@ class SearchController extends GetxController {
   Map get getSearchDatum {
     String searchText = searchTC.text;
     Map<String, dynamic> body = {
-      ...Get.arguments[0] as Map,
+      ...arguments[0] as Map,
       "searchText": searchText,
       "sortOption": "NONE",
       "rating": 0,
@@ -151,17 +153,20 @@ class SearchController extends GetxController {
 
   List<Filters> get filters => _filters;
 
+  void updateFilter() {
+    update(['T']);
+  }
+
   void setCurrentTabIdx(Filters idx) {
     _currentFilterIdx = filters.indexOf(idx);
     _filters.forEach((e) {
       e.isSelected = false;
       if (idx.name == e.name) e.isSelected = true;
     });
-
     update(['T']);
   }
 
-  late final List<Filters> _filters;
+  late final List<Filters> _filters=[];
 
   updateFilters(Data e) {
     _filters[_currentFilterIdx].data.forEach((et) {
@@ -184,24 +189,31 @@ class SearchController extends GetxController {
   }
 
   void generateDropDow() {
-    _filters = List.from(CommonConstants.FILTER_DATA)
-        .map((e) => Filters.fromJson(e))
-        .toList();
+    try {
+      _filters.clear();
+      _filters.addAll(List.from(CommonConstants.FILTER_DATA)
+          .map((e) => Filters.fromJson(e))
+          .toList());
 
-    apiRepository.storeAmenities().then((value) {
-      value.fold((l) => null, (r) {
-        List<Data> amenities = [];
-        r.forEach((element) {
-          Data data = Data(
-              key: element['name'],
-              isSelected: false,
-              id: element['id'],
-              assetId: element['assetId']);
-          amenities.add(data);
+      apiRepository.storeAmenities().then((value) {
+        value.fold((l) => null, (r) {
+          List<Data> amenities = [];
+          r.forEach((element) {
+            Data data = Data(
+                key: element['name'],
+                isSelected: false,
+                id: element['id'],
+                assetId: element['assetId']);
+            amenities.add(data);
+          });
+          _filters.add(
+              Filters(name: 'Amenities', data: amenities, isSelected: false));
         });
-        _filters.add(
-            Filters(name: 'Amenities', data: amenities, isSelected: false));
       });
-    });
+      updateFilter();
+    } catch (e, s) {
+      print(e);
+      print(s);
+    }
   }
 }
