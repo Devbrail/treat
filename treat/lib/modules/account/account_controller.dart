@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:treat/api/api.dart';
+import 'package:treat/models/response/Ping.dart';
 import 'package:treat/models/response/addresses.dart';
 import 'package:treat/models/response/my_savings.dart';
 import 'package:treat/models/response/profile_response.dart';
@@ -182,6 +183,18 @@ class AccountController extends GetxController {
     }
   }
 
+  List<PingSummaries> receivedPings = [];
+
+  getPings() {
+    apiRepository.getPings('100/1', isSend: false).then((value) {
+      if (value != -1) {
+        Ping ping = Ping.fromJson(value);
+        receivedPings.addAll(ping.pingSummaries!);
+        update(['rp']);
+      }
+    });
+  }
+
   uploadImage() async {
     final ImagePicker _picker = ImagePicker();
     // Pick an image
@@ -316,7 +329,7 @@ class AccountController extends GetxController {
       return ColorConstants.graphRetail;
     else if (name.toLowerCase().contains('gro'))
       return ColorConstants.graphGrocery;
-    else if (name.toLowerCase().contains('ente'))
+    else if (name.toLowerCase().contains('eve'))
       return ColorConstants.graphEntertainment;
   }
 
@@ -363,7 +376,7 @@ class AccountController extends GetxController {
 
   List<SavingsByStores>? get savingsByStores {
     try {
-      return savingList!.respData!.savingsByStores??[];
+      return savingList!.respData!.savingsByStores ?? [];
     } catch (e) {
       return [];
     }

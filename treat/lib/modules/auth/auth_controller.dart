@@ -54,9 +54,12 @@ class AuthController extends GetxController {
   var phoneController = TextEditingController();
   Country selectedCountry = CountryPickerUtils.getCountryByPhoneCode('91');
 
+  bool hasError = false;
+
   sentOtpMobile(BuildContext context) async {
     AppFocus.unfocus(context);
-
+    hasError = false;
+    update(['eText']);
     String phone = phoneController.text;
 
     if (!phone.isNumericOnly || phone.length < 8) {
@@ -72,8 +75,9 @@ class AuthController extends GetxController {
       printInfo(info: 'success');
       if (r['success'])
         Get.toNamed(Routes.AUTH + Routes.PhoneOTP, arguments: this);
-      else
-        CommonWidget.toast('Error senting otp');
+      else {
+        // CommonWidget.toast('Error senting otp');
+      }
     });
   }
 
@@ -147,6 +151,7 @@ class AuthController extends GetxController {
 
     result?.fold((l) => CommonWidget.toast(l), (r) async {
       printInfo(info: 'success');
+      hasError = false;
       if (r['success']) {
         CommonWidget.toast('OTP verifed succesfully');
         printInfo(info: intialToken!);
@@ -165,7 +170,8 @@ class AuthController extends GetxController {
           Get.toNamed(Routes.AUTH + Routes.AuthLoading);
         }
       } else
-        CommonWidget.toast('Invalid OTP');
+        hasError = true;
+      update(['eText']);
     });
   }
 
@@ -280,7 +286,7 @@ class AuthController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-
+    hasError = false;
     // phoneController.dispose();
     //
     // firstNameController.dispose();

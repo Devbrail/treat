@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:treat/modules/account/account_controller.dart';
+import 'package:treat/modules/home/home.dart';
+import 'package:treat/modules/pings/Pings.dart';
 import 'package:treat/routes/routes.dart';
 import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/shared.dart';
@@ -21,7 +23,7 @@ class Account extends GetView<AccountController> {
               onTap: () => Get.back(),
               text: 'BACK',
               height: 26,
-              buttoncolor: ColorConstants.black,
+              buttoncolor: ColorConstants.backButton,
               textColor: ColorConstants.white,
               margin: EdgeInsets.only(top: 32, left: 24),
             ),
@@ -52,7 +54,7 @@ class Account extends GetView<AccountController> {
                         onTap: () => Get.back(),
                         text: 'BACK',
                         height: 26,
-                        buttoncolor: ColorConstants.black,
+                        buttoncolor: ColorConstants.backButton,
                         textColor: ColorConstants.white,
                         margin: EdgeInsets.only(top: 32, left: 24),
                       ),
@@ -300,17 +302,29 @@ class Account extends GetView<AccountController> {
                     },
                   ].map(
                     (Map e) => ListTile(
-                      leading: Image.asset(e['icon']!),
+                      leading: Image.asset(
+                        e['icon']!,
+                        color: ColorConstants.redemptionTextBlack,
+                      ),
                       title: NormalText(
                         text: e['title'],
                         textAlign: TextAlign.start,
                         fontSize: 18,
-                        fontWeight: FontWeight.w500,
+                        textColor: ColorConstants.redemptionTextBlack,
                       ),
                       onTap: () {
                         switch (e['id']) {
                           case 6:
                             controller.signOut();
+                            break;
+                          case 0:
+                            HomeController hc = Get.put(
+                                HomeController(apiRepository: Get.find()));
+                            Get.toNamed(Routes.LOCATION_PICKER,
+                                arguments: hc.locationData);
+                            break;
+                          case 3:
+                            Get.to(Pings());
                         }
                       },
                     ),

@@ -33,6 +33,7 @@ class ApiConstants {
   static const String verify = '/otp/verify';
   static const String resendotp = '/otp/resendotp';
   static const String getconsumeraddresses = '/ProfileAddress/List';
+  static const String addConsumerAddresses = '/ProfileAddress/add';
   static const String makeDefaultAddress = '/makeDefaultAddress';
   static const String capture = '/additionaldetails/capture';
   static const String toggleFavourite = '/toggleFavorite';
@@ -43,6 +44,8 @@ class ApiConstants {
   static const String redeemCoupon = '/Redemption/staticcoupon';
   static const String postRating = '/StoreRating/add';
   static const String getMySavings = '/savings';
+  static const String getReceivedPings = '/PingCoupon/receivedsummary';
+  static const String getSendPings = '/PingCoupon/sentsummary';
   static const String getMySavingList = '/savingslist';
 
 //STORE PREFIX

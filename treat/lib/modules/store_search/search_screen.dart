@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:treat/models/filter_modal.dart';
 import 'package:treat/models/response/search_response.dart';
 import 'package:treat/modules/store_detail/widgets/menu_chip.dart';
 import 'package:treat/modules/store_search/search.dart';
@@ -41,7 +42,7 @@ class SearchScreen extends GetView<SearchController> {
                 onTap: () => Get.back(),
                 text: 'BACK',
                 height: 26,
-                buttoncolor: ColorConstants.black,
+                buttoncolor: ColorConstants.backButton,
                 textColor: ColorConstants.white,
                 // margin: EdgeInsets.only(top: 32, left: 24),
               ),
@@ -276,30 +277,58 @@ class BuildResult extends StatelessWidget {
               topRight: const Radius.circular(30.0),
             ),
           ),
-          child: Column(
-            children: <Widget>[
-              Container(
-                height: 50,
-                alignment: Alignment.center,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: ColorConstants.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: const Radius.circular(30.0),
-                    topRight: const Radius.circular(30.0),
-                  ),
-                ),
-                child: NormalText(
-                  text: 'Sort & Filter',
-                  fontSize: 21,
-                  textColor: ColorConstants.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              GetBuilder<SearchController>(
-                  id: 'T',
-                  builder: (controller) {
-                    return Expanded(
+          child: GetBuilder<SearchController>(
+              id: 'T',
+              builder: (controller) {
+                return Column(
+                  children: <Widget>[
+                    Container(
+                      height: 50,
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: ColorConstants.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(30.0),
+                          topRight: const Radius.circular(30.0),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              controller.generateDropDow();
+                              controller.updateFilter();
+                              Get.back();
+                            },
+                            child: NormalText(
+                              text: 'Reset',
+                              fontSize: 16,
+                              textColor: ColorConstants.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          NormalText(
+                            text: 'Sort & Filter',
+                            fontSize: 21,
+                            textColor: ColorConstants.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          CommonWidget.actionbutton(
+                              text: 'Save',
+                              buttoncolor: ColorConstants.textBlack,
+                              textColor: ColorConstants.white,
+                              margin: EdgeInsets.zero,
+                              onTap: () {
+                                searchController.getResults();
+                                Get.back();
+                              })
+                        ],
+                      ),
+                    ),
+                    Expanded(
                       child: Row(
                         children: [
                           Container(
@@ -307,6 +336,7 @@ class BuildResult extends StatelessWidget {
                             width: Get.width * .4,
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ...controller.filters.map(
                                   (e) => Expanded(
@@ -340,76 +370,109 @@ class BuildResult extends StatelessWidget {
                           Expanded(
                             child: Container(
                               color: ColorConstants.filterDropDownSelected,
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                alignment: WrapAlignment.center,
-                                children: [
-                                  ...controller.filtersBody.map(
-                                    (e) => InkWell(
-                                      onTap: () => controller.updateFilters(e),
-                                      child: (controller.currentFilterIdx) == 2
-                                          ? Container(
+                              child: controller.currentFilterIdx == 4
+                                  ? GridView.builder(
+                                      itemCount: controller.filtersBody.length,
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 3),
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        Data e = controller.filtersBody[index];
+                                        return InkWell(
+                                          onTap: () =>
+                                              controller.updateFilters(e),
+                                          child: Opacity(
+                                            opacity: e.isSelected ? 1 : 0.5,
+                                            child: Container(
+                                              width: 48,
+                                              height: 48,
+                                              alignment: Alignment.center,
+                                              padding: EdgeInsets.all(8),
                                               margin: EdgeInsets.symmetric(
-                                                  horizontal: 8, vertical: 8),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                color: e.isSelected
-                                                    ? ColorConstants
-                                                        .textColorBlack
-                                                    : ColorConstants.white,
+                                                  horizontal: 4),
+                                              child: ImageWidget(
+                                                image: e.assetId,
                                               ),
-                                              child: Rating(
-                                                rating: double.parse(e.key),
-                                                size: 24,
-                                              ),
-                                            )
-                                          : controller.currentFilterIdx == 4
-                                              ? Opacity(
-                                                  opacity:
-                                                      e.isSelected ? 1 : 0.5,
-                                                  child: Container(
-                                                    width: 48,
-                                                    height: 48,
-                                                    alignment: Alignment.center,
-                                                    padding: EdgeInsets.all(8),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        if (controller.currentFilterIdx == 2)
+                                          SizedBox(height: 16),
+                                        ...controller.filtersBody.map(
+                                          (e) => InkWell(
+                                            onTap: () =>
+                                                controller.updateFilters(e),
+                                            child: (controller
+                                                        .currentFilterIdx) ==
+                                                    2
+                                                ? Container(
                                                     margin:
                                                         EdgeInsets.symmetric(
-                                                            horizontal: 4),
-                                                    child: ImageWidget(
-                                                      image: e.assetId,
+                                                            horizontal: 14,
+                                                            vertical: 8),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 8),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              16),
+                                                      color: e.isSelected
+                                                          ? ColorConstants
+                                                              .textBlack
+                                                          : ColorConstants
+                                                              .white,
+                                                    ),
+                                                    child: Rating(
+                                                      rating:
+                                                          double.parse(e.key),
+                                                      size: 24,
+                                                      onRatingUpdate: (dd) {},
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    child: MenuChip(
+                                                      text: e.key,
+                                                      bGColor: e.isSelected
+                                                          ? ColorConstants
+                                                              .textBlack
+                                                          : ColorConstants
+                                                              .white,
+                                                      textColor: e.isSelected
+                                                          ? ColorConstants.white
+                                                          : ColorConstants
+                                                              .textColorBlack,
+                                                      padding: EdgeInsets.symmetric(
+                                                          horizontal: controller
+                                                                      .currentFilterIdx ==
+                                                                  3
+                                                              ? 16
+                                                              : 8,
+                                                          vertical: 4),
                                                     ),
                                                   ),
-                                                )
-                                              : Container(
-                                                  child: MenuChip(
-                                                    text: e.key,
-                                                    bGColor: e.isSelected
-                                                        ? ColorConstants
-                                                            .textColorBlack
-                                                        : ColorConstants.white,
-                                                    textColor: e.isSelected
-                                                        ? ColorConstants.white
-                                                        : ColorConstants
-                                                            .textColorBlack,
-                                                  ),
-                                                ),
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  )
-                                ],
-                              ),
                             ),
                           ),
                         ],
                       ),
-                    );
-                  })
-            ],
-          ),
+                    )
+                  ],
+                );
+              }),
         );
       },
     );
-    searchController.getResults();
   }
 
   var tits = ['Sort By', 'Category', 'Rating', 'Price Range', 'Amenities'];

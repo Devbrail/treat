@@ -86,7 +86,7 @@ class _RetailMenuState extends State<RetailMenu> {
                             onTap: () => Get.back(),
                             text: 'BACK',
                             height: 26,
-                            buttoncolor: ColorConstants.black,
+                            buttoncolor: ColorConstants.backButton,
                             textColor: ColorConstants.white,
                           ),
                           Container(
@@ -403,7 +403,7 @@ class _RetailMenuState extends State<RetailMenu> {
       onTap: () {
         if (!isDynamic)
           Get.toNamed(Routes.STATIC_REDEEM,
-              arguments: [coupon.couponId, storeID]);
+              arguments: [coupon.couponId, storeID,controller.storeDetails.value.storeName]);
       },
       child: Container(
         margin: EdgeInsets.only(left: 24, right: 24, top: 12),

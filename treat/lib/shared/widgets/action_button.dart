@@ -18,7 +18,7 @@ class ActionButton extends StatelessWidget {
     required this.width,
     this.height = 44,
     this.borderRadius,
-    this.buttonColor = ColorConstants.black,
+    this.buttonColor = const Color(0xFF363636),
     this.buttonTextColor = ColorConstants.white,
     this.onTap,
     Key? key,
@@ -41,8 +41,7 @@ class ActionButton extends StatelessWidget {
             buttonText,
             style: GoogleFonts.roboto(
                 color: buttonTextColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 18),
+                 fontSize: 18),
           ),
         ),
       ),

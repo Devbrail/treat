@@ -1,12 +1,13 @@
 import 'dart:async';
 
-import 'package:dio/dio.dart' as D;
+  import 'package:dio/dio.dart' as D;
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_controller/google_maps_controller.dart';
 import 'package:location/location.dart';
+import 'package:treat/modules/address/location_selection.dart';
 import 'package:treat/modules/home/home.dart';
 import 'package:treat/shared/constants/common.dart';
 import 'package:treat/shared/constants/constants.dart';
@@ -21,7 +22,6 @@ class LocationPicker extends StatefulWidget {
 }
 
 class _LocationPickerState extends State<LocationPicker> {
-  final s = "Map 2";
   late GoogleMapsController controller;
   late StreamSubscription<CameraPosition> subscription;
   late CameraPosition position;
@@ -34,7 +34,6 @@ class _LocationPickerState extends State<LocationPicker> {
     LatLng latLng;
     if (locationData.longitude != -141) {
       latLng = LatLng(locationData.latitude!, locationData.longitude!);
-      'sss  $latLng'.printInfo();
     } else
       latLng = LatLng(45.593920, -75.616267);
 
@@ -169,17 +168,17 @@ class _LocationPickerState extends State<LocationPicker> {
                     },
                   ),
                 ),
-                if (hc.getAddress.length > 1)
-                  Container(
-                    margin: EdgeInsets.only(top: 16, left: 21),
-                    width: double.infinity,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          ...hc.getAddress.skip(1).map((e) => InkWell(
+                Container(
+                  margin: EdgeInsets.only(top: 16, left: 21),
+                  width: double.infinity,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        ...hc.getAddress.skip(1).map(
+                              (e) => InkWell(
                                 onTap: () {
                                   locationString = e.addressLine1;
                                   updateUIAfterLocationFetch(
@@ -187,50 +186,84 @@ class _LocationPickerState extends State<LocationPicker> {
                                       e.addressLine1);
                                 },
                                 child: Container(
-                                    width: 116,
-                                    margin: EdgeInsets.only(right: 6),
-                                    decoration: BoxDecoration(
-                                        color: ColorConstants.white,
-                                        borderRadius:
-                                            BorderRadius.circular(24)),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(3.0),
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 6, vertical: 4),
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(24),
-                                              color: const Color(0xFFE6E6E6)),
-                                          child: Icon(
-                                            Utils.addressType(e.addressType),
-                                            color: ColorConstants.black,
-                                            size: 24,
-                                          ),
+                                  width: 116,
+                                  margin: EdgeInsets.only(right: 6),
+                                  decoration: BoxDecoration(
+                                      color: ColorConstants.white,
+                                      borderRadius: BorderRadius.circular(24)),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(3.0),
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 6, vertical: 4),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(24),
+                                            color: const Color(0xFFE6E6E6)),
+                                        child: Icon(
+                                          Utils.addressType(e.addressType),
+                                          color: ColorConstants.black,
+                                          size: 24,
                                         ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            NormalText(
-                                              text: e.addressType,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            NormalText(
-                                              text: e.addressLine1,
-                                              fontSize: 8,
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    )),
-                              ))
-                        ],
-                      ),
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          NormalText(
+                                            text: e.addressType,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          NormalText(
+                                            text: e.addressLine1,
+                                            fontSize: 8,
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          decoration: BoxDecoration(
+                              color: ColorConstants.white,
+                              borderRadius: BorderRadius.circular(24)),
+                          child: InkWell(
+                            onTap: () {
+                              Get.to(LocationSelection());
+                            },
+                            child: Row(
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(right: 4),
+                                  padding: EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFE6E6E6),
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                  child: Icon(
+                                    Icons.add,
+                                    color: ColorConstants.textBlack,
+                                  ),
+                                ),
+                                NormalText(
+                                  text: 'Add Location',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                  )
+                  ),
+                )
               ],
             ),
           ),

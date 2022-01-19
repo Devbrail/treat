@@ -8,6 +8,7 @@ import 'package:treat/shared/widgets/text_widget.dart';
 
 class PhoneOtpScreen extends StatelessWidget {
   final AuthController controller = Get.arguments;
+  AuthController cntrl = Get.put(AuthController(apiRepository: Get.find()));
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class PhoneOtpScreen extends StatelessWidget {
                     onTap: () => Get.back(),
                     text: 'BACK',
                     height: 26,
-                    buttoncolor: ColorConstants.black,
+                    buttoncolor: ColorConstants.backButton,
                     textColor: ColorConstants.white),
                 CommonWidget.rowHeight(height: SizeConfig().screenHeight * .1),
                 Column(
@@ -52,7 +53,20 @@ class PhoneOtpScreen extends StatelessWidget {
                       completed: (otp) => controller.verifyOtp(context, otp),
                     ),
                     CommonWidget.rowHeight(
-                        height: SizeConfig().screenHeight * .05),
+                        height: SizeConfig().screenHeight * .025),
+                    GetBuilder<AuthController>(
+                        id: 'eText',
+                        builder: (context) {
+                          if (cntrl.hasError)
+                            return NormalText(
+                              text: 'Wrong OTP! Enter again.',
+                              fontSize: 14,
+                              textColor: Color(0xFFE85959),
+                            );
+                          return Text('');
+                        }),
+                    CommonWidget.rowHeight(
+                        height: SizeConfig().screenHeight * .025),
                     InkWell(
                       onTap: () async {
                         printInfo(info: 'sssssss');
@@ -63,7 +77,7 @@ class PhoneOtpScreen extends StatelessWidget {
                         width: SizeConfig().screenWidth * .4,
                         margin: EdgeInsets.only(bottom: 14, top: 10),
                         decoration: BoxDecoration(
-                          color: ColorConstants.black,
+                          color: const Color(0xFF363636),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Center(

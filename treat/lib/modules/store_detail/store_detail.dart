@@ -44,7 +44,7 @@ class _MenuDetailState extends State<MenuDetail> {
                     onTap: () => Get.back(),
                     text: 'BACK',
                     height: 26,
-                    buttoncolor: ColorConstants.black,
+                    buttoncolor: ColorConstants.backButton,
                     textColor: ColorConstants.white,
                     margin: EdgeInsets.only(top: 32, left: 24),
                   ),

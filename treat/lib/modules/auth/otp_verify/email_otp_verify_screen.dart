@@ -23,7 +23,7 @@ class EmailOtpScreen extends StatelessWidget {
                   onTap: () => Get.back(),
                   text: 'BACK',
                   height: 26,
-                  buttoncolor: ColorConstants.black,
+                  buttoncolor: ColorConstants.backButton,
                   textColor: ColorConstants.white,
                   margin: EdgeInsets.all(24)),
               Column(

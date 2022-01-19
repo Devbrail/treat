@@ -58,6 +58,7 @@ class RedeemController extends GetxController {
   int get couponID => Get.arguments[0];
 
   String get storeID => Get.arguments[1];
+  String get storeName => Get.arguments[2];
 
   bool get hasRated => rating > 0;
 

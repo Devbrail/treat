@@ -62,7 +62,7 @@ class _StaticRedemptionState extends State<StaticRedemption>
                   },
                   text: 'BACK',
                   height: 22,
-                  buttoncolor: ColorConstants.black,
+                  buttoncolor: ColorConstants.backButton,
                   textColor: ColorConstants.white,
                   margin: EdgeInsets.symmetric(horizontal: 30, vertical: 54),
                 ),
@@ -137,7 +137,6 @@ class _StaticRedemptionState extends State<StaticRedemption>
                                   duration: Duration(milliseconds: 300),
                                   width: Get.width,
                                   height: Get.height * .7,
-
                                   decoration: BoxDecoration(
                                       color: ColorConstants.white,
                                       borderRadius: BorderRadius.circular(24)),
@@ -207,9 +206,8 @@ class _StaticRedemptionState extends State<StaticRedemption>
               SizedBox(
                 height: 8,
               ),
-              // TODO
               NormalText(
-                text: 'Please ask Sake Halifax for their pin',
+                text: 'Please ask ${_rc.storeName} for their pin',
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 textColor: ColorConstants.redemptionTextBlack,
@@ -369,11 +367,35 @@ class _StaticRedemptionState extends State<StaticRedemption>
           SizedBox(
             height: 12,
           ),
-          NormalText(
-            text: 'Enjoyed your experience?\nLeave Sake a review!',
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            textColor: Color(0xFF2B2B2B),
+          Container(
+             margin: EdgeInsets.symmetric(horizontal: 6),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                     Flexible(
+                      child: Column(
+                        children: <Widget>[
+                          NormalText(
+                            text: 'Enjoyed your experience?',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            textColor: Color(0xFF2B2B2B),
+                          ),
+                          NormalText(
+                            text: 'Leave ${_rc.storeName} a review!',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            textColor: Color(0xFF2B2B2B),
+                            textOverflow: null,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
           SizedBox(
             height: 16,

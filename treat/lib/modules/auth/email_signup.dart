@@ -37,7 +37,7 @@ class _EmailSignupState extends State<EmailSignup> {
                   onTap: () => Get.back(),
                   text: 'BACK',
                   height: 26,
-                  buttoncolor: ColorConstants.black,
+                  buttoncolor: ColorConstants.backButton,
                   textColor: ColorConstants.white),
               Container(
                 width: double.infinity,

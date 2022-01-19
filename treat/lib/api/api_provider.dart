@@ -22,8 +22,12 @@ class ApiProvider extends BaseProvider {
     return post('${ApiConstants.baseUrl}$path', data);
   }
 
-  Future<Response> getconsumeraddresses(String path) {
+  Future<Response> getConsumerAddresses(String path) {
     return get('${ApiConstants.baseUrl}$path');
+  }
+
+  Future<Response> addConsumerAddresses(String path, Map map) {
+    return post('${ApiConstants.baseUrl}$path', map);
   }
 
   Future<Response> searchStores(String path, Map data) {
@@ -96,5 +100,10 @@ class ApiProvider extends BaseProvider {
   Future<Response> getSavings(String path) {
     '${ApiConstants.baseUrl}$path'.printInfo();
     return get('${ApiConstants.baseUrl}$path');
+  }
+
+  Future<Response> getPing(String path) {
+
+     return get('${ApiConstants.baseUrl}$path');
   }
 }

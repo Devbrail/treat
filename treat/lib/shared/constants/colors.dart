@@ -16,6 +16,7 @@ class ColorConstants {
   static const Color violet = const Color(0xFFC36BFF);
   static const Color lightViolet = const Color(0xFFD89FFF);
   static const Color black = const Color(0xFF585858);
+  static const Color backButton = const Color(0xFF363636);
   static const Color ratingBlack = const Color(0xFF3B3B3B);
   static const Color green = const Color(0xFFADEFFF);
   static const Color whiteGrey = const Color(0xFFEAEAEA);

@@ -174,192 +174,10 @@ class _MySavingsState extends State<MySavings>
                       SizedBox(
                         height: 24,
                       ),
-                      if (accountController.savingsByStores!.length > 0)
-                        NormalText(
-                          text: 'Biggest Savings',
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          textAlign: TextAlign.center,
-                          textColor: ColorConstants.redemptionTextBlack,
-                        ),
                       SizedBox(
                         height: 12,
                       ),
-                      GetBuilder<AccountController>(
-                          id: 'l',
-                          builder: (ctrl) {
-                            List<SavingsByStores>? savingsByStores =
-                                ctrl.savingsByStores;
-
-                            return Column(
-                              children: [
-                                ...savingsByStores!.map(
-                                  (e) => Container(
-                                    margin: EdgeInsets.symmetric(
-                                        horizontal: 14, vertical: 4),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          height: 16,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 14),
-                                          alignment: Alignment.center,
-                                          width: double.infinity,
-                                          decoration: BoxDecoration(
-                                            color: controller
-                                                .getColor(e.storeCategory!),
-                                            borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(7),
-                                              topLeft: Radius.circular(7),
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              NormalText(
-                                                text: e.storeCategory!,
-                                                textColor: ColorConstants.white,
-                                                textAlign: TextAlign.start,
-                                                fontSize: 9,
-                                              ),
-                                              NormalText(
-                                                text: e.referenceCode!,
-                                                textColor: ColorConstants.white,
-                                                textAlign: TextAlign.start,
-                                                fontSize: 9,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          // height: 73,
-                                          decoration: BoxDecoration(
-                                            color: ColorConstants.whiteGrey,
-                                            borderRadius: BorderRadius.only(
-                                              bottomLeft: Radius.circular(14),
-                                              bottomRight: Radius.circular(14),
-                                            ),
-                                          ),
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                    height: 50,
-                                                    width: 50,
-                                                    margin:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 14),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50),
-                                                      child: Container(
-                                                        height: 50,
-                                                        width: 50,
-                                                        child:
-                                                            CachedNetworkImage(
-                                                          height: 50,
-                                                          width: 50,
-                                                          imageUrl:
-                                                              e.logoAssetUrl!,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 10,
-                                                    child: Container(
-                                                      margin:
-                                                          EdgeInsets.symmetric(
-                                                              vertical: 14),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          NormalText(
-                                                            text: e.storeName!,
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            textColor:
-                                                                ColorConstants
-                                                                    .redemptionTextBlack,
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                          ),
-                                                          NormalText(
-                                                            text: e
-                                                                .redemptionDate!,
-                                                            fontSize: 12,
-                                                          ),
-                                                          NormalText(
-                                                              text: e
-                                                                  .storeLocation!,
-                                                              fontSize: 12),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    child: Column(
-                                                      children: [
-                                                        NormalText(
-                                                          text: 'You Saved',
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          textColor: ColorConstants
-                                                              .redemptionTextBlack,
-                                                        ),
-                                                        Container(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      10,
-                                                                  vertical: 3),
-                                                          margin: EdgeInsets
-                                                              .symmetric(
-                                                                  vertical: 4),
-                                                          decoration: BoxDecoration(
-                                                              color:
-                                                                  ColorConstants
-                                                                      .white,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          4)),
-                                                          child: NormalText(
-                                                            text:
-                                                                '\$${e.savedAmount}',
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            textColor:
-                                                                ColorConstants
-                                                                    .redemptionTextBlack,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Spacer(),
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            );
-                          }),
+                      buildSavingsList(controller),
                     ],
                   ),
                 );
@@ -367,6 +185,159 @@ class _MySavingsState extends State<MySavings>
         ),
       ),
     );
+  }
+
+  Widget buildSavingsList(AccountController controller) {
+    return GetBuilder<AccountController>(
+        id: 'l',
+        builder: (ctrl) {
+          List<SavingsByStores>? savingsByStores = ctrl.savingsByStores;
+          return Column(
+            children: [
+              if (ctrl.savingsByStores!.length > 0)
+                NormalText(
+                  text: 'Biggest Savings',
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  textAlign: TextAlign.center,
+                  textColor: ColorConstants.redemptionTextBlack,
+                ),
+              ...savingsByStores!.map(
+                (e) => Container(
+                  margin: EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 16,
+                        padding: EdgeInsets.symmetric(horizontal: 14),
+                        alignment: Alignment.center,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: controller.getColor(e.storeCategory!),
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(7),
+                            topLeft: Radius.circular(7),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            NormalText(
+                              text: e.storeCategory!,
+                              textColor: ColorConstants.white,
+                              textAlign: TextAlign.start,
+                              fontSize: 9,
+                            ),
+                            NormalText(
+                              text: e.referenceCode!,
+                              textColor: ColorConstants.white,
+                              textAlign: TextAlign.start,
+                              fontSize: 9,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        // height: 73,
+                        decoration: BoxDecoration(
+                          color: ColorConstants.whiteGrey,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(14),
+                            bottomRight: Radius.circular(14),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  height: 50,
+                                  width: 50,
+                                  margin: EdgeInsets.symmetric(horizontal: 14),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: Container(
+                                      height: 50,
+                                      width: 50,
+                                      child: CachedNetworkImage(
+                                        height: 50,
+                                        width: 50,
+                                        imageUrl: e.logoAssetUrl!,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 10,
+                                  child: Container(
+                                    margin: EdgeInsets.symmetric(vertical: 14),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        NormalText(
+                                          text: e.storeName!,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          textColor: ColorConstants
+                                              .redemptionTextBlack,
+                                          textAlign: TextAlign.start,
+                                        ),
+                                        NormalText(
+                                          text: e.redemptionDate!,
+                                          fontSize: 12,
+                                        ),
+                                        NormalText(
+                                            text: e.storeLocation!,
+                                            fontSize: 12),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      NormalText(
+                                        text: 'You Saved',
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        textColor:
+                                            ColorConstants.redemptionTextBlack,
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 3),
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 4),
+                                        decoration: BoxDecoration(
+                                            color: ColorConstants.white,
+                                            borderRadius:
+                                                BorderRadius.circular(4)),
+                                        child: NormalText(
+                                          text: '\$${e.savedAmount}',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          textColor: ColorConstants
+                                              .redemptionTextBlack,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Spacer(),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          );
+        });
   }
 
   Column buildYGraph(AccountController controller) {

@@ -10,15 +10,17 @@ class NormalText extends StatelessWidget {
   final String fontFamily;
   final TextAlign textAlign;
   final FontWeight fontWeight;
+  final TextOverflow? textOverflow;
 
   NormalText({
     required this.text,
-    this.textColor = ColorConstants.black,
+    this.textColor = ColorConstants.textBlack,
     this.fontSize = 16,
     this.fontFamily = 'Roboto',
     this.textAlign = TextAlign.center,
     this.fontWeight = FontWeight.normal,
     this.letterSpacing,
+    this.textOverflow = TextOverflow.ellipsis,
     Key? key,
   }) : super(key: key);
 
@@ -31,11 +33,9 @@ class NormalText extends StatelessWidget {
         fontSize: fontSize,
         letterSpacing: letterSpacing,
         fontWeight: fontWeight,
-
       ),
-
       textAlign: textAlign,
-      overflow: TextOverflow.ellipsis,
+      overflow: textOverflow,
       softWrap: true,
     );
   }

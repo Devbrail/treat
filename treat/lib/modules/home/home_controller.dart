@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -222,6 +223,17 @@ class HomeController extends GetxController {
     });
   }
 
+  Future<void> addAddress(Map map) async {
+    apiRepository.addConsumerAddresses(map).then((value) {
+      value!.fold((l) => null, (r) {
+        CommonWidget.toast('Successfully Added');
+        loadAddresses();
+        Future.delayed(Duration(seconds: 1))
+            .then((value) => Get.offNamedUntil(Routes.HOME, (route) => false));
+      });
+    });
+  }
+
   var defaultAddress = 0.obs;
 
   selectAddress(AddressReturns address) async {
@@ -242,7 +254,7 @@ class HomeController extends GetxController {
               value['address']);
           loadStores(lat: value['lat'], lng: value['lng']);
         }
-          // fetchCurrentLocation();
+        // fetchCurrentLocation();
       });
     } else
       loadStores();

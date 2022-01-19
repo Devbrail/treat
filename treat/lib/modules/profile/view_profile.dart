@@ -29,7 +29,7 @@ class ViewProfile extends GetView<AccountController> {
                         onTap: () => Get.back(),
                         text: 'BACK',
                         height: 26,
-                        buttoncolor: ColorConstants.black,
+                        buttoncolor: ColorConstants.backButton,
                         textColor: ColorConstants.white,
                       ),
                       // InkWell(
