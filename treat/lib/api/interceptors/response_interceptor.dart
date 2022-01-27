@@ -4,19 +4,21 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
 import 'package:get/get_utils/src/extensions/dynamic_extensions.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:treat/models/models.dart';
 import 'package:treat/modules/auth/auth_controller.dart';
+import 'package:treat/routes/routes.dart';
 import 'package:treat/shared/shared.dart';
 
 FutureOr<dynamic> responseInterceptor(
     Request request, Response response) async {
   EasyLoading.dismiss();
+  Sentry.captureMessage('response ${response.statusCode} ${request.url.path}');
   Get.printInfo(info: 'response ${response.statusCode} ${request.url.path}');
 
   handleErrorStatus(response);
 
-    Get.printInfo(
-        info: '${response.request!.url.path}\n${response.bodyString}');
+  Get.printInfo(info: '${response.request!.url.path}\n${response.bodyString}');
   return response;
 }
 
@@ -26,7 +28,6 @@ void handleErrorStatus(Response response) {
     case 200:
       if (!response.body['success'])
         error.forEach((element) {
-          'fdfkj ${element['code']} ${response.body['errorCode']}'.printInfo();
           if (element['code'] == response.body['errorCode'])
             CommonWidget.toast(element['message'] ?? '');
         });
@@ -48,9 +49,12 @@ void handleErrorStatus(Response response) {
       AuthController controller =
           Get.put(AuthController(apiRepository: Get.find()));
 
-      controller.fetchAuthToken();
+      controller.fetchingIntialToken();
 
-      CommonWidget.toast('Internal Server error');
+      Future.delayed(Duration(seconds: 1))
+          .then((value) => Get.offAndToNamed(Routes.AUTH));
+
+      // CommonWidget.toast('Your Session has expired\nPlease Login to continue');
 
       break;
     default:
