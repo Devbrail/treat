@@ -5,8 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:treat/models/response/Ping.dart';
 import 'package:treat/models/response/savings_list.dart';
 import 'package:treat/modules/account/account_controller.dart';
+import 'package:treat/routes/routes.dart';
 import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/constants/common.dart';
+import 'package:treat/shared/utils/common_function.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
 
 class Pings extends StatefulWidget {
@@ -116,10 +118,15 @@ class _PingsState extends State<Pings> with SingleTickerProviderStateMixin {
     return GetBuilder<AccountController>(
         id: 'rp',
         builder: (ctrl) {
-          List<PingSummaries> receivedPings = ctrl.receivedPings;
+          bool isReceivedTab = tabController!.index == 0;
+          List<PingSummaries> pings = ctrl.receivedPings;
+          if (isReceivedTab)
+            pings = ctrl.receivedPings;
+          else
+            pings = ctrl.sendPings;
           return Column(
             children: [
-              ...receivedPings.map(
+              ...pings.map(
                 (e) => Container(
                   margin: EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                   child: Column(
@@ -147,7 +154,7 @@ class _PingsState extends State<Pings> with SingleTickerProviderStateMixin {
                               fontSize: 9,
                             ),
                             NormalText(
-                              text: 'e.referenceCode!',
+                              text: 'code',
                               textColor: ColorConstants.white,
                               textAlign: TextAlign.start,
                               fontSize: 9,
@@ -164,76 +171,119 @@ class _PingsState extends State<Pings> with SingleTickerProviderStateMixin {
                             bottomRight: Radius.circular(14),
                           ),
                         ),
-                        child: Column(
+                        child: Stack(
+                          clipBehavior: Clip.none,
                           children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                            Column(
                               children: [
-                                Container(
-                                  height: 50,
-                                  width: 50,
-                                  margin: EdgeInsets.symmetric(horizontal: 14),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(50),
-                                    child: Container(
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
                                       height: 50,
                                       width: 50,
-                                      child: CachedNetworkImage(
-                                        height: 50,
-                                        width: 50,
-                                        imageUrl:
-                                            e.couponDetails!.couponAssetId!,
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 14),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(50),
+                                        child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          child: CachedNetworkImage(
+                                            height: 50,
+                                            width: 50,
+                                            imageUrl:
+                                                e.couponDetails!.couponAssetId!,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 10,
+                                    Expanded(
+                                      flex: 10,
+                                      child: Container(
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 14),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            NormalText(
+                                              text: e.storeDetails!.storeName!,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              textColor: ColorConstants
+                                                  .redemptionTextBlack,
+                                              textAlign: TextAlign.start,
+                                            ),
+                                            NormalText(
+                                              text: e.couponDetails!
+                                                  .couponDescription!,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            NormalText(
+                                                text:
+                                                    '${isReceivedTab ? 'Sent by' : 'Pinged to'} : ${e.pingedBy!}',
+                                                fontSize: 12),
+                                            NormalText(
+                                                text:
+                                                    'Expires by : ${e.couponDetails!.expiryDate!}',
+                                                fontSize: 12),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                            if (e.couponDetails!.canRedeem!)
+                              Positioned(
+                                right: 8,
+                                bottom: -12,
+                                child: InkWell(
+                                  onTap: () {
+                                    if (!Utils.isAdvanced(
+                                        e.storeDetails!.couponLayout!))
+                                      Get.toNamed(Routes.RetailMenu, arguments: [
+                                        CommonConstants.dine,
+                                        e.storeDetails!.storeId
+                                      ]);
+                                    else
+                                      Get.toNamed(Routes.EVERYDAY, arguments: [
+                                        CommonConstants.dine,
+                                        e.storeDetails!.storeId.toString()
+                                      ]);
+                                  },
                                   child: Container(
-                                    margin: EdgeInsets.symmetric(vertical: 14),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        NormalText(
-                                          text: e.storeDetails!.storeName!,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          textColor: ColorConstants
-                                              .redemptionTextBlack,
-                                          textAlign: TextAlign.start,
-                                        ),
-                                        NormalText(
-                                          text: e.couponDetails!
-                                              .couponDescription!,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        NormalText(
-                                            text: 'Sent by : ${e.pingedBy!}',
-                                            fontSize: 12),
-                                        NormalText(
-                                            text: 'Expires by : ',
-                                            fontSize: 12),
-                                      ],
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 6),
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xFF50C890),
+                                        borderRadius:
+                                            BorderRadius.circular(14)),
+                                    child: NormalText(
+                                      text: 'Redeem Now',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      textColor: ColorConstants.white,
                                     ),
                                   ),
                                 ),
-                              ],
-                            )
+                              ),
                           ],
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.only(top: 4,bottom: 6, left: 8),
+                        padding:
+                            const EdgeInsets.only(top: 4, bottom: 6, left: 8),
                         child: RichText(
                           text: TextSpan(
                             text: 'Status : ',
                             style: GoogleFonts.roboto(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: ColorConstants.redemptionTextBlack
-                            ),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: ColorConstants.redemptionTextBlack),
                             children: <TextSpan>[
                               TextSpan(
                                 text: '${e.couponDetails!.status!}',
