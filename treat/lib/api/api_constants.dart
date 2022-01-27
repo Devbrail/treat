@@ -1,8 +1,8 @@
 class ApiConstants {
-  static const baseUrl = 'http://treatdev.consumerapi.virtuosoft.in';
-  static const storeBaseUrl = 'http://treatdev.storeapi.virtuosoft.in';
-  static const miscBaseUrl = 'http://treatdev.miscapi.virtuosoft.in';
-  static const couponBaseUrl = 'http://treatdev.couponapi.virtuosoft.in';
+  static const baseUrl = 'http://treatuat.consumerapi.virtuosoft.in';
+  static const storeBaseUrl = 'http://treatuat.storeapi.virtuosoft.in';
+  static const miscBaseUrl = 'http://treatuat.miscapi.virtuosoft.in';
+  static const couponBaseUrl = 'http://treatuat.couponapi.virtuosoft.in';
   static const API_KEY = 'AIzaSyDsaPA8h1O6afo6J5ZuJFQDORVHo1fsFSU';
   static const List consumerList = [
     ApiConstants.login,
@@ -58,9 +58,6 @@ class ApiConstants {
 //MISC PREFIX
   static const String uploadAsset = '/Asset/uploadasset';
 
-
 //COUPON PREFIX
   static const String couponSummary = '/redeemcoupon/staticcouponsummary';
-
-
 }
