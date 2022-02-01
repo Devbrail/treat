@@ -4,14 +4,7 @@ class ApiConstants {
   static const miscBaseUrl = 'http://treatuat.miscapi.virtuosoft.in';
   static const couponBaseUrl = 'http://treatuat.couponapi.virtuosoft.in';
   static const API_KEY = 'AIzaSyDsaPA8h1O6afo6J5ZuJFQDORVHo1fsFSU';
-  static const List consumerList = [
-    ApiConstants.login,
-    ApiConstants.phone,
-    ApiConstants.email,
-    ApiConstants.verify,
-    ApiConstants.resendotp,
-    ApiConstants.capture
-  ];
+
 
   static const List headerLess = [
     ApiConstants.phone,
@@ -19,7 +12,8 @@ class ApiConstants {
     ApiConstants.verify,
     ApiConstants.resendotp,
     ApiConstants.skiplogin,
-    ApiConstants.initialtoken
+    ApiConstants.initialtoken,
+    ApiConstants.socialLogin
   ];
 
   static const List storeList = [ApiConstants.storedetails];
@@ -47,6 +41,7 @@ class ApiConstants {
   static const String getReceivedPings = '/PingCoupon/receivedsummary';
   static const String getSendPings = '/PingCoupon/sentsummary';
   static const String getMySavingList = '/savingslist';
+  static const String socialLogin = '/social/login';
 
 //STORE PREFIX
   static const String storedetails = '/storedetails';

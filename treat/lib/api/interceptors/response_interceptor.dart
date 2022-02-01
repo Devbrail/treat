@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
@@ -13,7 +15,9 @@ import 'package:treat/shared/shared.dart';
 FutureOr<dynamic> responseInterceptor(
     Request request, Response response) async {
   EasyLoading.dismiss();
-  Sentry.captureMessage('response ${response.statusCode} ${request.url.path}');
+  if (!kDebugMode)
+    Sentry.captureMessage(
+        'response ${response.statusCode} ${request.url.path}');
   Get.printInfo(info: 'response ${response.statusCode} ${request.url.path}');
 
   handleErrorStatus(response);
@@ -26,11 +30,15 @@ void handleErrorStatus(Response response) {
   Get.printInfo(info: response.statusCode.toString() + " Status code");
   switch (response.statusCode) {
     case 200:
-      if (!response.body['success'])
+      if (!response.body['success']) {
+        String message = response.body['message'];
         error.forEach((element) {
           if (element['code'] == response.body['errorCode'])
-            CommonWidget.toast(element['message'] ?? '');
+            message = element['message'] ?? '';
         });
+        CommonWidget.toast(message);
+      }
+
       break;
     case 400:
       final message = response.body is String

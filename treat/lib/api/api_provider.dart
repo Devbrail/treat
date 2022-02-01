@@ -18,8 +18,8 @@ class ApiProvider extends BaseProvider {
     return post('${ApiConstants.baseUrl}$path', data);
   }
 
-  Future<Response> resentOTP(String path, Map data) {
-    return post('${ApiConstants.baseUrl}$path', data);
+  Future<Response> resentOTP(String path) {
+     return post('${ApiConstants.baseUrl}$path', {});
   }
 
   Future<Response> getConsumerAddresses(String path) {
@@ -89,6 +89,7 @@ class ApiProvider extends BaseProvider {
   }
 
   Future<Response> redeemCoupon(String path, Map data) {
+    jsonEncode(data).printInfo();
     return post('${ApiConstants.baseUrl}$path', data);
   }
 
@@ -103,7 +104,12 @@ class ApiProvider extends BaseProvider {
   }
 
   Future<Response> getPing(String path) {
+    return get('${ApiConstants.baseUrl}$path');
+  }
 
-     return get('${ApiConstants.baseUrl}$path');
+  Future<Response> socialLogin(String path, Map data) {
+    '${ApiConstants.baseUrl}$path'.printInfo();
+    jsonEncode(data).printInfo();
+    return post('${ApiConstants.baseUrl}$path', data);
   }
 }
