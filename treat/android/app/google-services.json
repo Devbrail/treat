@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "905474674768",
+    "project_id": "treat-dev-74b28",
+    "storage_bucket": "treat-dev-74b28.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:905474674768:android:44b93142911ffa556e4155",
+        "android_client_info": {
+          "package_name": "com.app.treat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "905474674768-vri1n0h3bigaucteofpqaa7husb5potn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCS-4SMAtqPg1W_7O2KNoLx_aTN2yljfM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "905474674768-vri1n0h3bigaucteofpqaa7husb5potn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

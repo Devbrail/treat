@@ -9,10 +9,10 @@ import 'package:treat/api/api.dart';
 import 'package:treat/shared/constants/storage.dart';
 
 FutureOr<Request> authInterceptor(Request request) async {
-  'auth interceptor  ${request.url.host}${request.url.path}'.printInfo();
-  if (!kDebugMode)
+  'auth interceptor ${request.method}  ${request.url.host}${request.url.path}'.printInfo();
+  if (kReleaseMode)
   Sentry.captureMessage(
-      'auth interceptor  ${request.url.host}${request.url.path}');
+      'auth interceptor  ${request.method}  ${request.url.host}${request.url.path}');
   if (ApiConstants.headerLess
       .where((element) => element.contains(request.url.path))
       .isEmpty) {
