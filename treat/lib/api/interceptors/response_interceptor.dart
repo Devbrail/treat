@@ -15,14 +15,14 @@ import 'package:treat/shared/shared.dart';
 FutureOr<dynamic> responseInterceptor(
     Request request, Response response) async {
   EasyLoading.dismiss();
-  if (!kDebugMode)
-    Sentry.captureMessage(
-        'response ${response.statusCode} ${request.url.path}');
-  Get.printInfo(info: 'response ${response.statusCode} ${request.url.path}');
 
   handleErrorStatus(response);
 
   Get.printInfo(info: '${response.request!.url.path}\n${response.bodyString}');
+
+  Get.printInfo(info: 'response ${response.statusCode} ${request.url.path}');
+  if (kReleaseMode)
+    Sentry.captureMessage('response   ${request.url.path} ${response.body}');
   return response;
 }
 
@@ -31,6 +31,11 @@ void handleErrorStatus(Response response) {
   switch (response.statusCode) {
     case 200:
       if (!response.body['success']) {
+        if (response.body['errorCode'] == 'TREATAPP_INITIAL_TOKEN_NOTVALID') {
+          AuthController controller =
+              Get.put(AuthController(apiRepository: Get.find()));
+          controller.fetchingIntialToken(forceUpdate: true);
+        }
         String message = response.body['message'];
         error.forEach((element) {
           if (element['code'] == response.body['errorCode'])
