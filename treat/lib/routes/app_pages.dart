@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:treat/modules/account/account_binding.dart';
 import 'package:treat/modules/account/my_savings.dart';
+import 'package:treat/modules/address/addresses.dart';
 import 'package:treat/modules/auth/auth.dart';
 import 'package:treat/modules/auth/auth_loading/auth_loading.dart';
 import 'package:treat/modules/auth/email_signup.dart';
@@ -85,6 +86,7 @@ class AppPages {
       children: [
         GetPage(name: Routes.MY_SAVINGS, page: () => MySavings()),
         GetPage(name: Routes.VIEW_PROFILE, page: () => ViewProfile()),
+        GetPage(name: Routes.ADDRESSES, page: () => AddressesView()),
         GetPage(name: Routes.EDIT_PROFILE, page: () => EditProfile()),
       ],
     ),

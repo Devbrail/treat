@@ -15,12 +15,12 @@ import 'package:treat/shared/shared.dart';
 FutureOr<dynamic> responseInterceptor(
     Request request, Response response) async {
   EasyLoading.dismiss();
+  Get.printInfo(info: 'response ${response.statusCode} ${request.url.path}');
 
   handleErrorStatus(response);
 
   Get.printInfo(info: '${response.request!.url.path}\n${response.bodyString}');
 
-  Get.printInfo(info: 'response ${response.statusCode} ${request.url.path}');
   if (kReleaseMode)
     Sentry.captureMessage('response   ${request.url.path} ${response.body}');
   return response;
@@ -62,7 +62,7 @@ void handleErrorStatus(Response response) {
       AuthController controller =
           Get.put(AuthController(apiRepository: Get.find()));
 
-      controller.fetchingIntialToken();
+      controller.fetchingIntialToken(forceUpdate: true);
 
       Future.delayed(Duration(seconds: 1))
           .then((value) => Get.offAndToNamed(Routes.AUTH));

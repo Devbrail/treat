@@ -58,15 +58,12 @@ class Utils {
     DateTime userCreatedDate = DateTime.now();
 
     return List.generate(12, (int index) {
-      final date =
-      DateTime(userCreatedDate.year, userCreatedDate.month + index);
-      print('is current month $index ${ DateTime.now().month == date.month}');
+      final date = DateTime(userCreatedDate.year, index + 1);
       return {
         'title': dateFormat.format(date),
-        'id': index,
+        'id': date.month,
         'isSelected': DateTime.now().month == date.month ? true : false
       };
     });
   }
-
 }
