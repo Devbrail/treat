@@ -267,6 +267,7 @@ class _RetailMenuState extends State<RetailMenu> {
                             text: storeDetails.address1,
                             bGColor: ColorConstants.chipBackround,
                             textColor: ColorConstants.textBlack,
+                            textOverflow: null,
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 24, top: 8),
@@ -402,8 +403,17 @@ class _RetailMenuState extends State<RetailMenu> {
     return InkWell(
       onTap: () {
         if (!isDynamic)
-          Get.toNamed(Routes.STATIC_REDEEM,
-              arguments: [coupon.couponId, storeID,controller.storeDetails.value.storeName]);
+          Get.toNamed(Routes.STATIC_REDEEM, arguments: [
+            coupon.couponId,
+            storeID,
+            controller.storeDetails.value.storeName
+          ]);
+        else
+          Get.toNamed(Routes.DYNAMIC_REDEEM,arguments: [
+            coupon.couponId,
+            storeID,
+            controller.storeDetails.value.storeName
+          ]);
       },
       child: Container(
         margin: EdgeInsets.only(left: 24, right: 24, top: 12),
@@ -531,7 +541,8 @@ class _RetailMenuState extends State<RetailMenu> {
             element.canRedeem)
         .toList();
     if (pingedCoupons.length < 1) {
-      CommonWidget.toast('No Pinged coupons available');
+      CommonWidget.toast(
+          'No coupons available for pinging at the moment,\nPlease try another outlet');
       return;
     }
     showModalBottomSheet(

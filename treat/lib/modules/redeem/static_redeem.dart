@@ -69,8 +69,16 @@ class _StaticRedemptionState extends State<StaticRedemption>
                 Obx(() {
                   if (_rc.loading)
                     return Center(child: CircularProgressIndicator());
+                  if (_rc.couponDesc == null)
+                    return Container(
+                      height: Get.height * .5,
+                      child: Center(
+                        child: Text('Cant redeem now'),
+                      ),
+                    );
                   else {
-                    List<dynamic> icons = _rc.couponDesc['couponDescIcons'];
+                    List<dynamic> icons =
+                        _rc.couponDesc['couponDescIcons'] ?? [];
                     Map header = _rc.couponDesc['staticCouponProperties'];
                     return Container(
                       margin: EdgeInsets.only(top: 64),
@@ -78,18 +86,21 @@ class _StaticRedemptionState extends State<StaticRedemption>
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Image.network(
-                            header['assetId'],
+                            header['assetId'] ?? '',
                             height: 76,
                             width: 76,
                           ),
                           SizedBox(
                             height: 12,
                           ),
-                          NormalText(
-                            text: header['title'],
-                            fontSize: 20,
-                            textColor: ColorConstants.white,
-                            fontWeight: FontWeight.bold,
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 4),
+                            child: NormalText(
+                              text: header['title'] ?? '',
+                              fontSize: 20,
+                              textColor: ColorConstants.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           SizedBox(
                             height: 12,
@@ -164,7 +175,7 @@ class _StaticRedemptionState extends State<StaticRedemption>
         Container(
           padding: const EdgeInsets.symmetric(vertical: 18),
           child: NormalText(
-            text: header['couponDescription'],
+            text: header['couponDescription'] ?? '',
             fontSize: 18,
             fontWeight: FontWeight.bold,
             textColor: ColorConstants.redemptionTextBlack,
@@ -177,7 +188,7 @@ class _StaticRedemptionState extends State<StaticRedemption>
               (e) => Column(
                 children: [
                   Image.network(
-                    e['assetId'],
+                    e['assetId'] ?? '',
                     width: 35,
                     height: 42,
                   ),
@@ -185,7 +196,7 @@ class _StaticRedemptionState extends State<StaticRedemption>
                     height: 4,
                   ),
                   NormalText(
-                    text: e['couponDescIconCategory'],
+                    text: e['couponDescIconCategory'] ?? '',
                     fontWeight: FontWeight.bold,
                     fontSize: 10,
                   )
@@ -206,11 +217,15 @@ class _StaticRedemptionState extends State<StaticRedemption>
               SizedBox(
                 height: 8,
               ),
-              NormalText(
-                text: 'Please ask ${_rc.storeName} for their pin',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                textColor: ColorConstants.redemptionTextBlack,
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: NormalText(
+                  text: 'Please ask ${_rc.storeName} for their pin',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  textColor: ColorConstants.redemptionTextBlack,
+                  textOverflow: null,
+                ),
               ),
               SizedBox(
                 height: 8,
@@ -287,7 +302,7 @@ class _StaticRedemptionState extends State<StaticRedemption>
           Container(
             padding: const EdgeInsets.symmetric(vertical: 18),
             child: NormalText(
-              text: header['couponDescription'],
+              text: header['couponDescription'] ?? '',
               fontSize: 18,
               fontWeight: FontWeight.bold,
               textColor: ColorConstants.redemptionTextBlack,
@@ -300,7 +315,7 @@ class _StaticRedemptionState extends State<StaticRedemption>
                 (e) => Column(
                   children: [
                     Image.network(
-                      e['assetId'],
+                      e['assetId'] ?? '',
                       width: 35,
                       height: 42,
                     ),
@@ -308,7 +323,7 @@ class _StaticRedemptionState extends State<StaticRedemption>
                       height: 4,
                     ),
                     NormalText(
-                      text: e['couponDescIconCategory'],
+                      text: e['couponDescIconCategory'] ?? '',
                       fontWeight: FontWeight.bold,
                       fontSize: 10,
                     )
@@ -368,12 +383,12 @@ class _StaticRedemptionState extends State<StaticRedemption>
             height: 12,
           ),
           Container(
-             margin: EdgeInsets.symmetric(horizontal: 6),
+            margin: EdgeInsets.symmetric(horizontal: 6),
             child: Column(
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                     Flexible(
+                    Flexible(
                       child: Column(
                         children: <Widget>[
                           NormalText(

@@ -124,6 +124,39 @@ class _PingsState extends State<Pings> with SingleTickerProviderStateMixin {
             pings = ctrl.receivedPings;
           else
             pings = ctrl.sendPings;
+
+          if (pings.isEmpty)
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: Get.height * .2,
+                ),
+                Image.asset(
+                  isReceivedTab
+                      ? 'assets/images/empty-box.png'
+                      : "assets/images/Page-1.png",
+                ),
+                SizedBox(
+                  height: Get.height * .05,
+                ),
+                NormalText(
+                  text: isReceivedTab ? 'Nothing here yet!' : 'Share the fun!',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                NormalText(
+                  text: isReceivedTab
+                      ? 'Don’t worry, its still not too late to receive\nyour first ping.'
+                      : 'Now’s a good time to send your first ping.',
+                  fontSize: 15,
+                  textColor: Color(0xFF4B4B4B),
+                )
+              ],
+            );
           return Column(
             children: [
               ...pings.map(
@@ -245,10 +278,11 @@ class _PingsState extends State<Pings> with SingleTickerProviderStateMixin {
                                   onTap: () {
                                     if (!Utils.isAdvanced(
                                         e.storeDetails!.couponLayout!))
-                                      Get.toNamed(Routes.RetailMenu, arguments: [
-                                        CommonConstants.dine,
-                                        e.storeDetails!.storeId
-                                      ]);
+                                      Get.toNamed(Routes.RetailMenu,
+                                          arguments: [
+                                            CommonConstants.dine,
+                                            e.storeDetails!.storeId
+                                          ]);
                                     else
                                       Get.toNamed(Routes.EVERYDAY, arguments: [
                                         CommonConstants.dine,

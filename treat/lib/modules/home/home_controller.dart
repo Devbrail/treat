@@ -58,8 +58,9 @@ class HomeController extends GetxController {
   Future<void> loadStores({double? lat, double? lng}) async {
     if (getAddress.length < 1 && lat == null) return;
 
-    if (getAddress.length > 0 && getDefAddr!.latitude != 0) {
-      '${getDefAddr!.latitude}'.printInfo();
+    if (getAddress.length > 0 &&
+        getDefAddr != null &&
+        getDefAddr!.latitude != 0) {
 
       lat = double.parse(getDefAddr!.latitude.toString());
       lng = double.parse(getDefAddr!.longitude.toString());
@@ -379,8 +380,10 @@ class HomeController extends GetxController {
           .stores;
 
       return stores;
-    } catch (e) {
+    } catch (e, s) {
+      'sdksd'.printInfo();
       e.printError();
+      print(s);
       return [];
     }
   }
@@ -420,6 +423,8 @@ class HomeController extends GetxController {
   TextEditingController lastNameTC = TextEditingController();
 
   getUserInfo() async {
+    profileDetails.value=null;
+    profileDetails.refresh();
     var value = await apiRepository.getProfileDetails();
     if (value != -1) {
       profileDetails.value = value;
@@ -479,7 +484,7 @@ class HomeController extends GetxController {
       latitude: 0,
       longitude: 0,
       addressLine1: 'Current Location',
-      apartment: '',
+      apartment: 0,
       city: '',
       province: '',
       zipCode: '');

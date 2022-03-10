@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="app_name">Treat</string>
+    <string name="facebook_app_id">5156442784367356</string>
+    <string name="fb_login_protocol_scheme">fb5156442784367356</string>
+    <string name="facebook_client_token">08e2cc538fe9b54c2a1e669597811208</string>
+</resources>

@@ -4,6 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:google_static_maps_controller/google_static_maps_controller.dart'
     as L;
+import 'package:map_launcher/map_launcher.dart';
 import 'package:treat/models/response/store_details.dart';
 import 'package:treat/modules/menu_detail/menu_detail.dart';
 import 'package:treat/modules/store_detail/widgets/menu_chip.dart';
@@ -12,6 +13,7 @@ import 'package:treat/shared/shared.dart';
 import 'package:treat/shared/widgets/favourite.dart';
 import 'package:treat/shared/widgets/static_map.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MenuDetail extends StatefulWidget {
   const MenuDetail({Key? key}) : super(key: key);
@@ -93,18 +95,56 @@ class _MenuDetailState extends State<MenuDetail> {
                         ],
                       ),
                       CommonWidget.rowHeight(height: 30),
-                      buildPersonalInfo(
-                          icon: 'pin.png',
-                          title: 'Address',
-                          description: _storeDetails.address1),
-                      buildPersonalInfo(
-                          icon: 'global.png',
-                          title: 'Website',
-                          description: _storeDetails.website),
-                      buildPersonalInfo(
-                          icon: 'phone-call.png',
-                          title: 'Contact',
-                          description: _storeDetails.contactNo),
+                      InkWell(
+                        onTap: () {
+                          MapsSheet.show(
+                            context: context,
+                            title: _storeDetails.storeName,
+                            cordinates: Coords(
+                                double.parse(_storeDetails.location.latitude),
+                                double.parse(_storeDetails.location.longitude)),
+                            onMapTap: (map) {
+                              map.showMarker(
+                                coords: Coords(
+                                    double.parse(
+                                        _storeDetails.location.latitude),
+                                    double.parse(
+                                        _storeDetails.location.longitude)),
+                                title: _storeDetails.storeName,
+                                zoom: 15,
+                              );
+                            },
+                          );
+                        },
+                        child: buildPersonalInfo(
+                            icon: 'pin.png',
+                            title: 'Address',
+                            description: _storeDetails.address1),
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          if (await canLaunch(_storeDetails.website)) {
+                            await launch(_storeDetails.website);
+                          }
+                        },
+                        child: buildPersonalInfo(
+                            icon: 'global.png',
+                            title: 'Website',
+                            description: _storeDetails.website),
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          String tel = 'tel:${_storeDetails.contactNo}';
+
+                          if (await canLaunch(tel)) {
+                            await launch(tel);
+                          }
+                        },
+                        child: buildPersonalInfo(
+                            icon: 'phone-call.png',
+                            title: 'Contact',
+                            description: _storeDetails.contactNo),
+                      ),
                       CommonWidget.rowHeight(height: 16),
                       Divider(
                         color: ColorConstants.whiteGrey,
@@ -249,7 +289,7 @@ class _MenuDetailState extends State<MenuDetail> {
             height: 70,
             width: 70,
             decoration: BoxDecoration(
-                color:ColorConstants.containerAshBackgroundColor,
+                color: ColorConstants.containerAshBackgroundColor,
                 borderRadius: BorderRadius.circular(8)),
             child: Image.network(
               image,
@@ -352,6 +392,7 @@ class _MenuDetailState extends State<MenuDetail> {
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   textAlign: TextAlign.start,
+                  textOverflow: null,
                 ),
               ],
             ),

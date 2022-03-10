@@ -24,6 +24,7 @@ class ColorConstants {
   static const Color pinInputBackround = const Color(0xFFEAEAEA);
   static const Color chipBackround = const Color(0xFFF2F2F2);
   static const Color textBlack = const Color(0xFF4B4B4B);
+  static const Color textfieldbgGrey = const Color(0xFFF5F5F5);
 
   static const Color textColorBlack = const Color(0xFF707070);
   static const Color textColorGrey = const Color(0xFFAFAFAF);
@@ -33,6 +34,7 @@ class ColorConstants {
   static const Color containerAshBackgroundColor = const Color(0xFFEFEFEF);
   static const Color redemptionBackground = const Color(0xFFB063E3);
   static const Color redemptionTextBlack = const Color(0xFF2B2B2B);
+  static const Color redemptionTextViolet = const Color(0xFF9855C4);
 
   static const Color graphDineIn = const Color(0xFFDFBCF8);
   static const Color graphGrocery = const Color(0xFF35B5ED);

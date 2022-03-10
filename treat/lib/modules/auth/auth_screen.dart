@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:country_pickers/country.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +21,7 @@ class AuthScreen extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
-    Utils.setStatusBarColor();
+     Utils.setStatusBarColor();
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -35,8 +37,7 @@ class AuthScreen extends GetView<AuthController> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage('$IMAGE_PATH/auth_logo.png'),
-                        fit: BoxFit.fill
-                    ),
+                        fit: BoxFit.fill),
                   ),
                   child: Stack(
                     children: [
@@ -105,29 +106,33 @@ class AuthScreen extends GetView<AuthController> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           InkWell(
-                            onTap: null,
+                            onTap: () {
+                              controller.signInWithFacebook();
+                            },
                             child: SvgPicture.asset(
                               'assets/svgs/icon_facebook.svg',
                               width: 38,
                               height: 38,
                             ),
                           ),
-                          InkWell(
-                            onTap: null,
-                            child: SvgPicture.asset(
-                              'assets/svgs/icon_apple.svg',
-                              width: 38,
-                              height: 38,
-                              allowDrawingOutsideViewBox: true,
+                          if (Platform.isIOS)
+                            InkWell(
+                              onTap: null,
+                              child: SvgPicture.asset(
+                                'assets/svgs/icon_apple.svg',
+                                width: 38,
+                                height: 38,
+                                allowDrawingOutsideViewBox: true,
+                              ),
                             ),
-                          ),
                           InkWell(
-                            onTap: null,
+                            onTap: () {
+                              controller.signInWithGoogle();
+                            },
                             child: SvgPicture.asset(
                               'assets/svgs/icon_search.svg',
                               width: 38,
                               height: 38,
-
                             ),
                           ),
                           InkWell(

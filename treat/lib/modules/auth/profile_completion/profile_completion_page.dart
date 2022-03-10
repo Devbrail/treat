@@ -14,7 +14,8 @@ import '../auth_controller.dart';
 class ProfileCompletion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final AuthController controller = Get.find<AuthController>();
+    final AuthController controller =
+        Get.put(AuthController(apiRepository: Get.find()));
     SizeConfig().init(context);
 
     return SafeArea(

@@ -67,3 +67,10 @@ class Utils {
     });
   }
 }
+List icons = [
+  {'icon': '$IMAGE_PATH/home_loc.png', 'flg': true},
+  {'icon': '$IMAGE_PATH/briefcase_loc.png', 'flg': false},
+  {'icon': '$IMAGE_PATH/heart_loc.png', 'flg': false},
+  {'icon': '$IMAGE_PATH/flag_loc.png', 'flg': false},
+  {'icon': '$IMAGE_PATH/star_loc.png', 'flg': false},
+];

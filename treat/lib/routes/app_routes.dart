@@ -23,6 +23,9 @@ abstract class Routes {
   static const EDIT_PROFILE = '/EditProfile';
   static const STATIC_REDEEM = '/StaticRedeem';
   static const LOCATION_PICKER = '/LocationPicker';
+  static const DYNAMIC_REDEEM = '/DynamicRedeem';
+  static const ADDCARD = '/addcard';
   static const MY_SAVINGS = '$ACCOUNT/MySavings';
+  static const ADDRESSES = '$ACCOUNT/Addresses';
 
 }

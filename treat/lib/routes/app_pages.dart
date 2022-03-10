@@ -8,6 +8,9 @@ import 'package:treat/modules/auth/email_signup.dart';
 import 'package:treat/modules/auth/otp_verify/email_otp_verify_screen.dart';
 import 'package:treat/modules/auth/otp_verify/phone_otp_verify_screen.dart';
 import 'package:treat/modules/auth/profile_completion/profile_completion_page.dart';
+import 'package:treat/modules/dynamic_redeem/add_card.dart';
+import 'package:treat/modules/dynamic_redeem/dynamic_redeem.dart';
+import 'package:treat/modules/dynamic_redeem/dynamic_redeem_screen.dart';
 import 'package:treat/modules/home/home.dart';
 import 'package:treat/modules/location_picker/LocationPicker.dart';
 import 'package:treat/modules/me/cards/cards_screen.dart';
@@ -51,7 +54,6 @@ class AppPages {
         binding: HomeBinding(),
         children: [
           GetPage(name: Routes.CARDS, page: () => CardsScreen()),
-
         ]),
     GetPage(
         name: Routes.RetailMenu,
@@ -74,6 +76,16 @@ class AppPages {
       name: Routes.STATIC_REDEEM,
       page: () => StaticRedemption(),
       binding: RedeemBinding(),
+    ),
+    GetPage(
+      name: Routes.DYNAMIC_REDEEM,
+      page: () => DynamicRedeemScreen(),
+      binding: DynamicRedeemBinding(),
+    ),
+    GetPage(
+      name: Routes.ADDCARD,
+      page: () => AddCard(),
+      binding: DynamicRedeemBinding(),
     ),
     GetPage(
       name: Routes.LOCATION_PICKER,

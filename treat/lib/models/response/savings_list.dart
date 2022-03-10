@@ -72,11 +72,11 @@ class SavingsByStores {
         this.referenceCode});
 
   SavingsByStores.fromJson(Map<String, dynamic> json) {
-    storeName = json['storeName'];
-    storeCategory = json['storeCategory'];
+    storeName = json['storeName']??'';
+    storeCategory = json['storeCategory']??'';
     logoAssetUrl = json['logoAssetUrl'];
-    storeLocation = json['storeLocation'];
-    savedAmount = json['savedAmount'];
+    storeLocation = json['storeLocation']??'';
+    savedAmount = json['savedAmount']??0;
     if(json['redemptionDate']!=null) {
        var format=DateTime.parse(json['redemptionDate']);
       var outputFormat = DateFormat('MM/dd/yy');

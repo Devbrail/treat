@@ -63,6 +63,9 @@ class ApiProvider extends BaseProvider {
   Future<Response> editProfileDetails(String path, Map data) {
     return post('${ApiConstants.baseUrl}$path', data);
   }
+  Future<Response> deleteAddress(String path) {
+    return post('${ApiConstants.baseUrl}$path', {});
+  }
 
   Future<Response> getStoreDetails(String path) {
     return get('${ApiConstants.storeBaseUrl}$path');
@@ -93,6 +96,11 @@ class ApiProvider extends BaseProvider {
     return post('${ApiConstants.baseUrl}$path', data);
   }
 
+  Future<Response> redeemDynamicCoupon(String path, Map data) {
+    jsonEncode(data).printInfo();
+    return post('${ApiConstants.baseUrl}$path', data);
+  }
+
   Future<Response> postRating(String path, Map data) {
     '${ApiConstants.baseUrl}$path\n ${json.encode(data)}'.printInfo();
     return post('${ApiConstants.baseUrl}$path', data);
@@ -111,5 +119,9 @@ class ApiProvider extends BaseProvider {
     '${ApiConstants.baseUrl}$path'.printInfo();
     jsonEncode(data).printInfo();
     return post('${ApiConstants.baseUrl}$path', data);
+  }
+
+  Future<Response> getCards(String path) {
+    return get('${ApiConstants.paymentBaseUrl}$path');
   }
 }

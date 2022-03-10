@@ -3,10 +3,12 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:treat/api/api.dart';
 import 'package:treat/models/response/Ping.dart';
@@ -14,6 +16,7 @@ import 'package:treat/models/response/addresses.dart';
 import 'package:treat/models/response/my_savings.dart';
 import 'package:treat/models/response/profile_response.dart';
 import 'package:treat/models/response/savings_list.dart';
+import 'package:treat/modules/auth/auth.dart';
 import 'package:treat/routes/app_pages.dart';
 import 'package:treat/shared/shared.dart';
 import 'package:treat/shared/utils/common_function.dart';
@@ -55,6 +58,7 @@ class AccountController extends GetxController {
 
   iniMonths() {
     _months.value = Utils.getMonthsInYear();
+    _months.refresh();
     isLifeTime = true;
     isGraphView = true;
     getSavingsData('${_cDate.year}/${_cDate.month}');
@@ -81,11 +85,36 @@ class AccountController extends GetxController {
   void signOut() async {
     var prefs = Get.find<SharedPreferences>();
     await prefs.clear();
+    if (kReleaseMode) Sentry.captureMessage('User signoff');
+    // await Get.deleteAll();
+    await Get.put(AuthController(apiRepository: Get.find()))
+        .fetchingIntialToken();
 
     Get.offAllNamed(Routes.SPLASH);
   }
 
   var addresses = Rxn<Addresses>();
+
+  Future<int> deleteAddress(String id) async {
+    if (defaultAddress.value == int.parse(id)) {
+      CommonWidget.toast('Default address cannot be deleted');
+      return -1;
+    }
+    int status = await apiRepository.deleteAddress(id);
+    try {
+      if (status == 0) {
+        {
+          addresses.value!.addressReturns
+              .removeWhere((element) => element.addressId == int.parse(id));
+          update(['addr']);
+          addresses.refresh();
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+    return status;
+  }
 
   Future<void> loadAddresses() async {
     if (Utils.isGuest) {
@@ -99,6 +128,7 @@ class AccountController extends GetxController {
       }, (r) {
         addresses.value = r;
         defaultAddress.value = addresses.value!.defaultAddressId;
+        update(['addr']);
         addresses.refresh();
       });
     });
@@ -174,6 +204,9 @@ class AccountController extends GetxController {
   TextEditingController lastNameTC = TextEditingController();
 
   getUserInfo() async {
+    profileDetails.value = null;
+    profileDetails.refresh();
+
     var value = await apiRepository.getProfileDetails();
     if (value != -1) {
       profileDetails.value = value;
@@ -184,13 +217,25 @@ class AccountController extends GetxController {
   }
 
   List<PingSummaries> receivedPings = [];
+  List<PingSummaries> sendPings = [];
 
   getPings() {
+    // if (receivedPings.isEmpty)
     apiRepository.getPings('100/1', isSend: false).then((value) {
       if (value != -1) {
         Ping ping = Ping.fromJson(value);
         receivedPings.addAll(ping.pingSummaries!);
         update(['rp']);
+      }
+    });
+    // if (sendPings.isEmpty)
+    apiRepository.getPings('100/1', isSend: true).then((value) {
+      if (value != -1) {
+        Ping ping = Ping.fromJson(value);
+        if (ping.pingSummaries != null && ping.pingSummaries!.isNotEmpty) {
+          sendPings.addAll(ping.pingSummaries!);
+          update(['rp']);
+        }
       }
     });
   }
@@ -262,9 +307,17 @@ class AccountController extends GetxController {
   }
 
   Map getChartData(month) {
-    print('month ${month.toString()}');
+    try {
+      Future.delayed(Duration(milliseconds: 200)).then((value) {
+        savingList!.respData!.savingsByStores!.clear();
+        update(['l']);
+      });
+    } catch (e) {
+      print(e);
+    }
     num h = Get.height / 1.75;
-    num tot = 0, value;
+    num tot = 0,
+        value;
 
     try {
       Entries? entries;
@@ -273,36 +326,36 @@ class AccountController extends GetxController {
             mySavings.entries!.firstWhere((element) => element.month == month);
         Map yesl = months!.firstWhere((element) => element['isSelected']);
 
-        getSavingsList('${_cDate.year}/${months![yesl['id'] + 1]['id']}');
+        getSavingsList('${_cDate.year}/${months![yesl['id']]['id'] - 1}');
       } else {
         Map yesl = years!.firstWhere((element) => element['isSelected']);
-        print('yeslyesl $yesl');
         getSavingsList('${yesl['title']}/00');
 
-        if (month.toString().length > 1)
+        if (month
+            .toString()
+            .length > 1)
           entries = mySavings.entries!
               .firstWhere((element) => element.year == int.parse(month));
         else
           entries = mySavings.entries!.firstWhere(
-              (element) => element.year == int.parse(yesl['title']));
+                  (element) => element.year == int.parse(yesl['title']));
         print(yesl);
       }
-      if (entries != null) {
-        tot = entries.amount!;
-        value = (tot / h) * 100;
+      tot = entries.amount!;
+      value = (tot / h) * 100;
 
-        return {
-          'total': tot.toString(),
-          'height': h / value.abs(),
-          'splits': [
-            ...entries.breakUps!.map((e) =>
-                {'value': e.amount, 'name': e.name, 'color': getColor(e.name!)})
-          ]
-        };
-      }
+      return {
+        'total': tot.toString(),
+        'height': h / value.abs(),
+        'splits': [
+          ...entries.breakUps!.map((e) =>
+          {'value': e.amount, 'name': e.name, 'color': getColor(e.name!)})
+        ]
+      };
     } catch (e, s) {
       // print(s);
-      // print(e);
+      print(e);
+      if (e is RangeError) print('fkdjnfdkjnsd');
     }
 
     return {'total': '0', 'height': 0, 'splits': []};
@@ -333,7 +386,9 @@ class AccountController extends GetxController {
       return ColorConstants.graphEntertainment;
   }
 
-  int currentMonth = DateTime.now().month - 1;
+  int currentMonth = DateTime
+      .now()
+      .month - 1;
 
   selectTenureYear(int id) {
     _years.value!.forEach((e) {
@@ -358,7 +413,8 @@ class AccountController extends GetxController {
   List<Object> rotate(List<Object> list, int v) {
     if (list.isEmpty) return list;
     var i = v % list.length;
-    return list.sublist(i)..addAll(list.sublist(0, i));
+    return list.sublist(i)
+      ..addAll(list.sublist(0, i));
   }
 
   AddressReturns currentAddressReturn = AddressReturns(
@@ -367,7 +423,7 @@ class AccountController extends GetxController {
       latitude: 0,
       longitude: 0,
       addressLine1: 'Current Location',
-      apartment: '',
+      apartment: 0,
       city: '',
       province: '',
       zipCode: '');
@@ -384,6 +440,8 @@ class AccountController extends GetxController {
 
   void getSavingsList(params) {
     savingList = null;
+    // update(['l']);
+
     apiRepository.getMySavingList(params).then((value) {
       if (value != -1) {
         savingList = SavingList.fromJson(value);

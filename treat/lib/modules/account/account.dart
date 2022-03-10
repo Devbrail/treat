@@ -320,7 +320,8 @@ class Account extends GetView<AccountController> {
                           case 0:
                             HomeController hc = Get.put(
                                 HomeController(apiRepository: Get.find()));
-                            Get.toNamed(Routes.LOCATION_PICKER,
+
+                            Get.toNamed( Routes.ACCOUNT + Routes.ADDRESSES,
                                 arguments: hc.locationData);
                             break;
                           case 3:

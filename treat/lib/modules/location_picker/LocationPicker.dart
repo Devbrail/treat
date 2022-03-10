@@ -1,6 +1,6 @@
 import 'dart:async';
 
-  import 'package:dio/dio.dart' as D;
+import 'package:dio/dio.dart' as D;
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
@@ -12,6 +12,7 @@ import 'package:treat/modules/home/home.dart';
 import 'package:treat/shared/constants/common.dart';
 import 'package:treat/shared/constants/constants.dart';
 import 'package:treat/shared/utils/common_function.dart';
+import 'package:treat/shared/utils/common_widget.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
 
 class LocationPicker extends StatefulWidget {
@@ -84,13 +85,27 @@ class _LocationPickerState extends State<LocationPicker> {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          SafeArea(
-            child: GoogleMaps(
-              controller: controller,
+          GoogleMaps(
+            controller: controller,
+          ),
+          Positioned(
+            top: 12,
+            left: 0,
+            right: 0,
+            child: Container(
+              alignment: Alignment.centerLeft,
+              child:  CommonWidget.actionbutton(
+                onTap: () => Get.back(),
+                text: 'BACK',
+                height: 26,
+                buttoncolor: ColorConstants.backButton,
+                textColor: ColorConstants.white,
+                margin: EdgeInsets.only(top: 32, left: 24),
+              ),
             ),
           ),
           Positioned(
-            top: 24,
+            top: 64,
             left: 0,
             right: 0,
             child: Column(
@@ -137,7 +152,8 @@ class _LocationPickerState extends State<LocationPicker> {
                     ),
                     suggestionsCallback: (pattern) async {
                       D.Response res = await D.Dio().get(
-                          'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$pattern&types=establishment&key=AIzaSyDsaPA8h1O6afo6J5ZuJFQDORVHo1fsFSU');
+                          'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$pattern&key=AIzaSyDsaPA8h1O6afo6J5ZuJFQDORVHo1fsFSU');
+
                       if (res.statusCode == 200)
                         return (res.data['predictions'] as List)
                             .map((e) => e['description']);

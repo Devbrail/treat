@@ -132,7 +132,7 @@ class MainTab extends GetView<HomeController> {
                     CommonWidget.rowHeight(height: 8),
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 24),
-                      child: buildStoreItem(controller.sponsoredShops.first,
+                      child: buildStoreItem(controller.allNearbyShops.first,
                           width: double.infinity),
                     ),
                     CommonWidget.rowHeight(height: 8),
@@ -399,7 +399,7 @@ class MainTab extends GetView<HomeController> {
   Widget buildStoreItem(Stores stores, {double? width}) {
     final bool isSingle = width != null;
     final int specialityCount = isSingle ? 2 : 1;
-    return StoreItem(
+     return StoreItem(
         isSingle: isSingle,
         width: width,
         stores: stores,

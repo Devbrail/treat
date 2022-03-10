@@ -30,9 +30,9 @@ class PingSummaries {
 
   PingSummaries(
       {this.acceptedDate,
-        this.pingedBy,
-        this.storeDetails,
-        this.couponDetails});
+      this.pingedBy,
+      this.storeDetails,
+      this.couponDetails});
 
   PingSummaries.fromJson(Map<String, dynamic> json) {
     acceptedDate = json['acceptedDate'];
@@ -62,13 +62,20 @@ class PingSummaries {
 class StoreDetails {
   int? storeId;
   String? storeName;
+  String? couponLayout;
   String? category;
 
-  StoreDetails({this.storeId, this.storeName, this.category});
+  StoreDetails({
+    this.storeId,
+    this.storeName,
+    this.couponLayout,
+    this.category,
+  });
 
   StoreDetails.fromJson(Map<String, dynamic> json) {
     storeId = json['storeId'];
     storeName = json['storeName'];
+    couponLayout = json['couponLayout'];
     category = json['category'];
   }
 
@@ -87,19 +94,25 @@ class CouponDetails {
   String? couponTitle;
   String? couponDescription;
   String? couponAssetId;
+  bool? canRedeem;
+  String? expiryDate;
 
   CouponDetails(
       {this.couponId,
-        this.status,
-        this.couponTitle,
-        this.couponDescription,
-        this.couponAssetId});
+      this.status,
+      this.couponTitle,
+      this.canRedeem,
+      this.couponDescription,
+      this.expiryDate,
+      this.couponAssetId});
 
   CouponDetails.fromJson(Map<String, dynamic> json) {
     couponId = json['couponId'];
     status = json['status'];
     couponTitle = json['couponTitle'];
     couponDescription = json['couponDescription'];
+    canRedeem = json['canRedeem'];
+    expiryDate = json['expiryDate'];
     couponAssetId = json['couponAssetId'];
   }
 

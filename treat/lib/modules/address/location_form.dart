@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_controller/google_maps_controller.dart';
+import 'package:treat/modules/account/account_controller.dart';
 import 'package:treat/modules/home/home.dart';
 import 'package:treat/routes/routes.dart';
 import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/constants/common.dart';
 import 'package:treat/shared/shared.dart';
+import 'package:treat/shared/utils/common_function.dart';
 import 'package:treat/shared/widgets/auth_input_field.dart';
 import 'package:treat/shared/widgets/text_widget.dart';
 
@@ -21,18 +23,22 @@ class LocationForm extends StatefulWidget {
 class _LocationFormState extends State<LocationForm> {
   late GoogleMapsController controller;
   TextEditingController addressLabel = TextEditingController();
-  List icons = [
-    {'icon': '$IMAGE_PATH/home_loc.png', 'flg': true},
-    {'icon': '$IMAGE_PATH/briefcase_loc.png', 'flg': false},
-    {'icon': '$IMAGE_PATH/heart_loc.png', 'flg': false},
-    {'icon': '$IMAGE_PATH/flag_loc.png', 'flg': false},
-    {'icon': '$IMAGE_PATH/star_loc.png', 'flg': false},
-  ];
+  bool isEdit = false;
 
   @override
   void initState() {
     print('widget.location');
     print(widget.location);
+    if (widget.location['edit'] != null) {
+      addressLabel.text = widget.location['addressType'].toString();
+      icons.forEach((element) {
+        element['flg'] = false;
+      });
+      icons[(widget.location['apartment'] as int)]['flg'] = true;
+      setState(() {
+        isEdit = true;
+      });
+    }
     controller = GoogleMapsController(
         initialCameraPosition: CameraPosition(
           target: LatLng(widget.location['latitude'] as double,
@@ -89,12 +95,112 @@ class _LocationFormState extends State<LocationForm> {
                     ),
                     Spacer(),
                     NormalText(
-                      text: 'Select Location',
+                      text: isEdit ? 'Edit Location' : 'Select Location',
                       textColor: ColorConstants.textBlack,
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
                     ),
-                    Spacer()
+                    Spacer(),
+                    if(isEdit)
+                    InkWell(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) => Dialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(34.0)),
+                                  child: Container(
+                                    height: Get.width * .48,
+                                    width: Get.width * .9,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(16)),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        NormalText(
+                                          text:
+                                              'Are you sure you want to delete\nthis location?',
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                        SizedBox(
+                                          height: 24,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            InkWell(
+                                              onTap: () async {
+                                                AccountController ctl = Get.put(
+                                                    AccountController(
+                                                        apiRepository:
+                                                            Get.find()));
+                                                await ctl.deleteAddress(
+                                                    widget.location['addressId'].toString()).then((value) {
+                                                     if(value==0)
+                                                       Get.back();
+
+
+                                                     Get.back();
+                                                });
+                                              },
+                                              child: Container(
+                                                height: 38,
+                                                width: Get.width * .2,
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: ColorConstants.black,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: NormalText(
+                                                  text: 'Yes',
+                                                  textColor:
+                                                      ColorConstants.white,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 24,
+                                            ),
+                                            InkWell(
+                                              onTap: Get.back,
+                                              child: Container(
+                                                height: 38,
+                                                width: Get.width * .2,
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      const Color(0xFFE6E6E6),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: NormalText(
+                                                  text: 'No',
+                                                  textColor:
+                                                      ColorConstants.textBlack,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ));
+                      },
+                      child: Image.asset(
+                        'assets/images/delete_addr.png',
+                      ),
+                    ),
+                    SizedBox(
+                      width: 16,
+                    )
                   ],
                 ),
               ),
@@ -226,7 +332,6 @@ class _LocationFormState extends State<LocationForm> {
                             "province": "",
                             "zipCode": ""
                           });
-
                         },
                         child: NormalText(
                           text: 'Save and Continue',

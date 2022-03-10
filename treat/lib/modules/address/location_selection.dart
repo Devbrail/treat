@@ -91,7 +91,9 @@ class _LocationSelectionState extends State<LocationSelection> {
                 ),
                 suggestionsCallback: (pattern) async {
                   D.Response res = await D.Dio().get(
-                      'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$pattern&types=establishment&key=AIzaSyDsaPA8h1O6afo6J5ZuJFQDORVHo1fsFSU');
+                      'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$pattern&key=AIzaSyDsaPA8h1O6afo6J5ZuJFQDORVHo1fsFSU');
+                  print('res.data');
+                  print(res.data);
                   if (res.statusCode == 200)
                     return (res.data['predictions'] as List)
                         .map((e) => '${e['description']}');
@@ -116,6 +118,7 @@ class _LocationSelectionState extends State<LocationSelection> {
                 onSuggestionSelected: (suggestion) async {
                   String sug = (suggestion as String).split('###')[0];
                   searchTC.text = sug.characters.take(30).toString();
+
                   List<Location> locations = await locationFromAddress(sug);
 
                   Get.to(LocationForm(

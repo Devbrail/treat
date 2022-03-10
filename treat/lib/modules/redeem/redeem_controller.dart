@@ -103,7 +103,7 @@ class RedeemController extends GetxController {
       data.toString().printInfo();
       apiRepository.redeemCoupon(data).then((value) {
         if (value == -1) {
-          CommonWidget.toast('Invalid Pin');
+          // CommonWidget.toast('Invalid Pin');
         } else {
           /*{"success":true,"message":"","errorCode":"TREATAPP_SUCCESS","respData":
           {"referenceCode":"56565","savedAmount":25,"savedThisMonth":10,

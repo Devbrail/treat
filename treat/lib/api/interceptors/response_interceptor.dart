@@ -17,9 +17,9 @@ FutureOr<dynamic> responseInterceptor(
   EasyLoading.dismiss();
   Get.printInfo(info: 'response ${response.statusCode} ${request.url.path}');
 
-  handleErrorStatus(response);
 
-  Get.printInfo(info: '${response.request!.url.path}\n${response.bodyString}');
+  Get.printInfo(info: '${response.request!.url.path}\n${response.body}');
+  handleErrorStatus(response);
 
   if (kReleaseMode)
     Sentry.captureMessage('response   ${request.url.path} ${response.body}');

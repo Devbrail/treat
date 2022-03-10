@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_pdf_viewer/flutter_pdf_viewer.dart';
+import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 import 'package:get/get.dart';
 import 'package:treat/shared/constants/colors.dart';
 import 'package:treat/shared/constants/common.dart';
@@ -222,23 +222,8 @@ class _MenuPDFViewState extends State<MenuPDFView> {
     return Container(
       width: screenWidth,
       height: screenHeight,
-      child: PDFView.fromUrl(
+      child: PDF().fromUrl(
         value,
-        cache: true,
-
-        // password: widget.password,
-        onDownload: (f) {
-          //print("downloaded file! $f");
-          // setState(() {
-          //   // loading = true;
-          // });
-        },
-        onLoad: () {
-          setState(() {
-            loading = false;
-          });
-        },
-        swipeHorizontal: false,
       ),
     );
   }

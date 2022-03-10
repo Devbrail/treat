@@ -359,7 +359,8 @@ class _MySavingsState extends State<MySavings>
                 Map cMonth =
                     controller.months![index % controller.months!.length];
                 if (cMonth['isSelected']) IFController.animateToItem(index);
-                Map content = controller.getChartData(cMonth["id"] + 1);
+
+                Map content = controller.getChartData(cMonth["id"]);
 
                 return Container(
                   margin: EdgeInsets.only(top: content['height'] / 2),
@@ -417,7 +418,7 @@ class _MySavingsState extends State<MySavings>
                 },
                 {
                   'color': ColorConstants.graphEntertainment,
-                  'text': 'Entertainment',
+                  'text': 'Leisure',
                 },
               ].map(
                 (Map e) => Row(
@@ -522,7 +523,7 @@ class _MySavingsState extends State<MySavings>
                 },
                 {
                   'color': ColorConstants.graphEntertainment,
-                  'text': 'Entertainment',
+                  'text': 'Leisure',
                 },
               ].map(
                 (Map e) => Row(
@@ -564,6 +565,7 @@ class _MySavingsState extends State<MySavings>
         axisDirection: Axis.horizontal,
         loop: loop,
         itemBuilder: (context, index, realIndex) {
+
           Map e;
           if (!loop)
             e = controller.years![index % controller.months!.length];
@@ -575,6 +577,7 @@ class _MySavingsState extends State<MySavings>
                 controller.selectTenureYear(e['id']);
               else
                 controller.selectTenure(e['id']);
+              print('jf inx $index  redlx $realIndex');
               IFControllerSlider.animateToItem(index);
               IFController.animateToItem(index);
             },
@@ -617,7 +620,7 @@ class _MySavingsState extends State<MySavings>
   Container buildContainerView(AccountController controller,
       {required bool isYearly}) {
     print('curent selcted in container $isYearly');
-    Map content = controller.getChartData(controller.currentMonth + 1);
+    Map content = controller.getChartData(controller.currentMonth);
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 12),
       child: Column(
@@ -691,7 +694,7 @@ class _MySavingsState extends State<MySavings>
                       const Color(0xFFFCCC00),
                       const Color(0xFFFFB000),
                     ],
-                    label: 'Entertainment',
+                    label: 'Leisure',
                     value: controller.getEarnings(content, 'Entertainment')),
               ),
             ],

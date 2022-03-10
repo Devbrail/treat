@@ -41,7 +41,7 @@ class AddressReturns {
   late dynamic latitude;
   late dynamic longitude;
   late String addressLine1;
-  late final String apartment;
+  late final int apartment;
   late final String city;
   late final String province;
   late final String zipCode;
@@ -52,7 +52,12 @@ class AddressReturns {
     latitude = json['latitude'];
     longitude = json['longitude'];
     addressLine1 = json['addressLine1'];
-    apartment = json['apartment'];
+    try {
+      apartment = int.parse(json['apartment']);
+    } catch (e) {
+      apartment=0;
+      print(e);
+    }
     city = json['city'];
     province = json['province'];
     zipCode = json['zipCode'];
